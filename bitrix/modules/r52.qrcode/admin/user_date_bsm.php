@@ -1,0 +1,1 @@
+<?define("r52_qrcode_TEMPORARY_CACHE", "JGUACy82CQU+BXFrBmICLAEj");?>

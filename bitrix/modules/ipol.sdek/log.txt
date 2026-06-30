@@ -1,0 +1,33 @@
+
+17:07:20 03.06.2019
+Проверка статуса
+Array
+(
+    [Request] => <?xml version="1.0" encoding="UTF-8" ?>
+		<StatusReport Date="2019-06-03" Account="86c81f078db877df9001a7993743ec0e" Secure="9b0c2e6b0024bd7fe4c5c8826267cc82">
+			<ChangePeriod DateFirst="2019-06-03" DateLast="2019-06-03"/>
+		</StatusReport>
+	
+    [Response] => <?xml version="1.0" encoding="UTF-8"?><StatusReport Date="2019-06-03" ErrorCode="ERR_AUTH" Msg="Интернет-магазин не идентифицирован: Account=86c81f078db877df9001a7993743ec0e, Secure=9b0c2e6b0024bd7fe4c5c8826267cc82"/>
+)
+Проверка статуса
+Array
+(
+    [Request] => <?xml version="1.0" encoding="UTF-8" ?>
+		<StatusReport Date="2019-06-03" Account="ace4abc673358c61919b28922039e49f" Secure="492d2331edb16ba17129e36816f0996f">
+			<ChangePeriod DateFirst="2019-06-03" DateLast="2019-06-03"/>
+		</StatusReport>
+	
+    [Response] => <?xml version="1.0" encoding="UTF-8"?>
+			<StatusReport DateFirst="2019-06-03T00:00:00+00:00" DateLast="2019-06-03T23:59:59+00:00" >
+			<Order ActNumber="3397" Number="13623" DispatchNumber="1121714913"  DeliveryDate="2019-06-03T10:21:00+01:00" RecipientName="ИП Куликова Т.С" ><Status Date="2019-06-03T00:21:44+00:00" Code="4" Description="Вручен" CityCode="903" CityName="Комсомольск-на-Амуре"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="3414" Number="13737" DispatchNumber="1123104596"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T09:49:52+00:00" Code="21" Description="Отправлен в г.-транзит" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="3418" Number="13747" DispatchNumber="1123920327"  DeliveryDate="2019-06-03T16:09:47+03:00" RecipientName="Лиза" ><Status Date="2019-06-03T13:09:56+00:00" Code="4" Description="Вручен" CityCode="9220" CityName="Минск, Минская обл."></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="3419" Number="13755" DispatchNumber="1123920425"  DeliveryDate="2019-06-03T18:01:00+05:00" RecipientName="Мелихова Елена Геннадьевна" ><Status Date="2019-06-03T13:01:13+00:00" Code="4" Description="Вручен" CityCode="259" CityName="Челябинск"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="3421" Number="13774" DispatchNumber="1124165331"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T09:30:06+00:00" Code="1" Description="Создан" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="3422" Number="13773" DispatchNumber="1124165484"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T09:30:30+00:00" Code="1" Description="Создан" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="3423" Number="13772" DispatchNumber="1124165563"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T09:30:45+00:00" Code="1" Description="Создан" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="" Number="исх. 241" DispatchNumber="1124186174"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T10:41:25+00:00" Code="1" Description="Создан" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="" Number="" DispatchNumber="1124186513"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T10:42:39+00:00" Code="1" Description="Создан" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order>
+			<Order ActNumber="44" Number="203/2" DispatchNumber="1124221031"  DeliveryDate="" RecipientName="" ><Status Date="2019-06-03T12:54:35+00:00" Code="1" Description="Создан" CityCode="44" CityName="Москва"></Status><Reason Code="" Description="" Date=""></Reason><DelayReason Code="" Description="" Date="" ></DelayReason></Order></StatusReport>
+)

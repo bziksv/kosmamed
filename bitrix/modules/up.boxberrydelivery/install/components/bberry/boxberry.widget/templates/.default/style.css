@@ -1,0 +1,34 @@
+.bxbbutton {
+    background: #FF1B4C;
+    border-radius:4px;
+    display:table;
+    cursor:pointer;
+    color:#ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 19px;
+    padding:13px 28px;
+}
+a.bxbbutton {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+.bxbbutton img,
+.bxbbutton span {
+    display: table-cell;
+    vertical-align:middle;
+}
+.bxbbutton span {
+    padding-left: 11px;
+}
+.bxbbutton:hover {
+    background-color: #6c7c7c;
+}
+.bxbbutton:active {
+    position:relative;
+    top:2px;
+}
+
+.bxblink{}

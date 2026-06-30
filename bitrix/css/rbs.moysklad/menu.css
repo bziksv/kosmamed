@@ -1,0 +1,13 @@
+#global_menu_global_menu_despi_moysklad .adm-main-menu-item-icon {
+	background: url('despi_global_menu.png') no-repeat;
+	background-position-x: 15px;
+	background-position-y: 3px;
+	height: 45px;
+	position: relative;
+	z-index: 2;
+}
+
+#global_submenu_global_menu_despi_moysklad .adm-submenu-item-link-icon.rbs_moysklad_icon {
+	background: url('rbs_moysklad_icon.png') no-repeat;
+	background-position-x: 5px;
+}

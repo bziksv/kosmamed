@@ -1,0 +1,28 @@
+
+.city-change .popular-city .item-city {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px auto;
+}
+.city-change .popular-city .item-city.hidden {
+    display: none;
+}
+.city-change .popular-city .item-city a {
+    width: 120px;
+    color: #575b71;
+    text-decoration: none;
+}
+.city-change .popular-city .item-city a.city-show {
+    flex-grow: 1;
+    text-align: center;
+}
+.city-change .popular-city .item-city a:hover {
+    color: #660901;
+}
+.city-change .popular-city .item-city:last-child{
+    display: none;
+}
+.city-change .popular-city .item-city:last-child.active{
+    display: flex;
+}

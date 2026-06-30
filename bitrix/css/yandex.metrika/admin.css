@@ -1,0 +1,950 @@
+@font-face {
+    font-family: "YS Text";
+    src: url("/bitrix/fonts/yandex.metrika/YS Text-Regular.woff2") format("woff2"),
+    url("/bitrix/fonts/yandex.metrika/YS Text-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "YS Text";
+    src: url("/bitrix/fonts/yandex.metrika/YS Text-Regular Italic.woff2") format("woff2"),
+    url("/bitrix/fonts/yandex.metrika/YS Text-Regular Italic.woff") format("woff");
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "YS Text";
+    src: url("/bitrix/fonts/yandex.metrika/YS Text-Medium.woff2") format("woff2"),
+    url("/bitrix/fonts/yandex.metrika/YS Text-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "YS Text";
+    src: url("/bitrix/fonts/yandex.metrika/YS Text-Medium Italic.woff2") format("woff2"),
+    url("/bitrix/fonts/yandex.metrika/YS Text-Medium Italic.woff") format("woff");
+    font-weight: 500;
+    font-style: italic;
+}
+
+.yam{
+    background: #F6F8FB;
+    font-family: "YS Text", sans-serif;
+    color: rgba(0, 12, 36, 0.7);
+    padding: 24px;
+}
+
+/*reset*/
+.yam * {
+    box-sizing: border-box;
+    font-family: "YS Text", sans-serif;
+}
+.yam a{
+    color: #498BFF;
+    text-decoration: none;
+}
+
+.yam a:hover{
+    color: #1469FF;
+}
+
+.yam select{
+    background: #fff;
+    border: 1px solid rgba(165, 177, 202, 0.3);
+    border-radius: 14px;
+    width: 366px;
+    height: 44px;
+    box-shadow: none;
+    font-size: 16px;
+    color: #2F3747;
+}
+
+.yam input[type="text"],
+.yam input[type="email"],
+.yam input[type="password"]{
+    background: #fff;
+    border: 1px solid rgba(165, 177, 202, 0.3);
+    border-radius: 14px;
+    width: 366px;
+    height: 44px;
+    box-shadow: none;
+    padding: 0 35px 0 20px ;
+    font-size: 16px;
+    color: #2F3747;
+}
+
+.yam input[type="text"]:focus,
+.yam input[type="email"]:focus,
+.yam input[type="password"]:focus,
+.yam input[type="text"]:hover,
+.yam input[type="email"]:hover,
+.yam input[type="password"]:hover{
+    border: 1px solid rgba(134, 148, 176, 0.4);
+}
+
+
+.yam input[type="text"]:disabled,
+.yam input[type="email"]:disabled,
+.yam input[type="password"]:disabled{
+    background: rgba(176, 189, 214, 0.2);
+    border: 1px solid rgba(176, 189, 214, 0.2);
+    color: rgba(71, 90, 128, 0.5);
+}
+
+
+/*blocks*/
+
+.button{
+    padding: 0 20px;
+    height: 44px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(176, 189, 214, 0.2);
+    border-radius: 14px;
+    color: #2F3747;
+    border: none;
+    cursor: pointer;
+    transition: background-color .2s;
+    font-size: 16px;
+    user-select: none;
+}
+
+.button:disabled{
+    color: rgba(71, 90, 128, 0.5);
+    background-color: rgba(176, 189, 214, 0.2);
+    cursor: default;
+}
+
+.button_default:hover:enabled{
+    background-color: rgba(165, 177, 202, 0.3);
+}
+
+.button_primary{
+    background-color: #FFDD57;
+}
+
+.button_primary:hover{
+    background-color: #FFD21F;
+}
+
+.button_transparent{
+    background-color: transparent;
+    border: none;
+    color: #498BFF;
+    transition: color .2s;
+}
+
+.button_transparent:hover {
+    padding: 0 20px;
+    height: 44px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(176, 189, 214, 0.2);
+    border-radius: 14px;
+    color: #2F3747;
+    border: none;
+    cursor: pointer;
+    transition: background-color .2s;
+    font-size: 16px;
+    user-select: none;
+}
+
+.info-block{
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 12, 36, 0.7);
+    background: rgba(176, 189, 214, 0.2);
+    border-radius: 14px;
+    padding: 14px 20px;
+}
+
+.info-block_icon{
+    padding-left: 46px;
+    position: relative;
+
+}
+
+.yam-logs_copy {
+    content: '';
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 20px;
+    height: 20px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/copy.svg);
+    border: 0;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.yam-logs_copy:hover {
+    opacity: 1;
+}
+
+.info-block_icon:before{
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 20px;
+    height: 20px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/i.svg);
+}
+
+.info-block_logs{
+    height: 300px;
+    font-family: monospace;
+    overflow: auto;
+    white-space: nowrap;
+    position: relative;
+}
+
+.styled-checkbox{
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+.styled-checkbox__input{
+    position: absolute;
+    left: -100px;
+    opacity: 0;
+}
+
+.styled-checkbox__text{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 16px;
+    color: #2F3747;
+}
+
+.styled-checkbox__text:before{
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(165, 177, 202, 0.3);
+    border-radius: 5px;
+    margin-right: 8px;
+}
+
+.styled-checkbox:hover .styled-checkbox__text:before{
+    border-color: rgba(134, 148, 176, 0.4);
+}
+
+.styled-checkbox__input:checked+.styled-checkbox__text:before{
+    border-color: transparent;
+    background: #FFDD57 url(/bitrix/modules/yandex.metrika/install/images/checkbox-arrow.svg) center center no-repeat;
+}
+
+
+.custom-select{
+    width: 100%;
+    max-width: 366px;
+    position: relative;
+    z-index: 10;
+    font-size: 16px;
+    /* border: 1px solid rgba(165, 177, 202, 0.3);
+     border-radius: 14px;*/
+}
+.custom-select.active{
+    z-index: 15;
+}
+
+.custom-select__orig {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.custom-select__active{
+    display: flex;
+    height: 44px;
+    padding: 10px 20px;
+    border-radius: 14px;
+    color: rgba(47,55,71, .75);
+    align-items: center;
+    cursor: pointer;
+    transition: background-color .2s;
+    background-color: rgba(176, 189, 214, 0.15);
+}
+
+.custom-select__active-value{
+    display: block;
+    color: #2F3747;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-select__active:after{
+    content: '';
+    width: 16px;
+    height: 8px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/select-arrow.svg) right center no-repeat;
+    margin-left: 10px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.custom-select.active .custom-select__active:after{
+    transform: rotate(180deg);
+}
+
+.custom-select__options{
+    position: absolute;
+    top: calc(100% + 5px);
+    border-radius: 14px;
+    box-shadow: 5px 7px 20px rgba(0,0,0,0.1);
+    background-color: #fff;
+    min-width: 100%;
+    z-index: 20;
+    max-height: 0;
+    overflow: auto;
+    opacity: 0;
+    transition: opacity .4s, max-height 0s .4s;
+}
+
+.custom-select__options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-select__options::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 7px;
+}
+
+.custom-select__options::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background-color: rgba(67,68,69,.5);
+}
+
+.custom-select.active .custom-select__options{
+    transition: max-height 0s, opacity .4s;
+    max-height: 264px;
+    opacity: 1;
+}
+
+.custom-select__option{
+    display: flex;
+    height: 44px;
+    padding: 10px 20px;
+    border-radius: 14px;
+    color: rgba(47,55,71, .75);
+    align-items: center;
+    cursor: pointer;
+    transition: background-color .2s;
+    white-space: nowrap;
+}
+
+.custom-select__option:hover{
+    background-color: rgba(176, 189, 214, 0.15);
+}
+
+.custom-select_v1{
+    width: 160px;
+}
+
+.text-field{
+    position: relative;
+}
+
+.text-field__reset{
+    width: 24px;
+    height: 24px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/reset-input.svg) center center no-repeat;
+    cursor: pointer;
+    position: absolute;
+    right: 14px;
+    top: 10px;
+
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0s .2s, opacity .2s;
+}
+
+.text-field:hover .text-field__reset,
+.text-field__input:focus+.text-field__reset{
+    transition: max-height 0s, opacity .2s;
+    max-height: 100px;
+    opacity: 0.5;
+}
+
+.text-field .text-field__reset:hover{
+    opacity: 0.7;
+}
+
+.text-field_fill{
+    width: 100% !important;
+}
+
+/*layout*/
+.yam__wrapper{
+    width: 100%;
+    max-width: 830px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 0 54px;
+}
+
+.yam__header{
+    border-bottom: 1px solid rgba(134, 148, 176, 0.4);
+    padding: 32px 0;
+}
+
+.yam__description{
+    border-bottom: 1px solid rgba(134, 148, 176, 0.4);
+    padding: 32px 0;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.yam__logo{
+    display: block;
+    width: 100%;
+    max-width: 154px;
+}
+
+.yam__sites{
+    padding: 32px 0;
+    border-bottom: 1px solid rgba(134, 148, 176, 0.4);
+}
+
+.yam__settings{
+    display: none;
+    padding: 32px 0;
+}
+
+.yam__settings.active{
+    display: block;
+}
+
+.yam__submit-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(134, 148, 176, 0.4);
+    padding: 32px 0;
+
+}
+
+.yam__logs{
+    display: none;
+    padding-bottom: 32px;
+}
+
+.yam__logs.active{
+    display: block;
+}
+
+.yam__field{
+    margin-top: 16px;
+    margin-bottom: 32px;
+}
+
+.yam__field:first-child{
+    margin-top: 0;
+}
+
+.yam__field:last-child{
+    margin-bottom: 0;
+}
+
+.yam__field-text{
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 12, 36, 0.7);
+}
+
+.yam__field-text_before{
+    margin-bottom: 20px;
+}
+
+.yam__field-text_after{
+    margin-top: 16px;
+}
+
+.yam__field-text:first-child{
+    margin-top: 0;
+}
+
+.yam__field-text:last-child{
+    margin-bottom: 0;
+}
+
+.yam__field-label{
+    display: block;
+    font-size: 16px;
+    margin-bottom: 16px;
+    font-weight: 500;
+    color: #2F3747;
+}
+
+.ym-events_row-labels .yam__field-label {
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+.yam__field-input_sites{
+    max-height: 264px;
+    overflow: auto;
+    scrollbar-color: rgba(67,68,69,.5) transparent;
+    scrollbar-width: thin;
+}
+
+.yam__field-input_sites::-webkit-scrollbar {
+    width: 8px;
+}
+
+.yam__field-input_sites::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 7px;
+}
+
+.yam__field-input_sites::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background-color: rgba(67,68,69,.5);
+}
+
+@media (max-width: 480px) {
+    .yam__header{
+        padding: 12px 20px;
+    }
+
+    .yam__description{
+        padding: 12px 20px;
+    }
+
+    .yam__settings{
+        padding: 12px 20px;
+    }
+}
+
+
+.yam-repeater-field{}
+.yam-repeater-field__row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.yam-repeater-field__row_tpl{
+    display: none;
+}
+
+.yam-repeater-field__input-wrap{
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.yam-repeater-field__input-wrap_fill{
+    width: 69%;
+}
+
+.yam-repeater-field__sep{
+    font-size: 16px;
+    margin-left: -8px;
+    margin-right: 8px;
+}
+
+.yam-repeater-field__remove-btn{
+    width: 44px;
+    height: 44px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/delete.svg) center center no-repeat;
+    cursor: pointer;
+    opacity: 0.5;
+    border: none;
+    transition: opacity .2s;
+    margin-left: auto;
+}
+
+.yam-repeater-field__remove-btn:hover{
+    background-color: rgba(176, 189, 214, 0.2);
+    border-radius: 14px;
+    opacity: 1;
+}
+
+.yam-repeater-field__row:nth-child(2):last-child .yam-repeater-field__remove-btn{
+    display: none;
+}
+
+.yam-repeater-field__add-wrap{
+    margin-top: 16px;
+}
+
+.yam-field-desc{
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.yam-spoiler{
+
+}
+
+.yam-spoiler__btn{
+    color: #888;
+    cursor: pointer;
+    margin-bottom: 5px;
+    user-select: none;
+}
+
+.yam-spoiler__btn:hover{
+
+}
+
+.yam-spoiler__content{
+    display: none;
+}
+
+.yam-spoiler__content.active{
+    display: block;
+    padding-top: 22px;
+}
+
+.yam-spoiler_primary .yam-spoiler__btn{
+    color: #498BFF;
+    font-size: 16px;
+    transition: color .2s;
+}
+
+.yam-spoiler_primary .yam-spoiler__btn:hover{
+    color: #1469FF;
+}
+
+.yam-spoiler_primary .yam-spoiler__arrow{
+    display: inline-block;
+    margin-left: 12px;
+}
+
+.yam-spoiler_primary .yam-spoiler__btn.active .yam-spoiler__arrow{
+    transform: rotate(180deg);
+}
+
+.yam__site{
+    display: flex;
+    height: 44px;
+    padding: 10px 20px;
+    border-radius: 14px;
+    color: rgba(47,55,71, .75);
+    align-items: center;
+    cursor: pointer;
+    transition: background-color .2s;
+    font-size: 16px;
+}
+
+.yam__site:hover{
+    background-color: rgba(176, 189, 214, 0.15);
+}
+.yam__site.active{
+    background-color: rgba(176, 189, 214, 0.15);
+    color: #2F3747;
+}
+
+.yam__site:after{
+    content: '';
+    width: 14px;
+    height: 11px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/site-arrow.svg);
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+.yam__site.active:after{
+    opacity: 1;
+}
+
+
+
+
+.ym-events_row-tempate-wrapper {
+    display:none;
+}
+
+
+.ym-events_field_wrapper_param .select2-container {
+    width: 200px !important;
+}
+
+.ym-events_field_wrapper_event .select2-container {
+    width: 160px !important;
+}
+
+.select2-container--default .select2-selection--single {
+    height: 44px;
+
+    background: #FFFFFF;
+
+    border: 1px solid rgba(134, 148, 176, 0.4);
+    border-radius: 14px !important;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    display: none;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 50%;
+    right: 18px;
+
+    width: 16px;
+    height: 8px;
+
+    transform: translateY(-50%);
+
+    background: url('/bitrix/modules/yandex.metrika/install/images/select-arrow-top.svg') no-repeat center center / contain;
+    transition: transform 0.3s;
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.select2-search--dropdown {
+    position: absolute;
+    top: -52px;
+    left: 0;
+    right: 40px;
+
+    height: 44px;
+    padding: 0;
+
+}
+
+.select2-dropdown {
+    border: none;
+}
+.select2-container--open .select2-dropdown.select2-dropdown--above {
+    top: -8px;
+}
+.select2-container--open .select2-dropdown.select2-dropdown--above .select2-results__options {
+    /*box-shadow: 0px 0px 0px rgb(165 177 202 / 30%), 0px -24px 80px rgb(165 177 202 / 8%);*/
+}
+.select2-container--open .select2-dropdown.select2-dropdown--above .select2-search--dropdown {
+    top: auto;
+    bottom: -52px;
+}
+
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    width: 100%;
+    height: 100%;
+    padding: 0 0 0 20px;
+    border: none;
+    background: white;
+
+    /*font-size: 16px;*/
+
+    outline: none;
+    border: 1px solid rgba(134, 148, 176, 0.4);
+
+    border-right: none;
+    border-radius: 14px 0 0 14px !important;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+    max-height: 250px;
+}
+
+.select2-container--open.select2-container--default .select2-selection--single .select2-selection__arrow {
+    transform: translateY(-50%) rotate(360deg);
+}
+
+.select2-container--open .select2-dropdown {
+    top: 8px;
+}
+
+.select2-container--open .select2-dropdown--below {
+    border: none;
+}
+.select2-results__options{
+    background: #FFFFFF;
+    /* normal/shdw_popover */
+
+    box-shadow: 0px 0px 3px rgba(165, 177, 202, 0.3), 0px 10px 40px rgba(165, 177, 202, 0.3);
+    border-radius: 12px;
+    border: none;
+
+    scrollbar-width:thin;
+    scrollbar-color:#a1a1a2 transparent;
+}
+.select2-results__options::-webkit-scrollbar {
+    width: 8px;
+    background: 0 0
+}
+
+.select2-results__options::-webkit-scrollbar-track {
+    background-color: transparent
+}
+
+.select2-results__options::-webkit-scrollbar-thumb {
+    background-color: #a1a1a2;
+    background-clip: content-box;
+    border-radius: 20px;
+    opacity: .5
+}
+.select2-results__options {
+    padding: 10px 0;
+}
+.select2-results__option {
+    padding: 8px 10px 6px;
+
+    font-size: 14px;
+    color: #2F3747 !important;
+}
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background: #EFF2F7;
+}
+.select2-container--default .select2-results__option--selected {
+    position: relative;
+    background: transparent !important;
+}
+.select2-container--default .select2-results__option--selected:after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: 5px;
+
+    width: 15px;
+    height: 15px;
+
+    transform: translateY(-50%);
+
+    background: url("/bitrix/modules/yandex.metrika/install/images/check.svg") no-repeat center center / contain;
+}
+.select2-results__option span {
+    display: block;
+}
+.select2-results__option span.custom-option__text {
+    margin-top: 5px;
+    font-size: 12px;
+    color: rgba(26, 43, 77, 0.6);
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: rgba(26, 43, 77, 0.6);
+}
+
+
+.yam-custom-input {
+    position: relative;
+    width: 100%;
+}
+.yam-custom-input input {
+    width: 100% !important;
+    height: 44px;
+    padding: 0 38px 0 20px;
+    box-sizing: border-box;
+
+    font-size: 16px;
+
+    border: 1px solid rgba(165, 177, 202, 0.3);
+    border-radius: 14px;
+}
+.yam-custom-input input::placeholder {
+    color: rgba(26, 43, 77, 0.6);
+}
+.yam-custom-input .custom-input__icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+
+    cursor: pointer;
+}
+.yam-custom-input .custom-input__message {
+    position: absolute;
+    top: 6px;
+    right: -8px;
+    padding: 14px 20px;
+    z-index: 2;
+    box-sizing: border-box;
+
+    width: 360px;
+
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(209, 225, 255, 0.8);
+
+    transform: translateY(-100%);
+
+    background: #252A38;
+    border-radius: 14px;
+
+    opacity: 0;
+    pointer-events: none;
+}
+.yam-custom-input .custom-input__message span {
+    display: block;
+}
+.yam-custom-input .custom-input__message span:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+.yam-custom-input .custom-input__icon:hover + .custom-input__message {
+    opacity: 1;
+}
+
+.ym-events_remove {
+    width: 44px;
+    height: 44px;
+    background: url(/bitrix/modules/yandex.metrika/install/images/delete.svg) center center no-repeat;
+    cursor: pointer;
+    opacity: 0.5;
+    border: none;
+    transition: opacity .2s;
+    margin-left: auto;
+}
+
+button.ym-events_remove:hover {
+    background-color: rgba(176, 189, 214, 0.2);
+    border-radius: 14px;
+    opacity: 1;
+}
+
+.autocomplete-select {
+    position: relative;
+    width: fit-content;
+}
+.autocomplete-select .select2-selection__arrow {
+    display: none;
+}
+
+.ym-events_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.ym-events_field_wrapper {
+    display: flex;
+    align-items: center;
+    /*margin-right: 16px;*/
+}
+
+.yam-custom-input .input-selector {
+    font-size: 14px !important;
+    color: #444 !important;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #eff2f7;
+    cursor: default;
+    border: none;
+    opacity: 0.5;
+}

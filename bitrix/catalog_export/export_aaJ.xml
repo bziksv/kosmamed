@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE yml_catalog SYSTEM "shops.dtd"><yml_catalog date="2023-04-04T21:49:25+03:00"><shop><name>medmarket</name><company>medmarket</company><url>http://kosmamed.ru</url><platform>BSM/Yandex/Market</platform><version>2.2.5</version><cpa>1</cpa><currencies><currency id="RUR" rate="1"/></currencies><categories><category id="14810">Лабораторное оборудование</category><category id="14869" parentId="14810">Ланцеты﻿</category><category id="14882" parentId="14869">Prolance Ланцеты, Польша</category><category id="14911" parentId="14810">Пробирки для крови</category><category id="14944" parentId="14911">Пробирки для исследования сыворотки</category><category id="14945" parentId="14944">С активатором свертывания</category><category id="14946" parentId="14944">С активатором свертывания и гелем</category><category id="14949" parentId="14911">Пробирки для гематологических исследований</category><category id="14951" parentId="14949">EDTA K3 Tube</category><category id="14962" parentId="14911">Иглы для забора крови</category><category id="14963" parentId="14962">Иглы двусторонние стандартные</category><category id="14964" parentId="14962">Иглы двусторонние с визуальной камерой</category><category id="14880" parentId="14869">Acti-lance Ланцеты, Польша</category><category id="14948" parentId="14911">Пробирки для коагулогических исследований</category><category id="14950" parentId="14949">EDTA K2 Tube</category><category id="14947" parentId="14944">Без наполнителя</category><category id="14955" parentId="14911">Пробирки для исследования плазмы</category><category id="14957" parentId="14955">С литий гепарином</category><category id="14965" parentId="14962">Игла-бабочки соединенные с луер-адаптером</category><category id="15037" parentId="14810">Лабораторная посуда</category><category id="15038" parentId="15037">Лабораторное стекло</category><category id="15045" parentId="15038">Штативы для пробирок и предметных стекол</category><category id="15012" parentId="14810">Глюкометры анализаторы крови</category><category id="15018" parentId="15012">Тест-полоски для глюкометра</category><category id="14812" parentId="14810">Анализаторы лабораторные</category><category id="14855" parentId="14812">Анализаторы алкоголя, алкотестеры, алкотекторы</category><category id="14856" parentId="14855">Экспресс-тесты на наркотики</category><category id="14848" parentId="14812">Приборы для измерения гемоглобина, холестерина, глюкозы и мочевой кислоты</category><category id="14849" parentId="14848">Дополнительные принадлежности к анализаторам</category></categories><enable_auto_discounts>true</enable_auto_discounts><offers><offer id="6561"><url>http://kosmamed.ru/catalog/prolance_lantsety_polsha_4/lantsety_prolance_low_flow_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_4_mm_sinie/</url><price>2999</price><currencyId>RUR</currencyId><categoryId>14882</categoryId><picture>http://kosmamed.ru/upload/iblock/df3/df30cfa8ffeb5abe60205f9c60f7b17a.png</picture><name>Ланцеты Prolance Low Flow для капиллярного забора крови 200 шт./упак, глубина прокола 1,4 мм, синие</name><vendor>Prolance</vendor><vendorCode>1В32-510200</vendorCode><description>Эргономические ланцеты польского производства Low Flow предназначены для качественного забора образцов крови.
+
+Технические особенности
+
+	
+благодаря двойной пружине прокол происходит максимально быстро;
+	
+манипуляция практически безболезненная;
+	
+изделие простое в применении;
+	
+защитная система предотвращает многократное использование прибора;
+	
+иглы хранятся под специальным колпачком;
+	
+процедура осуществляется автоматически - после прокола игла заходит в ланцет. Риск инфицирования минимализирован;
+	
+для потока крови различной мощности созданы устройства шести размеров;
+	
+каждый цветовой код соответствует конкретной модели.</description></offer><offer id="6562"><url>http://kosmamed.ru/catalog/prolance_lantsety_polsha_4/lantsety_prolance_micro_flow_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_6_mm_gol/</url><price>2889</price><currencyId>RUR</currencyId><categoryId>14882</categoryId><picture>http://kosmamed.ru/upload/iblock/4de/4deba1625e784a8854e59021106a0fdb.png</picture><name>Ланцеты Prolance Micro Flow для капиллярного забора крови 200 шт./упак, глубина прокола 1,6 мм, голубые</name><vendor>Prolance</vendor><vendorCode>1В34-510200</vendorCode><description>Ланцет позволяет проводить процедуру взятия крови на анализ быстро и на безопасном уровне.
+
+Преимущества модели Prolance Micro Flow
+
+	
+Двойная пружина позволяет сделать быстрый прокол.
+	
+Во время проведения процедуры пациент практически не испытывает боли.
+	
+Инструмент выполнен в эргономичном дизайне.
+	
+Прибор прост в использовании.
+	
+Конструкция изделия исключает повторный прокол.
+	
+Стерильные иголки защищены колпачками.
+	
+Распространение инфекции исключено за счет автоматического возвращения иглы в корпус после укола.
+	
+Для разного кровотока можно подобрать подходящий размер из шести предложенных.
+	
+Модели представлены в разных цветовых вариациях в зависимости от модели.
+	
+В упаковке содержится 200 или 9 600 экземпляров.</description></offer><offer id="26990"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_standartnye_1/igla_dvustoronnyaya_lind_vac_0_8_mm_kh_38_mm_21g_kh1_1_2_100_sht_up/</url><price>849</price><currencyId>RUR</currencyId><categoryId>14963</categoryId><picture>http://kosmamed.ru/upload/iblock/193/1931ecc03a02a4e3e62ad44eccad88f1.jpg</picture><name>Игла двусторонняя Lind-Vac 0,8 мм х 38 мм (21G х1 1/2''), 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>MN2112</vendorCode><description>Двусторонняя медицинская игла предназначена для забора венозной крови и используется вместе с вакуумной пробиркой. Игла предназначена для одноразового использования, стерильна и не пирогена.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность иглы.
+Силиконовое покрытие трубки иглы.
+Футляр с перфорацией для контроля целостности упаковки.
+Цветовая кодировка в соответствии с ISO 6009.</description></offer><offer id="26993"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_s_vizualnoy_kameroy_1/igla_dvustoronnyaya_s_vizualnoy_kameroy_lind_vac_0_8_mm_kh_25_mm_21g_kh1_50_sht_up/</url><price>999</price><currencyId>RUR</currencyId><categoryId>14964</categoryId><picture>http://kosmamed.ru/upload/iblock/d23/d234912e60e62844386f20d4ef8881c7.jpg</picture><name>Игла двусторонняя с визуальной камерой Lind-Vac 0,8 мм х 25 мм (21G х1''), 50 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>VN2110</vendorCode><description>Двусторонняя игла с визуальной камерой облегчает процедуру взятия крови. Камера позволяет наблюдать ток крови и поможет предотвратить выведение иглы из вены.
+особенности
+
+Материал иглы - нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность изделия.
+Увеличенная прозрачная канюля для визуализации тока крови.
+Защитный резиновый колпачок с одной стороны иглы для предотвращения разбрызгивания крови.
+Дополнительная этикетка с информацией об изделии.
+Цветовое кодирование футляра иглы в соответствии с ISO 6009.</description></offer><offer id="26987"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_standartnye_1/igla_dvustoronnyaya_lind_vac_0_9_mm_kh_25_mm_20g_kh1_100_sht_up/</url><price>749</price><currencyId>RUR</currencyId><categoryId>14963</categoryId><picture>http://kosmamed.ru/upload/iblock/615/61514c04675ec73e5a1fc48c85a65daf.jpg</picture><name>Игла двусторонняя Lind-Vac 0,9 мм х 25 мм (20G х1''), 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>MN2010</vendorCode><description>Двусторонняя медицинская игла предназначена для забора венозной крови и используется вместе с вакуумной пробиркой. Игла предназначена для одноразового использования, стерильна и не пирогена.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность иглы.
+Силиконовое покрытие трубки иглы.
+Футляр с перфорацией для контроля целостности упаковки.
+Цветовая кодировка в соответствии с ISO 6009.</description></offer><offer id="26996"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_s_vizualnoy_kameroy_1/igla_dvustoronnyaya_s_vizualnoy_kameroy_lind_vac_0_7_mm_kh_38_mm_22g_kh1_1_2_50_sht_up/</url><price>879</price><currencyId>RUR</currencyId><categoryId>14964</categoryId><picture>http://kosmamed.ru/upload/iblock/67a/67aaa8adff418162a1b1de47754cc4a2.jpg</picture><name>Игла двусторонняя с визуальной камерой Lind-Vac 0,7 мм х 38 мм (22G х1 1/2''), 50 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>VN2212</vendorCode><description>Двусторонняя игла с визуальной камерой облегчает процедуру взятия крови. Камера позволяет наблюдать ток крови и поможет предотвратить выведение иглы из вены.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность изделия.
+Увеличенная прозрачная канюля для визуализации тока крови.
+Защитный резиновый колпачок с одной стороны иглы для предотвращения разбрызгивания крови.
+Дополнительная этикетка с информацией об изделии.
+Цветовое кодирование футляра иглы в соответствии с ISO 6009.</description></offer><offer id="26992"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_standartnye_1/igla_dvustoronnyaya_lind_vac_0_6_mm_kh_38_mm_23g_kh1_1_2_100_sht_up/</url><price>749</price><currencyId>RUR</currencyId><categoryId>14963</categoryId><picture>http://kosmamed.ru/upload/iblock/b54/b542572c2d143de13adeba9abe79ca4a.jpg</picture><name>Игла двусторонняя Lind-Vac 0,6 мм х 38 мм (23G х1 1/2''), 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>MN2312</vendorCode><description>Двусторонняя медицинская игла предназначена для забора венозной крови и используется вместе с вакуумной пробиркой. Игла предназначена для одноразового использования, стерильна и не пирогена.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность иглы.
+Силиконовое покрытие трубки иглы.
+Футляр с перфорацией для контроля целостности упаковки.
+Цветовая кодировка в соответствии с ISO 6009.</description></offer><offer id="6560"><url>http://kosmamed.ru/catalog/prolance_lantsety_polsha_4/lantsety_prolance_normal_flow_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_8_mm_ze/</url><price>2989</price><currencyId>RUR</currencyId><categoryId>14882</categoryId><picture>http://kosmamed.ru/upload/iblock/78d/78d286485d55ef16a890a479dc87ecd2.png</picture><name>Ланцеты Prolance Normal Flow для капиллярного забора крови 200 шт./упак, глубина прокола 1,8 мм, зеленые</name><vendorCode>7659</vendorCode><description>Лабораторные ланцеты Normal Flow разработаны для ускоренного капиллярного отбора образцов крови. Отличаются улучшенной эргономикой.
+
+Особенности изделия
+
+	
+двойная пружина дает возможность осуществить прокол быстро и без боли;
+	
+болевые ощущения сводятся к минимуму;
+	
+ланцеты удобные для использования;
+	
+прибор одноразовый. Защищен встроенным механизмом от многократного применения;
+	
+острые иглы спрятаны под колпачком;
+	
+прохождение иглы в ланцет происходит автоматически после прокалывания. Это гарантирует полную безопасность для пользователей;
+	
+для разной силы кровотока существует шесть размеров;
+	
+каждая модель обозначена цветовым кодом.</description></offer><offer id="6559"><url>http://kosmamed.ru/catalog/prolance_lantsety_polsha_4/lantsety_prolance_high_flow_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_8_mm_zhel/</url><price>2919</price><currencyId>RUR</currencyId><categoryId>14882</categoryId><picture>http://kosmamed.ru/upload/iblock/698/698b077f8f24bc387fe285ae7981477e.png</picture><name>Ланцеты Prolance High Flow для капиллярного забора крови 200 шт./упак, глубина прокола 1,8 мм, желтые</name><vendor>Prolance</vendor><vendorCode>7658</vendorCode><description>Ланцет предназначен для быстрого забора крови на анализ. Прокалывание осуществляется с помощью 2-ной пружины. 
+
+Преимущества Prolance High Flow
+
+	
+Чувство боли во время проведения процедуры сведены к минимуму.
+	
+Изделие имеет эргономичный дизайн.
+	
+Исключена возможность повторного прокола. 
+	
+Стерильные иголки закрыты колпачком.
+	
+Укол осуществляется автоматически, предохраняя таким образом специалиста от заражения.
+	
+Предусмотрено шесть размеров для разного уровня кровотока.
+	
+Модели отличаются по цветам.
+
+В одной упаковке содержится 200 или 9 600 экземпляров.</description></offer><offer id="26991"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_standartnye_1/igla_dvustoronnyaya_lind_vac_0_7_mm_kh_38_mm_22g_kh1_1_2_100_sht_up/</url><price>839</price><currencyId>RUR</currencyId><categoryId>14963</categoryId><picture>http://kosmamed.ru/upload/iblock/715/71574b078f4bcd87acac515fc55b5862.jpg</picture><name>Игла двусторонняя Lind-Vac 0,7 мм х 38 мм (22G х1 1/2''), 100 шт/уп</name><vendorCode>MN2212</vendorCode><description>Двусторонняя медицинская игла предназначена для забора венозной крови и используется вместе с вакуумной пробиркой. Игла предназначена для одноразового использования, стерильна и не пирогена.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность иглы.
+Силиконовое покрытие трубки иглы.
+Футляр с перфорацией для контроля целостности упаковки.
+Цветовая кодировка в соответствии с ISO 6009.</description></offer><offer id="6594"><url>http://kosmamed.ru/catalog/acti_lance_lantsety_polsha_3/lantsety_acti_lance_universal_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_8_mm_si/</url><price>2649</price><currencyId>RUR</currencyId><categoryId>14880</categoryId><picture>http://kosmamed.ru/upload/iblock/e2f/e2f496b0919b9c617dcb707bbf81383d.png</picture><name>Ланцеты Acti-lance Universal для капиллярного забора крови, 200 шт./упак, глубина прокола 1,8 мм, синие</name><vendor>Acti-lance</vendor><vendorCode>7342</vendorCode><description>Ланцеты Acti-lance служат для капиллярного забора крови. Применение данного оборудования обеспечивает верный подбор промежутка от приспособления до пальца пациента во время прокалывания. Минимизация болевых ощущений достигается равномерным нажатием иглы. Это дает возможность проверять величину прокола для получения требуемого количества материала.
+
+Достоинства инструмента:
+
+	
+устройство создает условия к правильному выбору рассстояния между пальцем и инструментом при проколе;
+	
+снижение болезненности забора материала возможно благодаря одинаковому давлению иголки;
+	
+взятие нужного объема крови, контроль глубины проколки осуществляется специалистом;
+	
+использование ланцетов упрощает проведение общих анализов.</description></offer><offer id="26860"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya/vakuumnye_probirki_lab_vac_s_aktivatorom_svertyvaniya_krasnye_6_ml_13kh100_mm_up_100sht_1100613100/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14945</categoryId><picture>http://kosmamed.ru/upload/iblock/1a0/1a094bda5c21f9cea87e2b3d02956101.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором свертывания, красные, 6 мл, 13х100 мм (уп. 100шт) 1100613100</name><vendor>Lab-Vac</vendor><vendorCode>1100613100</vendorCode><description>В качестве активатора свертывания используется диоксид кремния, который наносится на внутреннюю сторону пробирки напылением. Он используется для запуска коагуляционного процесса и получения сыворотки крови.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Изделие является стерильным.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Применение: биохимия, иммунология, серология, микробиология, токсикология.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer><offer id="26879"><url>http://kosmamed.ru/catalog/edta_k2_tube/vakuumnye_probirki_lab_vac_s_k2_edta_fioletovye_3_ml_13kh75_mm_up_100sht_142031375/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14950</categoryId><picture>http://kosmamed.ru/upload/iblock/d15/d1525fca518b1486310a9ae9dc7e6375.jpg</picture><name>Вакуумные пробирки Lab-Vac с К2 ЭДТА, фиолетовые, 3 мл, 13х75 мм (уп. 100шт) 142031375</name><vendor>Lab-Vac</vendor><vendorCode>142031375</vendorCode><description>Калиевая соль ЭДТА предотвращает свертывание крови путем блокирования ионов кальция. Используется в гематологии, ПЦР-исследованиях, применяются для определения групп крови.
+Наполнитель ЭДТА К2 в виде кристаллического порошка наносят на внутреннюю сторону пробирки напылением.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К2.
+Материал для исследования: цельная кровь.</description></offer><offer id="26881"><url>http://kosmamed.ru/catalog/edta_k2_tube/vakuumnye_probirki_lab_vac_s_k2_edta_fioletovye_9_ml_16kh100_mm_up_100sht_1420916100/</url><price>1399</price><currencyId>RUR</currencyId><categoryId>14950</categoryId><picture>http://kosmamed.ru/upload/iblock/e6f/e6fa837eb9024a26ac2a910be094359b.jpg</picture><name>Вакуумные пробирки Lab-Vac с К2 ЭДТА, фиолетовые, 9 мл, 16х100 мм (уп. 100шт) 1420916100</name><vendor>Lab-Vac</vendor><vendorCode>1420916100</vendorCode><description>Калиевая соль ЭДТА предотвращает свертывание крови путем блокирования ионов кальция. Используется в гематологии, ПЦР-исследованиях, применяются для определения групп крови.
+Наполнитель ЭДТА К2 в виде кристаллического порошка наносят на внутреннюю сторону пробирки напылением.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К2.
+Материал для исследования: цельная кровь.</description></offer><offer id="26870"><url>http://kosmamed.ru/catalog/probirki_dlya_koagulogicheskikh_issledovaniy/vakuumnye_probirki_lab_vac_s_tsitratom_natriya_3_8_golubye_3_6_ml_13kh75_mm_up_100sht_158361375/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14948</categoryId><picture>http://kosmamed.ru/upload/iblock/89a/89a05c7186a4cf619bb0bc93faf49934.jpg</picture><name>Вакуумные пробирки Lab-Vac с цитратом натрия 3,8%, голубые, 3,6 мл, 13х75 мм (уп. 100шт) 158361375</name><vendor>Lab-Vac</vendor><vendorCode>158361375</vendorCode><description>Пробирки содержат антикоагулянт 3,8% цитрат Na (0,129 моль/л). Он используется в исследованиях системы гемостаза - для определения коагуляционных свойств крови. Наполнитель в виде раствора находится на дне пробирки. Соотношение объемов крови и цитрата натрия - 9:1.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: коагулология.
+Добавки: 3,8% цитрат натрия.
+Материал для исследования: цитратная плазма.</description></offer><offer id="26989"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_standartnye_1/igla_dvustoronnyaya_lind_vac_0_8_mm_kh_25_mm_21g_kh1_100_sht_up/</url><price>959</price><currencyId>RUR</currencyId><categoryId>14963</categoryId><picture>http://kosmamed.ru/upload/iblock/903/9031e8ebe0fc5c9879e5794de1fddd35.jpg</picture><name>Игла двусторонняя Lind-Vac 0,8 мм х 25 мм (21G х1''), 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>MN2110</vendorCode><description>Двусторонняя медицинская игла предназначена для забора венозной крови и используется вместе с вакуумной пробиркой. Игла предназначена для одноразового использования, стерильна и не пирогена.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность иглы.
+Силиконовое покрытие трубки иглы.
+Футляр с перфорацией для контроля целостности упаковки.
+Цветовая кодировка в соответствии с ISO 6009.</description></offer><offer id="26884"><url>http://kosmamed.ru/catalog/s_litiy_geparinom/vakuumnye_probirki_lab_vac_c_litiy_geparinom_zelenye_2_ml_13kh75_mm_up_100sht_160021375/</url><price>1199</price><currencyId>RUR</currencyId><categoryId>14957</categoryId><picture>http://kosmamed.ru/upload/iblock/5c0/5c0ee6f034db8e29f152dea833416614.jpg</picture><name>Вакуумные пробирки Lab-Vac c литий-гепарином, зеленые, 2 мл, 13х75 мм (уп. 100шт) 160021375</name><vendor>Lab-Vac</vendor><vendorCode>160021375</vendorCode></offer><offer id="26873"><url>http://kosmamed.ru/catalog/edta_k3_tube/vakuumnye_probirki_lab_vac_s_k3_edta_fioletovye_2_ml_13kh75_mm_up_100sht_143021375/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14951</categoryId><picture>http://kosmamed.ru/upload/iblock/8f5/8f5dca7c002f6e41a9e0f8295191197e.jpg</picture><name>Вакуумные пробирки Lab-Vac с К3 ЭДТА, фиолетовые, 2 мл, 13х75 мм (уп. 100шт) 143021375</name><vendor>Lab-Vac</vendor><vendorCode>143021375</vendorCode><description>Вакуумные пробирки с калиевой солью ЭДТА применяются в гематологических исследованиях, ПЦР-исследованиях, исследованиях на определение групп крови.
+Антикоагулянт ЭДТА К3 находится в пробирке в виде раствора (концентрация 1,2-2 мг/мл крови), нанесенного на внутреннюю сторону пробирки.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К3.
+Материал для исследования: цельная кровь.</description></offer><offer id="26876"><url>http://kosmamed.ru/catalog/edta_k3_tube/vakuumnye_probirki_lab_vac_s_k3_edta_fioletovye_6_ml_13kh100_mm_up_100sht_1430613100/</url><price>1199</price><currencyId>RUR</currencyId><categoryId>14951</categoryId><picture>http://kosmamed.ru/upload/iblock/956/9565ed0e42af01517419bebd954a7e0f.jpg</picture><name>Вакуумные пробирки Lab-Vac с К3 ЭДТА, фиолетовые, 6 мл, 13х100 мм (уп. 100шт) 1430613100</name><vendor>Lab-Vac</vendor><vendorCode>1430613100</vendorCode><description>Вакуумные пробирки с калиевой солью ЭДТА применяются в гематологических исследованиях, ПЦР-исследованиях, исследованиях на определение групп крови.
+Антикоагулянт ЭДТА К3 находится в пробирке в виде раствора (концентрация 1,2-2 мг/мл крови), нанесенного на внутреннюю сторону пробирки.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К3.
+Материал для исследования: цельная кровь.</description></offer><offer id="27003"><url>http://kosmamed.ru/catalog/igla_babochki_soedinennye_s_luer_adapterom/igla_babochka_lind_vac_25g_x_3_4_x_7_0_5mm_kh_19_mm_dlina_trubki_19_sm_100_sht_up/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14965</categoryId><picture>http://kosmamed.ru/upload/iblock/a5f/a5f4096cd8a437d94cbf5b597a1dd3af.jpg</picture><name>Игла-бабочка Lind-Vac 25G x 3/4'' x 7'' 0.5мм х 19 мм, длина трубки 19 см, 100 шт/уп</name><vendorCode>SN2507</vendorCode><description>Иглы-бабочки используются в педиатрии, ветеринарии и отделениях реанимации для работы с пациентами в нестабильном состоянии или с маленькими детьми. Крепление в виде крылышек предотвращает случайное извлечение иглы из вены.
+особенности
+
+Материал иглы — нержавеющая сталь;
+Короткий скос иглы 17°±2°;
+Полная стерильность изделия;
+Индивидуальная упаковка для каждого изделия;
+Гибкий прозрачный катетер из АБС-пластика;
+Стерильный луэр-адаптер для подсоединения иглы к вакуумной пробирке;
+Цветовая кодировка для определения диаметра иглы.</description></offer><offer id="19376"><url>http://kosmamed.ru/catalog/shtativy_dlya_probirok_i_predmetnykh_stekol/shtativ_p_e_shlpp_20_na_20_gnezd_diametr_18_mm_kitay/</url><price>359</price><currencyId>RUR</currencyId><categoryId>15045</categoryId><picture>http://kosmamed.ru/upload/iblock/161/161312d23ca8ba1716addbae41256052.jpg</picture><name>Штатив п/э ШЛПП-20, на 20 гнезд диаметр 18 мм, Китай</name><vendorCode>12005002</vendorCode></offer><offer id="27001"><url>http://kosmamed.ru/catalog/igla_babochki_soedinennye_s_luer_adapterom/igla_babochka_lind_vac_23g_x_3_4_x_7_0_6mm_kh_19_mm_dlina_trubki_19_sm_100_sht_up/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14965</categoryId><picture>http://kosmamed.ru/upload/iblock/677/677f50be73936ce35db185c6cb7ed1f7.jpg</picture><name>Игла-бабочка Lind-Vac 23G x 3/4'' x 7'' 0.6мм х 19 мм, длина трубки 19 см, 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>SN2307</vendorCode><description>Иглы-бабочки используются в педиатрии, ветеринарии и отделениях реанимации для работы с пациентами в нестабильном состоянии или с маленькими детьми. Крепление в виде крылышек предотвращает случайное извлечение иглы из вены.
+Особенности
+
+Материал иглы — нержавеющая сталь;
+Короткий скос иглы 17°±2°;
+Полная стерильность изделия;
+Индивидуальная упаковка для каждого изделия;
+Гибкий прозрачный катетер из АБС-пластика;
+Стерильный луэр-адаптер для подсоединения иглы к вакуумной пробирке;
+Цветовая кодировка для определения диаметра иглы.</description></offer><offer id="26994"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_s_vizualnoy_kameroy_1/igla_dvustoronnyaya_s_vizualnoy_kameroy_lind_vac_0_8_mm_kh_38_mm_21g_kh1_1_2_50_sht_up/</url><price>999</price><currencyId>RUR</currencyId><categoryId>14964</categoryId><picture>http://kosmamed.ru/upload/iblock/9b9/9b920d64c481b2ce50fbdd647a48050d.jpg</picture><name>Игла двусторонняя с визуальной камерой Lind-Vac 0,8 мм х 38 мм (21G х1 1/2''), 50 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>VN2112</vendorCode><description>Двусторонняя игла с визуальной камерой облегчает процедуру взятия крови. Камера позволяет наблюдать ток крови и поможет предотвратить выведение иглы из вены.
+Особенности
+
+Материал иглы - нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность изделия.
+Увеличенная прозрачная канюля для визуализации тока крови.
+Защитный резиновый колпачок с одной стороны иглы для предотвращения разбрызгивания крови.
+Дополнительная этикетка с информацией об изделии.
+Цветовое кодирование футляра иглы в соответствии с ISO 6009.</description></offer><offer id="26995"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_s_vizualnoy_kameroy_1/igla_dvustoronnyaya_s_vizualnoy_kameroy_lind_vac_0_7_mm_kh_25_mm_22g_kh1_50_sht_up/</url><price>999</price><currencyId>RUR</currencyId><categoryId>14964</categoryId><picture>http://kosmamed.ru/upload/iblock/89d/89dd2f63194116eb2f369cc1dc7113bc.jpg</picture><name>Игла двусторонняя с визуальной камерой Lind-Vac 0,7 мм х 25 мм (22G х1''), 50 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>VN2210</vendorCode><description>Двусторонняя игла с визуальной камерой облегчает процедуру взятия крови. Камера позволяет наблюдать ток крови и поможет предотвратить выведение иглы из вены.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность изделия.
+Увеличенная прозрачная канюля для визуализации тока крови.
+Защитный резиновый колпачок с одной стороны иглы для предотвращения разбрызгивания крови.
+Дополнительная этикетка с информацией об изделии.
+Цветовое кодирование футляра иглы в соответствии с ISO 6009.</description></offer><offer id="27000"><url>http://kosmamed.ru/catalog/igla_babochki_soedinennye_s_luer_adapterom/igla_babochka_lind_vac_22g_x_3_4_x_7_0_7mm_kh_19_mm_dlina_trubki_19_sm_100_sht_up/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14965</categoryId><picture>http://kosmamed.ru/upload/iblock/a41/a4182d67a190374209f3af491022595f.jpg</picture><name>Игла-бабочка Lind-Vac, 22G x 3/4'' x 7'' 0.7мм х 19 мм, длина трубки 19 см, 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>SN2207</vendorCode></offer><offer id="26999"><url>http://kosmamed.ru/catalog/igla_babochki_soedinennye_s_luer_adapterom/igla_babochka_lind_vac_21g_x_3_4_x_7_0_8mm_kh_19_mm_dlina_trubki_19_sm_100_sht_up/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14965</categoryId><picture>http://kosmamed.ru/upload/iblock/49e/49ee6963d0a7bc45bbda1386e8debdef.jpg</picture><name>Игла-бабочка Lind-Vac, 21G x 3/4'' x 7'' 0.8мм х 19 мм, длина трубки 19 см, 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>SN2107</vendorCode><description>Иглы-бабочки используются в педиатрии, ветеринарии и отделениях реанимации для работы с пациентами в нестабильном состоянии или с маленькими детьми. Крепление в виде крылышек предотвращает случайное извлечение иглы из вены.
+Особенности
+
+Материал иглы - нержавеющая сталь;
+Короткий скос иглы 17°±2°;
+Полная стерильность изделия;
+Индивидуальная упаковка для каждого изделия;
+Гибкий прозрачный катетер из АБС-пластика;
+Стерильный луэр-адаптер для подсоединения иглы к вакуумной пробирке;
+Цветовая кодировка для определения диаметра иглы.</description></offer><offer id="26867"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya_i_gelem/vakuumnye_probirki_lab_vac_s_aktivatorom_i_gelem_zheltye_9_ml_16kh100_mm_up_100sht_1200916100/</url><price>1499</price><currencyId>RUR</currencyId><categoryId>14946</categoryId><picture>http://kosmamed.ru/upload/iblock/98a/98ace1a07ad54d5c2bd773f599db7331.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором и гелем, желтые, 9 мл, 16х100 мм (уп. 100шт) 1200916100</name><vendorCode>1200916100</vendorCode><description>Для полного разграничения сыворотки и сгустка в вакуумные пробирки добавляют биологически инертный гель. Гель тяжелее сыворотки, но легче кровяного сгустка, поэтому после центрифугирования в виде тонкой полоски гель занимает промежуточное положение между ними.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: биохимия, иммунология, серология, микробиология, токсикология, исследования электрофореза белков.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer><offer id="26875"><url>http://kosmamed.ru/catalog/edta_k3_tube/vakuumnye_probirki_lab_vac_s_k3_edta_fioletovye_4_ml_13kh75_mm_up_100sht_143041375/</url><price>1199</price><currencyId>RUR</currencyId><categoryId>14951</categoryId><picture>http://kosmamed.ru/upload/iblock/8c1/8c108a4effa221f3d21e2e9d2f850861.jpg</picture><name>Вакуумные пробирки Lab-Vac с К3 ЭДТА, фиолетовые, 4 мл, 13х75 мм (уп. 100шт) 143041375</name><vendor>Lab-Vac</vendor><vendorCode>143041375</vendorCode><description>Вакуумные пробирки с калиевой солью ЭДТА применяются в гематологических исследованиях, ПЦР-исследованиях, исследованиях на определение групп крови.
+Антикоагулянт ЭДТА К3 находится в пробирке в виде раствора (концентрация 1,2-2 мг/мл крови), нанесенного на внутреннюю сторону пробирки.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К3.
+Материал для исследования: цельная кровь.</description></offer><offer id="26988"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_standartnye_1/igla_dvustoronnyaya_lind_vac_0_9_mm_kh_38_mm_20g_kh1_1_2_100_sht_up/</url><price>829</price><currencyId>RUR</currencyId><categoryId>14963</categoryId><picture>http://kosmamed.ru/upload/iblock/e48/e48836e975ba35ea1da1d8f18c55a366.jpg</picture><name>Игла двусторонняя Lind-Vac 0,9 мм х 38 мм (20G х1 1/2''), 100 шт/уп</name><vendor>Lind-Vac</vendor><vendorCode>MN2012</vendorCode><description>Двусторонняя медицинская игла предназначена для забора венозной крови и используется вместе с вакуумной пробиркой. Игла предназначена для одноразового использования, стерильна и не пирогена.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность иглы.
+Силиконовое покрытие трубки иглы.
+Футляр с перфорацией для контроля целостности упаковки.
+Цветовая кодировка в соответствии с ISO 6009.</description></offer><offer id="26868"><url>http://kosmamed.ru/catalog/probirki_dlya_koagulogicheskikh_issledovaniy/vakuumnye_probirki_lab_vac_s_tsitratom_natriya_3_2_golubye_4_5_ml_13kh75_mm_up_100sht_152451375/</url><price>1199</price><currencyId>RUR</currencyId><categoryId>14948</categoryId><picture>http://kosmamed.ru/upload/iblock/acb/acb4d1127ed499f7317fb1efdefa1e07.jpg</picture><name>Вакуумные пробирки Lab-Vac с цитратом натрия 3,2%, голубые, 4,5 мл, 13х75 мм (уп. 100шт) 152451375</name><vendor>Lab-Vac</vendor><vendorCode>152451375</vendorCode><description>Пробирки содержат антикоагулянт 3,2% цитрат Na (0,109 моль/л). Он используется в исследованиях системы гемостаза - для определения коагуляционных свойств крови. Наполнитель в виде раствора находится на дне пробирки. Соотношение объемов крови и цитрата натрия - 9:1.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: коагулология.
+Добавки: 3,2% цитрат натрия.
+Материал для исследования: цитратная плазма.</description></offer><offer id="6557"><url>http://kosmamed.ru/catalog/prolance_lantsety_polsha_4/lantsety_prolance_pediatric_dlya_kapillyarnogo_zabora_krovi_glubina_prokola_1_2_mm_rozovye/</url><price>2949</price><currencyId>RUR</currencyId><categoryId>14882</categoryId><picture>http://kosmamed.ru/upload/iblock/25a/25a282ea930cac19966b020db88b9348.png</picture><name>Ланцеты Prolance Pediatric для капиллярного забора крови, глубина прокола 1,2 мм, розовые</name><vendor>Prolance</vendor><vendorCode>7656</vendorCode><description>Одноразовые автоланцеты Prolance Pediatric используют для быстрого и безопасного забора крови.
+
+Преимущества
+
+	
+В состав прибора входит двойная пружина, благодаря чему, процесс прокалывания кожной ткани производится быстро и легко.
+	
+Приспособление снижает болевой синдром при проведении процедуры.
+	
+Эргономичный корпус облегчает процесс пользования.
+	
+Инструмент имеет защиту от повторного использования.
+	
+Стерильность иглы обеспечивается наличием колпачка.
+	
+По окончании прокола игла автоматически возвращается внутрь изделия, снижая риск случайного травмирования пациента и врача.
+
+Предусмотрена комплектация по 200 или по 9600 штук.</description></offer><offer id="26885"><url>http://kosmamed.ru/catalog/s_litiy_geparinom/vakuumnye_probirki_lab_vac_c_litiy_geparinom_zelenye_4_ml_13kh75_mm_up_100sht_160041375/</url><price>1129</price><currencyId>RUR</currencyId><categoryId>14957</categoryId><picture>http://kosmamed.ru/upload/iblock/3e8/3e86a81badac38b22dc5917b4f967a3f.jpg</picture><name>Вакуумные пробирки Lab-Vac c литий-гепарином, зеленые, 4 мл, 13х75 мм (уп. 100шт) 160041375</name><vendor>Lab-Vac</vendor><vendorCode>160041375</vendorCode></offer><offer id="26878"><url>http://kosmamed.ru/catalog/edta_k2_tube/vakuumnye_probirki_lab_vac_s_k2_edta_fioletovye_2_ml_13kh75_mm_up_100sht_142021375/</url><price>1199</price><currencyId>RUR</currencyId><categoryId>14950</categoryId><picture>http://kosmamed.ru/upload/iblock/02c/02c3f8fc1b0241b58ab10ca528d99be3.jpg</picture><name>Вакуумные пробирки Lab-Vac с К2 ЭДТА, фиолетовые, 2 мл, 13х75 мм (уп. 100шт) 142021375</name><vendor>Lab-Vac</vendor><vendorCode>142021375</vendorCode><description>Калиевая соль ЭДТА предотвращает свертывание крови путем блокирования ионов кальция. Используется в гематологии, ПЦР-исследованиях, применяются для определения групп крови.
+Наполнитель ЭДТА К2 в виде кристаллического порошка наносят на внутреннюю сторону пробирки напылением.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К2.
+Материал для исследования: цельная кровь.</description></offer><offer id="25900"><url>http://kosmamed.ru/catalog/ekspress_testy_na_narkotiki/poloski_indikatornye_dlya_opredeleniya_alkogolya_v_slyune_alkosensor_25_testov_v_penale_kitay/</url><price>749</price><currencyId>RUR</currencyId><categoryId>14856</categoryId><picture>http://kosmamed.ru/upload/iblock/322/322ae609bf0b0c61fbdff4480b41c0a5.jpg</picture><name>Полоски индикаторные для определения алкоголя в слюне "АЛКОСЕНСОР" (25 тестов в пенале), Китай</name><vendorCode>АЛКОСЕНСОР</vendorCode><description>Индикаторные полосы «Алкосенсор» позволяют оперативно, максимально точно обнаруживать содержание алкоголя. Исследование осуществляется методом анализа слюны. В коробке содержится 25 отдельных индикаторных полос.
+Особенности изделия
+Тестовые полоски имеют следующие характерные особенности:
+
+    низкая цена;
+    результаты диагностики проводятся с максимальной точностью с погрешностью 0.96;
+    тестирование  занимает несколько секунд;
+    тест  подходит также для самостоятельного контроля.
+
+Алкосенсор действует путем окислительного процесса алкогольоксидазой, в результате чего образуется перекись водорода, альдегиды. Фермент  влияет на окисление хромогена, реакция сопровождается окрашиванием, интенсивность цвета показывает степень концентрации алкоголя во взятом образце слюны. Полученный итог сверяется с эталонной шкалой.</description></offer><offer id="6648"><url>http://kosmamed.ru/catalog/test_poloski_dlya_glyukometra/test_poloski_akku_chek_aktiv_50/</url><price>1699</price><currencyId>RUR</currencyId><categoryId>15018</categoryId><picture>http://kosmamed.ru/upload/iblock/3c2/3c262b8d50e4188907b7e12a8c57c624.png</picture><name>Тест-полоски "Акку-Чек Актив" №50</name><vendorCode>A-6648</vendorCode><description>Тест-полоски "Акку-Чек Актив" №50 швейцарского производства рекомендуется использовать для измерения количества глюкозы в крови вместе с глюкометром от данного производителя. Одна упаковка содержит 50 полосок одноразового использования и инструкцию по применению. Амортизирующий тубус обеспечивает защиту содержимого при транспортировке или при падении. Тестовая зона полосок пропитана индикаторами, меняющими цвет при соприкосновении с кровью. Полученная информация обрабатывается глюкометром, который выдает готовый результат. Правильная эксплуатация тест-полосок позволяет определить уровень сахара со стопроцентной точностью. Подходят для применения дома и в профессиональных медицинских учреждениях.</description></offer><offer id="19371"><url>http://kosmamed.ru/catalog/shtativy_dlya_probirok_i_predmetnykh_stekol/shtativ_p_e_shlpp_10_na_10_gnezd_diametrom_18_mm_kitay/</url><price>349</price><currencyId>RUR</currencyId><categoryId>15045</categoryId><picture>http://kosmamed.ru/upload/iblock/f80/f80b67f4285277ad8b4457181a493b96.jpg</picture><name>Штатив П/э ШЛПП-10, на 10 гнезд диаметром 18 мм, Китай</name><vendorCode>12005001</vendorCode></offer><offer id="26858"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya/vakuumnye_probirki_lab_vac_s_aktivatorom_svertyvaniya_krasnye_4_ml_13kh75_mm_up_100sht_110041375/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14945</categoryId><picture>http://kosmamed.ru/upload/iblock/a3c/a3c2dd2de025d0371035f6a7aa474dbf.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором свертывания, красные, 4 мл, 13х75 мм (уп. 100шт) 110041375</name><vendor>Lab-Vac</vendor><vendorCode>110041375</vendorCode><description>В качестве активатора свертывания используется диоксид кремния, который наносится на внутреннюю сторону пробирки напылением. Он используется для запуска коагуляционного процесса и получения сыворотки крови.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Изделие является стерильным.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Применение: биохимия, иммунология, серология, микробиология, токсикология.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer><offer id="26864"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya_i_gelem/vakuumnye_probirki_lab_vac_s_aktivatorom_i_gelem_zheltye_4_ml_13kh75_mm_up_100sht_120041375/</url><price>1299</price><currencyId>RUR</currencyId><categoryId>14946</categoryId><picture>http://kosmamed.ru/upload/iblock/598/598cc215977337803e8f948dd02e0840.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором и гелем, желтые, 4 мл, 13х75 мм (уп. 100шт) 120041375</name><vendor>Lab-Vac</vendor><vendorCode>120041375</vendorCode><description>Для полного разграничения сыворотки и сгустка в вакуумные пробирки добавляют биологически инертный гель. Гель тяжелее сыворотки, но легче кровяного сгустка, поэтому после центрифугирования в виде тонкой полоски гель занимает промежуточное положение между ними.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: биохимия, иммунология, серология, микробиология, токсикология, исследования электрофореза белков.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer><offer id="26880"><url>http://kosmamed.ru/catalog/edta_k2_tube/vakuumnye_probirki_lab_vac_s_k2_edta_fioletovye_4_ml_13kh75_mm_up_100sht_142041375/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14950</categoryId><picture>http://kosmamed.ru/upload/iblock/ec2/ec2011735b4a4e3169a5e57e8bf71073.jpg</picture><name>Вакуумные пробирки Lab-Vac с К2 ЭДТА, фиолетовые, 4 мл, 13х75 мм (уп. 100шт) 142041375</name><vendor>Lab-Vac</vendor><vendorCode>142041375</vendorCode><description>Калиевая соль ЭДТА предотвращает свертывание крови путем блокирования ионов кальция. Используется в гематологии, ПЦР-исследованиях, применяются для определения групп крови.
+Наполнитель ЭДТА К2 в виде кристаллического порошка наносят на внутреннюю сторону пробирки напылением.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К2.
+Материал для исследования: цельная кровь.</description></offer><offer id="6558"><url>http://kosmamed.ru/catalog/prolance_lantsety_polsha_4/lantsety_prolance_max_flow_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_6_mm_fiole/</url><price>2999</price><currencyId>RUR</currencyId><categoryId>14882</categoryId><picture>http://kosmamed.ru/upload/iblock/63b/63b9a8e07b17a5f36764ab7a521b39f5.png</picture><name>Ланцеты Prolance Max Flow для капиллярного забора крови 200 шт./упак, глубина прокола 1,6 мм, фиолетовые</name><vendor>Prolance</vendor><vendorCode>1В36-510200</vendorCode><description>С помощью капиллярного ланцета можно быстро и без затруднений взять кровь на анализ. В состав входит пружина, которая позволяет быстро и без боли проколоть кожу. Благодаря эргономичной конструкции облегчается процедура пользования. Защитный колпачок обеспечивает стерильность устройства.
+
+Преимущества Prolance Max Flow
+
+	
+Пациент не испытывает болевых ощущений в момент проведения процедуры.
+	
+Прибором легко пользоваться.
+	
+Изделие стерильно и гарантирует безопасность.
+	
+Представлены разные размеры, среди которых можно выбрать наиболее подходящий вариант.
+	
+В коробках укомплектовано во 200 и по 9600 экземпляров.</description></offer><offer id="26866"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya_i_gelem/vakuumnye_probirki_lab_vac_s_aktivatorom_i_gelem_zheltye_6_ml_13kh100_mm_up_100sht_1200613100/</url><price>1299</price><currencyId>RUR</currencyId><categoryId>14946</categoryId><picture>http://kosmamed.ru/upload/iblock/812/8123a8f3f00d149127627018f7ffa462.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором и гелем, желтые, 6 мл, 13х100 мм (уп. 100шт) 1200613100</name><vendor>Lab-Vac</vendor><vendorCode>1200613100</vendorCode><description>Для полного разграничения сыворотки и сгустка в вакуумные пробирки добавляют биологически инертный гель. Гель тяжелее сыворотки, но легче кровяного сгустка, поэтому после центрифугирования в виде тонкой полоски гель занимает промежуточное положение между ними.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: биохимия, иммунология, серология, микробиология, токсикология, исследования электрофореза белков.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer><offer id="6593"><url>http://kosmamed.ru/catalog/acti_lance_lantsety_polsha_3/lantsety_acti_lance_lite_dlya_kapillyarnogo_zabora_krovi_200_sht_upak_glubina_prokola_1_5_mm_fioleto/</url><price>2649</price><currencyId>RUR</currencyId><categoryId>14880</categoryId><picture>http://kosmamed.ru/upload/iblock/5d1/5d1dcecb64c025addccb115b86cb824f.png</picture><name>Ланцеты Acti-lance Lite для капиллярного забора крови, 200 шт./упак, глубина прокола 1,5 мм, фиолетовые</name><vendor>Acti-lance</vendor><vendorCode>7341</vendorCode><description>Ланцет представляет собой одноразовое устройство для забора капиллярной крови на анализ. Прибор разработан таким образом, чтобы снизить травмирование пальца. Изделие будет полезно для пациентов, которым данная процедура проводится каждый день.
+
+Преимущества Acti-lance
+
+	
+Оптимальный выбор промежутка, образующегося между пальцем и прибором в момент прокола.
+	
+Равномерный нажим на иглу позволяет проводить сеанс практически безболезненно.
+	
+Глубину введения иголки и количество забираемой биологической жидкости можно регулировать.
+	
+Инструмент разработан таким образом, чтобы производить точный замер уровня глюкозы.
+	
+Устройство подходит детям и больным, имеющим тонкие кожные покровы.</description></offer><offer id="19262"><url>http://kosmamed.ru/catalog/dopolnitelnye_prinadlezhnosti_k_analizatoram/test_poloski_na_glyukozu_izitach_50_tayvan/</url><price>1499</price><currencyId>RUR</currencyId><categoryId>14849</categoryId><picture>http://kosmamed.ru/upload/iblock/c68/c68b06cfbb334d2519ddb2914c311e6f.jpg</picture><name>Тест-полоски на глюкозу ИзиТач №50, Тайвань</name><vendorCode>ETGlu</vendorCode></offer><offer id="6596"><url>http://kosmamed.ru/catalog/acti_lance_lantsety_polsha_3/lantsety_acti_lance_special_dlya_kapillyarnogo_zabora_krovi_200sht_upak_glubina_prokola_2_0_mm_zhelt/</url><price>2979</price><currencyId>RUR</currencyId><categoryId>14880</categoryId><picture>http://kosmamed.ru/upload/iblock/9b0/9b0950c2e431da442ae1353c5689795b.png</picture><name>Ланцеты Acti-lance Special для капиллярного забора крови 200шт./упак, глубина прокола 2,0 мм, желтые</name><vendor>Acti-lance</vendor><vendorCode>7343</vendorCode><description>Ланцет предназначен для взятия большого количества крови для проведения анализа. 
+
+Преимущества изделия
+
+	
+Промежуток между прибором и пальцем рассчитано с максимальной точностью, благодаря чему давление распределено равномерно, процедура проводится безболезненно.
+	
+Исключено травмирование пациентов, которым требуется регулярно сдавать анализ.
+	
+Оставшиеся ранки затягиваются очень быстро.
+	
+Минимальный диаметр прокола.
+	
+При минимальном уколе производят забор достаточного объема крови.</description></offer><offer id="6651"><url>http://kosmamed.ru/catalog/test_poloski_dlya_glyukometra/test_poloski_kontur_ts_50/</url><price>1399</price><currencyId>RUR</currencyId><categoryId>15018</categoryId><picture>http://kosmamed.ru/upload/iblock/df6/df65577b36611931dabab725f70d0713.png</picture><name>Тест-полоски "Контур ТС" №50</name><vendorCode>A-6651</vendorCode><description>Тестовые полосы предназначены для работы совместно с глюкометром.
+
+Особенности
+
+	
+Во время помещения полоски в аппарат происходит автокодировка, эта методика исключает риск возникновения ошибок, которые возможны при ручной настройке.
+	
+Для того чтобы произвести анализ, потребуется всего лишь 0,6 мкл крови.
+	
+Одна коробка укомплектована 50 экземплярами.</description></offer><offer id="26871"><url>http://kosmamed.ru/catalog/probirki_dlya_koagulogicheskikh_issledovaniy/vakuumnye_probirki_lab_vac_s_tsitratom_natriya_3_8_golubye_4_5_ml_13kh75_mm_up_100sht_158451375/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14948</categoryId><picture>http://kosmamed.ru/upload/iblock/f58/f5869e77d7bd682702169ec5b81541c1.jpg</picture><name>Вакуумные пробирки Lab-Vac с цитратом натрия 3,8%, голубые, 4,5 мл, 13х75 мм (уп. 100шт) 158451375</name><vendor>Lab-Vac</vendor><vendorCode>158451375</vendorCode><description>Пробирки содержат антикоагулянт 3,8% цитрат Na (0,129 моль/л). Он используется в исследованиях системы гемостаза - для определения коагуляционных свойств крови. Наполнитель в виде раствора находится на дне пробирки. Соотношение объемов крови и цитрата натрия - 9:1.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: коагулология.
+Добавки: 3,8% цитрат натрия.
+Материал для исследования: цитратная плазма.</description></offer><offer id="26862"><url>http://kosmamed.ru/catalog/bez_napolnitelya/vakuumnye_probirki_lab_vac_bez_napolnitelya_krasnye_6_ml_13kh100_mm_up_100sht_1000613100/</url><price>1189</price><currencyId>RUR</currencyId><categoryId>14947</categoryId><picture>http://kosmamed.ru/upload/iblock/a3a/a3a20d81f0501f8b8ddc834c3c4da1f5.jpg</picture><name>Вакуумные пробирки Lab-Vac без наполнителя, красные, 6 мл, 13х100 мм (уп. 100шт) 1000613100</name><vendor>Lab-Vac</vendor><vendorCode>1000613100</vendorCode><description>Служат для взятия образцов венозной крови, в качестве пробирок для анализа, хранения и транспортировки биоматериала.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови, подходят для автоматических и полуавтоматических анализаторов.
+Изделие является стерильным.
+Применение: биохимия, серология, бактериология, определение группы крови.
+Добавки: без наполнителя.</description></offer><offer id="26865"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya_i_gelem/vakuumnye_probirki_lab_vac_s_aktivatorom_i_gelem_zheltye_5_ml_13kh100_mm_up_100sht_1200513100/</url><price>1399</price><currencyId>RUR</currencyId><categoryId>14946</categoryId><picture>http://kosmamed.ru/upload/iblock/2a4/2a405b39d208886ec7e229c67657e19f.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором и гелем, желтые, 5 мл, 13х100 мм (уп. 100шт) 1200513100</name><vendor>Lab-Vac</vendor><vendorCode>1200513100</vendorCode><description>Для полного разграничения сыворотки и сгустка в вакуумные пробирки добавляют биологически инертный гель. Гель тяжелее сыворотки, но легче кровяного сгустка, поэтому после центрифугирования в виде тонкой полоски гель занимает промежуточное положение между ними.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: биохимия, иммунология, серология, микробиология, токсикология, исследования электрофореза белков.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer><offer id="19268"><url>http://kosmamed.ru/catalog/pribory_dlya_izmereniya_gemoglobina_kholesterina_glyukozy_i_mochevoy_kisloty/pribor_dlya_izmereniya_kholesterina_glyukozy_i_gemoglobina_izitach_easy_touch_gchb_tayvan/</url><price>8799</price><currencyId>RUR</currencyId><categoryId>14848</categoryId><picture>http://kosmamed.ru/upload/iblock/d5e/d5e057be1f7ca3ddd58476c26c3f1074.jpg</picture><name>Прибор для измерения холестерина, глюкозы и гемоглобина ИзиТач (Easy Touch GCHb), Тайвань</name><vendorCode>EasyTouch GCHb</vendorCode><description>Easy Touch GCHb – это универсальный прибор, который используют для контроля содержания в крови глюкозы, холестерина и гемоглобина. Широко применяется в больницах, на выезде бригад скорой помощи. Подходит для индивидуального использования пациентами.
+
+Достоинства
+
+	
+Чтобы получить результат, необходимо нанести капиллярную каплю крови с пальца на тестовую полоску устройства.
+	
+Когда пройдет 6 секунд на мониторе появятся показатели гемоглобина или глюкозы.
+	
+По окончанию 2,5 минут определится уровень холестерина.
+	
+Изделие рассчитано только для наружного применения. Тестирование можно проводить в любых условиях и брать с собой благодаря маленькому размеру и независимому питанию.
+
+Easy Touch GCHb незаменим для людей страдающих довольно распространенными заболеваниями, такими как сахарный диабет и анемия</description></offer><offer id="19264"><url>http://kosmamed.ru/catalog/dopolnitelnye_prinadlezhnosti_k_analizatoram/test_poloski_na_mochevuyu_kislotu_izitach_easytouch_uric_acid_25_sht_tayvan/</url><price>2399</price><currencyId>RUR</currencyId><categoryId>14849</categoryId><picture>http://kosmamed.ru/upload/iblock/8af/8afb2abf811bfce772767b05f122d066.jpg</picture><name>Тест-полоски на мочевую кислоту ИзиТач (EasyTouch® Uric Acid) (25 шт), Тайвань</name><vendorCode>A-19264</vendorCode></offer><offer id="19263"><url>http://kosmamed.ru/catalog/dopolnitelnye_prinadlezhnosti_k_analizatoram/test_poloski_na_gemoglobin_izitach_25_tayvan/</url><price>2399</price><currencyId>RUR</currencyId><categoryId>14849</categoryId><picture>http://kosmamed.ru/upload/iblock/a29/a29cfb7efea41ad2baa59acfbc2b979b.jpg</picture><name>Тест-полоски на гемоглобин ИзиТач №25, Тайвань</name><vendorCode>ETGem</vendorCode></offer><offer id="19270"><url>http://kosmamed.ru/catalog/pribory_dlya_izmereniya_gemoglobina_kholesterina_glyukozy_i_mochevoy_kisloty/pribor_dlya_izmereniya_kholesterina_glyukozy_i_mochevoy_kisloty_izitach_easy_touch_gcu_tayvan/</url><price>8799</price><currencyId>RUR</currencyId><categoryId>14848</categoryId><picture>http://kosmamed.ru/upload/iblock/2f8/2f806f06adc2579b4183513e656c2f5b.jpg</picture><name>Прибор для измерения холестерина, глюкозы и мочевой кислоты ИзиТач (Easy Touch GCU), Тайвань</name><vendorCode>EasyTouch GCU</vendorCode></offer><offer id="26997"><url>http://kosmamed.ru/catalog/igly_dvustoronnie_s_vizualnoy_kameroy_1/igla_dvustoronnyaya_s_vizualnoy_kameroy_lind_vac_0_6_mm_kh_25_mm_23g_kh1_50_sht_up/</url><price>999</price><currencyId>RUR</currencyId><categoryId>14964</categoryId><picture>http://kosmamed.ru/upload/iblock/1a6/1a657fc29c0ac82ac2cecddb523391bb.jpg</picture><name>Игла двусторонняя с визуальной камерой Lind-Vac 0,6 мм х 25 мм (23G х1''), 50 шт/уп</name><vendorCode>VN2310</vendorCode><description>Двусторонняя игла с визуальной камерой облегчает процедуру взятия крови. Камера позволяет наблюдать ток крови и поможет предотвратить выведение иглы из вены.
+Особенности
+
+Материал иглы — нержавеющая сталь.
+Длинный скос иглы 11°±2°.
+Полная стерильность изделия.
+Увеличенная прозрачная канюля для визуализации тока крови.
+Защитный резиновый колпачок с одной стороны иглы для предотвращения разбрызгивания крови.
+Дополнительная этикетка с информацией об изделии.
+Цветовое кодирование футляра иглы в соответствии с ISO 6009.</description></offer><offer id="26998"><url>http://kosmamed.ru/catalog/igla_babochki_soedinennye_s_luer_adapterom/igla_babochka_lind_vac_20g_x_3_4_x_7_0_9mm_kh_19_mm_dlina_trubki_19_sm_100_sht_up/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14965</categoryId><picture>http://kosmamed.ru/upload/iblock/8a0/8a071ef66ae1158a8b15dc51c19b4db1.jpg</picture><name>Игла-бабочка Lind-Vac 20G x 3/4'' x 7'' 0.9мм х 19 мм, длина трубки 19 см, 100 шт/уп</name><vendorCode>SN2007</vendorCode></offer><offer id="26872"><url>http://kosmamed.ru/catalog/probirki_dlya_koagulogicheskikh_issledovaniy/vakuumnye_probirki_lab_vac_s_tsitratom_natriya_3_8_golubye_4_5_ml_13kh100_mm_up_100sht_1584513100/</url><price>1199</price><currencyId>RUR</currencyId><categoryId>14948</categoryId><picture>http://kosmamed.ru/upload/iblock/98e/98e68b2d81252a012c7d4042e609fa15.jpg</picture><name>Вакуумные пробирки Lab-Vac с цитратом натрия 3,8%, голубые, 4,5 мл, 13х100 мм (уп. 100шт) 1584513100</name><vendor>Lab-Vac</vendor><vendorCode>1584513100</vendorCode><description>Пробирки содержат антикоагулянт 3,8% цитрат Na (0,129 моль/л). Он используется в исследованиях системы гемостаза - для определения коагуляционных свойств крови. Наполнитель в виде раствора находится на дне пробирки. Соотношение объемов крови и цитрата натрия - 9:1.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Применение: коагулология.
+Добавки: 3,8% цитрат натрия.
+Материал для исследования: цитратная плазма.</description></offer><offer id="27002"><url>http://kosmamed.ru/catalog/igla_babochki_soedinennye_s_luer_adapterom/igla_babochka_lind_vac24g_x_3_4_x_7_0_55mm_kh_19_mm_dlina_trubki_19_sm_100_sht_up/</url><price>1099</price><currencyId>RUR</currencyId><categoryId>14965</categoryId><picture>http://kosmamed.ru/upload/iblock/2a9/2a9050a7f0999071486d9144c971731e.jpg</picture><name>Игла-бабочка Lind-Vac24G x 3/4'' x 7'' 0.55мм х 19 мм, длина трубки 19 см, 100 шт/уп</name><vendorCode>SN2407</vendorCode></offer><offer id="19259"><url>http://kosmamed.ru/catalog/pribory_dlya_izmereniya_gemoglobina_kholesterina_glyukozy_i_mochevoy_kisloty/pribor_dlya_izmereniya_glyukozy_i_kholesterina_izitach_easy_touch_gc_tayvan/</url><price>6999</price><currencyId>RUR</currencyId><categoryId>14848</categoryId><picture>http://kosmamed.ru/upload/iblock/da0/da0cd1f160e9563cb0b87df5e53d2006.jpg</picture><name>Прибор для измерения глюкозы и холестерина ИзиТач (Easy Touch GC), Тайвань</name><vendorCode>A-19259</vendorCode><description>Посредством прибора ИзиТач (Easy Touch GC) измеряется уровень глюкозы и холестерина. Устройство предназначено для самостоятельного использования, востребовано среди людей с повышенными показателями холестерина и больных сахарным диабетом.
+Процедура предполагает взятие капли крови из подушечки пальца. Содержание сахара определяется автоматически в течение 6 секунд, а холестерина - 2,5 минут. Результаты выводятся на дисплей.
+
+Особенности модели
+
+	
+Функционирует автономно за счет питания от батареек или аккумуляторов.
+	
+Эргономичность, портативность. Благодаря малому весу и размеру всегда можно брать с собой.
+	
+В медприборе сохраняются предыдущие данные анализа, что помогает легко отслеживать динамику показателей концентрации холестерина и глюкозы.
+	
+В основе работы Easy Touch GC лежит электрохимическая методика анализа.</description></offer><offer id="19260"><url>http://kosmamed.ru/catalog/dopolnitelnye_prinadlezhnosti_k_analizatoram/test_poloski_na_kholesterin_izitach_10_tayvan/</url><price>2399</price><currencyId>RUR</currencyId><categoryId>14849</categoryId><picture>http://kosmamed.ru/upload/iblock/79c/79ccf0c9edd19ff3dbbb103588f61672.jpg</picture><name>Тест-полоски на холестерин ИзиТач №10, Тайвань</name><vendorCode>ETChol</vendorCode></offer><offer id="26863"><url>http://kosmamed.ru/catalog/bez_napolnitelya/vakuumnye_probirki_lab_vac_bez_napolnitelya_krasnye_9_ml_16kh100_mm_up_100sht_1000916100/</url><price>1399</price><currencyId>RUR</currencyId><categoryId>14947</categoryId><picture>http://kosmamed.ru/upload/iblock/25b/25b8010475ba1b805c71cac3d1beea62.jpg</picture><name>Вакуумные пробирки Lab-Vac без наполнителя, красные, 9 мл, 16х100 мм (уп. 100шт) 1000916100</name><vendor>Lab-Vac</vendor><vendorCode>1000916100</vendorCode><description>Служат для взятия образцов венозной крови, в качестве пробирок для анализа, хранения и транспортировки биоматериала.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови, подходят для автоматических и полуавтоматических анализаторов.
+Изделие является стерильным.
+Применение: биохимия, серология, бактериология, определение группы крови.
+Добавки: без наполнителя.</description></offer><offer id="26874"><url>http://kosmamed.ru/catalog/edta_k3_tube/vakuumnye_probirki_lab_vac_s_k3_edta_fioletovye_3_ml_13kh75_mm_up_100sht_143031375/</url><price>1149</price><currencyId>RUR</currencyId><categoryId>14951</categoryId><picture>http://kosmamed.ru/upload/iblock/8ce/8ce7cc30566ef604f851520742c7b708.jpg</picture><name>Вакуумные пробирки Lab-Vac с К3 ЭДТА, фиолетовые, 3 мл, 13х75 мм (уп. 100шт) 143031375</name><vendor>Lab-Vac</vendor><vendorCode>143031375</vendorCode><description>Вакуумные пробирки с калиевой солью ЭДТА применяются в гематологических исследованиях, ПЦР-исследованиях, исследованиях на определение групп крови.
+Антикоагулянт ЭДТА К3 находится в пробирке в виде раствора (концентрация 1,2-2 мг/мл крови), нанесенного на внутреннюю сторону пробирки.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Изделие является стерильным.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Применение: гематология.
+Добавки: этилендиаминтетраацетат (ЭДТА) К3.
+Материал для исследования: цельная кровь.</description></offer><offer id="26861"><url>http://kosmamed.ru/catalog/s_aktivatorom_svertyvaniya/vakuumnye_probirki_lab_vac_s_aktivatorom_svertyvaniya_krasnye_9_ml_16kh100_mm_up_100sht_1100916100/</url><price>1299</price><currencyId>RUR</currencyId><categoryId>14945</categoryId><picture>http://kosmamed.ru/upload/iblock/03b/03b5c0f8ed3112c7cf40d8a16b196c00.jpg</picture><name>Вакуумные пробирки Lab-Vac с активатором свертывания, красные, 9 мл, 16х100 мм (уп. 100шт) 1100916100</name><vendor>Lab-Vac</vendor><vendorCode>1100916100</vendorCode><description>В качестве активатора свертывания используется диоксид кремния, который наносится на внутреннюю сторону пробирки напылением. Он используется для запуска коагуляционного процесса и получения сыворотки крови.
+Вакуумные пробирки Lab-Vac имеют стандартные размеры и могут использоваться со стандартными аксессуарами для взятия крови.
+Изделие является стерильным.
+После процедуры взятия крови необходимо плавно перевернуть пробирку на 180° не менее 5 раз.
+Применение: биохимия, иммунология, серология, микробиология, токсикология.
+Материал для исследования: сыворотка крови.
+Добавки: активатор образования сгустка сухой SiO2 (диоксид кремния).</description></offer></offers></shop></yml_catalog>

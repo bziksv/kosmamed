@@ -1,0 +1,467 @@
+@import "fonts/TildaSans-Regular.css";
+@import "fonts/TildaSans-Bold.css";
+
+.popup {
+    font-family: 'TildaSansRegular';
+    display: none; /* Скрываем по умолчанию */
+    position: fixed; /* Фиксированное позиционирование */
+    z-index: 10000; /* Отображаем поверх всего */
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Прокрутка, если контент не помещается */
+    background-color: rgba(0,0,0,0.5); /* Полупрозрачный фон */
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+}
+
+.popup-content {
+    background-color: white;
+    color: #333;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    position: relative;
+    animation: fadeIn 0.3s;
+    min-width: 320px;
+    max-width: 440px;
+    padding: 30px 30px 15px;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-50px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.popup-header .h2
+{
+    width: 100%;
+    text-align: left;
+    margin: 0;
+    color: #0B0C0D;
+    font-family: 'TildaSansBold';
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 20px;
+    letter-spacing: 0%;
+
+}
+
+.close-button {
+    position: absolute; /* Абсолютное позиционирование */
+    top: 30px;
+    right: 30px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+    line-height: 1; /* Важно для вертикального выравнивания */
+}
+.close-button .icon
+{
+    background-image: url('data:image/svg+xml,<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.64722 1.70065C10.0342 1.30659 10.0284 0.673454 9.63436 0.286495C9.24031 -0.100463 8.60717 -0.0947079 8.22021 0.29935L4.98969 3.58913L1.70065 0.359352C1.30659 -0.0276058 0.673453 -0.0218502 0.286495 0.372208C-0.100463 0.766266 -0.0947076 1.3994 0.29935 1.78636L3.58839 5.01614L0.360146 8.30362C-0.0268122 8.69767 -0.0210572 9.33081 0.373001 9.71777C0.767058 10.1047 1.4002 10.099 1.78716 9.70492L5.0154 6.41744L8.30362 9.64641C8.69768 10.0334 9.33081 10.0276 9.71777 9.63356C10.1047 9.2395 10.099 8.60636 9.70492 8.2194L6.4167 4.99043L9.64722 1.70065Z" fill="%23929DA6"/></svg>');
+    width: 10px;
+    height: 10px;
+    display: block;
+}
+.close-button:hover .icon
+{
+    background-image: url('data:image/svg+xml,<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.64722 1.70065C10.0342 1.30659 10.0284 0.673454 9.63436 0.286495C9.24031 -0.100463 8.60717 -0.0947079 8.22021 0.29935L4.98969 3.58913L1.70065 0.359352C1.30659 -0.0276058 0.673453 -0.0218502 0.286495 0.372208C-0.100463 0.766266 -0.0947076 1.3994 0.29935 1.78636L3.58839 5.01614L0.360146 8.30362C-0.0268122 8.69767 -0.0210572 9.33081 0.373001 9.71777C0.767058 10.1047 1.4002 10.099 1.78716 9.70492L5.0154 6.41744L8.30362 9.64641C8.69768 10.0334 9.33081 10.0276 9.71777 9.63356C10.1047 9.2395 10.099 8.60636 9.70492 8.2194L6.4167 4.99043L9.64722 1.70065Z" fill="%230B0C0D"/></svg>');
+    width: 10px;
+    height: 10px;
+    display: block;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.popup-body {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.popup-footer {
+    text-align: right;
+}
+
+.popup-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.popup-button:hover,
+.popup-button:focus {
+    background-color: #217dbb;
+}
+
+.trigger-button
+{
+    padding: 8px 25px;
+    background-color: #0B0C0D;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 24px;
+    transition: background-color 0.3s ease;
+}
+
+.trigger-button:hover,
+.trigger-button:focus {
+    background-color: #0B0C0D;
+}
+
+.robokassa-buttons
+{
+    display: flex;
+    position: fixed;
+    z-index: 10000;
+    border: 1px solid #eaeaea;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 4px;
+    background: #F1F3F4;
+    border-radius: 10px;
+}
+
+.robokassa-buttons > .trigger-button:first-child
+{
+    margin-right: 15px;
+}
+
+.robokassa-buttons.position-top-left
+{
+    top: 30px;
+    left: 30px;
+}
+
+.robokassa-buttons.position-top-center
+{
+    top: 30px;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, 30px);
+}
+
+.robokassa-buttons.position-top-right
+{
+    top: 30px;
+    right: 30px;
+}
+
+.robokassa-buttons.position-middle-left
+{
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(30px, -50%);
+    left: 30px;
+}
+
+.robokassa-buttons.position-middle-right
+{
+    top: 50%;
+    right: 30px;
+    bottom: auto;
+    transform: translate(0, -50%);
+    left: auto;
+}
+
+
+.robokassa-buttons.position-bottom-left
+{
+    bottom: 30px;
+    left: 30px;
+}
+
+.robokassa-buttons.position-bottom-center
+{
+    bottom: 30px;
+    left: 50%;
+    right: auto;
+    top: auto;
+    transform: translate(-50%, 0px);
+}
+
+.robokassa-buttons.position-bottom-right
+{
+    bottom: 30px;
+    right: 30px;
+}
+
+body.hidden-school
+{
+    overflow: hidden;
+}
+
+.basket-list .empty-basket
+{
+    background: #F1F3F4;
+    color: #000;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.basket-list .basket-item-image.no-photo
+{
+    background-color: #F5F5F5;
+}
+
+.basket-list .basket-item-image
+{
+    min-width: 70px;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+.basket-list .basket-item-title
+{
+    padding-left: 10px;
+    color:#0B0C0D;
+    font-weight: 500;
+}
+
+.basket-list .basket-item-data > td
+{
+    color: #000;
+}
+
+.basket-list .basket-item-data > td:last-child
+{
+    margin-right: 0;
+}
+
+.basket-list .basket-item-data > td
+{
+    min-height: 70px;
+}
+
+.basket-list .basket-item-data
+{
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*align-content: center;*/
+    /*align-items: center;*/
+    /*justify-content: space-between;*/
+    /*flex-wrap: nowrap;*/
+    border-bottom: 1px solid #BFBFBF;
+    vertical-align: middle;
+}
+
+table.basket-table
+{
+    width: 100%;
+}
+
+.basket-list .basket-item-data:first-child
+{
+    border-top: 1px solid #BFBFBF;
+}
+
+.basket-list .basket-item-data > .basket-item-remove .remove-button
+{
+    background-image: url('images/remove.svg');
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.basket-list .basket-item-data > .basket-item-price
+{
+    text-align: right;
+    padding-right: 10px;
+}
+
+.basket-list .basket-item-data > .basket-item-quantity
+{
+    line-height: 70px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5px;
+}
+
+.basket-list .basket-item-data > .basket-item-quantity .quantity-minus
+{
+    background-image: url('images/minus.svg');
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.basket-list .basket-item-data > .basket-item-quantity .quantity-plus
+{
+    background-image: url('images/plus.svg');
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.basket-list .basket-item-data > .basket-item-quantity .quantity-text
+{
+    margin: 0 10px;
+}
+
+.basket-list .basket-ibasket-item-datatem-data > .basket-item-remove
+{
+    cursor: pointer;
+}
+
+.basket-list .basket
+{
+    margin-bottom: 15px;
+    border-bottom: 1px solid #BFBFBF;
+    border-top: 1px solid #BFBFBF;
+}
+
+.basket-price,
+.order-form
+{
+    display: none;
+}
+
+.basket-price
+{
+    text-align: right;
+    color: #000;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 20px 0;
+}
+
+.basket-price .text
+{
+    display: inline-block;
+}
+
+.basket-price .value
+{
+    display: inline-block;
+}
+
+.basket-list .make-order .order-button {
+    padding: 12px 25px;
+    background-color: #0B0C0D;
+    color: white;
+    border: none;
+    /*border-radius: 10px;*/
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 24px;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+    text-align: center;
+    font-family: 'TildaSansBold';
+}
+
+.order-form .make-order .make-order-payments
+{
+    margin-top: 20px;
+}
+
+.order-form .make-order .make-order-payments img
+{
+    max-width: 100%;
+    width: 100%;
+}
+
+.order-form .make-order .order-button
+{
+    padding: 12px 25px;
+    font-family: 'TildaSansBold';
+    background-color: #0B0C0D;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 24px;
+    transition: background-color 0.3s ease;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.order-form .make-order .order-button.disabled
+{
+    background-color: #EBEDEE;
+}
+
+.order-form .order-form-row
+{
+    margin-bottom: 10px;
+}
+
+.order-form .order-form-row .order-form-field label
+{
+    display: block;
+    color: #000;
+    font-size: 14px;
+    line-height: 18px;
+    margin-bottom: 8px;
+}
+
+.order-form .order-form-row .order-form-field input
+{
+    border: 1px solid #000000;
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+    line-height: 30px;
+}
+
+.order-form .order-form-row .order-form-field.robokassa-error-field input
+{
+    border-color: #F7592F;
+}
+
+.order-form .response-errors
+{
+}
+
+.order-form .response-errors .order-form-create-error
+{
+    background: #F7592F;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+}

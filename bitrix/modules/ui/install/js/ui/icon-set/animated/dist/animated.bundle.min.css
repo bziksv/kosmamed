@@ -1,0 +1,15 @@
+.ui-icon-set,
+.ui-icon-set__scope {
+	--ui-icon-set__path_loader-clock: url("/bitrix/js/ui/icon-set/animated/dist/images/loader-clock.svg");
+	--ui-icon-set__path_loader-wait: url("/bitrix/js/ui/icon-set/animated/dist/images/loader-wait.svg");
+}
+
+.ui-icon-set.--loader-clock {
+	--ui-icon-set__icon-path: var(--ui-icon-set__path_loader-clock);
+}
+
+.ui-icon-set.--loader-wait {
+	--ui-icon-set__icon-path: var(--ui-icon-set__path_loader-wait);
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3RtcC92YXFaeWoiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEiLCJmaWxlIjoiLi4vLi4vLi4vdG1wL3ZhcVp5aiIsInNvdXJjZXNDb250ZW50IjpbIi51aS1pY29uLXNldCxcbi51aS1pY29uLXNldF9fc2NvcGUge1xuXHQtLXVpLWljb24tc2V0X19wYXRoX2xvYWRlci1jbG9jazogdXJsKFwiL2JpdHJpeC9qcy91aS9pY29uLXNldC9hbmltYXRlZC9kaXN0L2ltYWdlcy9sb2FkZXItY2xvY2suc3ZnXCIpO1xuXHQtLXVpLWljb24tc2V0X19wYXRoX2xvYWRlci13YWl0OiB1cmwoXCIvYml0cml4L2pzL3VpL2ljb24tc2V0L2FuaW1hdGVkL2Rpc3QvaW1hZ2VzL2xvYWRlci13YWl0LnN2Z1wiKTtcbn1cblxuLnVpLWljb24tc2V0Li0tbG9hZGVyLWNsb2NrIHtcblx0LS11aS1pY29uLXNldF9faWNvbi1wYXRoOiB2YXIoLS11aS1pY29uLXNldF9fcGF0aF9sb2FkZXItY2xvY2spO1xufVxuXG4udWktaWNvbi1zZXQuLS1sb2FkZXItd2FpdCB7XG5cdC0tdWktaWNvbi1zZXRfX2ljb24tcGF0aDogdmFyKC0tdWktaWNvbi1zZXRfX3BhdGhfbG9hZGVyLXdhaXQpO1xufVxuIl19 */

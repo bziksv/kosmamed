@@ -1,0 +1,50 @@
+# ============================================================
+# КосмаМед — .gitignore (корень = корень сайта)
+# ============================================================
+
+# --- медиа (управляется МойСклад/1С) ---
+upload/*
+
+# --- php_interface: только init.php в git, остальное (вкл. dbconn.php) — нет ---
+bitrix/php_interface/*
+!/bitrix/php_interface/init.php
+
+# --- СЕКРЕТЫ ---
+bitrix/.settings.php
+bitrix/.settings_extra.php
+
+# --- лицензионный ключ Bitrix ---
+bitrix/license_key.php
+bitrix/*license_key.php
+**/license_key.php
+
+# --- кэш / рантайм / бэкапы Bitrix ---
+bitrix/managed_cache/*
+bitrix/cache/*
+bitrix/stack_cache/*
+bitrix/html_pages/*
+bitrix/backup/*
+bitrix/tmp/*
+bitrix/updates/*
+access/*
+
+# --- логи / дампы / временное ---
+*.log
+*.sql
+*.sql.gz
+*.tar.gz
+*.bak
+*.bak.*
+
+# --- ОС / редакторы ---
+.DS_Store
+**/.DS_Store
+.idea/*
+*~
+*.swp
+
+# --- окружение-специфичное (как в исходном проекте) ---
+.htaccess
+sitemap.xml
+sitemap-iblock-*.xml
+sitemap-files.xml

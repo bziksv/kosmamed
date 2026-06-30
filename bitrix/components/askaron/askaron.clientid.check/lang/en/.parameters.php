@@ -1,0 +1,3 @@
+<?
+$MESS ['ASKARON_CLIENTID_ELEMENT_ID'] = "Element ID";
+?>

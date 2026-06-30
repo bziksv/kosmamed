@@ -1,0 +1,110 @@
+<?php
+define("NO_KEEP_STATISTIC", true);
+define("NOT_CHECK_PERMISSIONS", true);
+require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+
+    CModule::IncludeModule("iblock");
+
+    $iblockId = 24;
+
+
+    $arSelect = Array("ID", "NAME", "PROPERTY_CML2_ARTICLE");
+    $arFilter = Array("IBLOCK_ID"=>IntVal($iblockId), "ACTIVE_DATE"=>"Y", "!PROPERTY_CML2_ARTICLE"=>false, "PROPERTY_WORKED_OUT"=>false, "ACTIVE"=>"Y");
+    $res = CIBlockElement::GetList(Array("xml_id"=>"asc"), $arFilter, false, Array("nPageSize"=>1000), $arSelect);
+    while($ob = $res->GetNextElement())
+    {
+        $arFields = $ob->GetFields();
+        if($arFields["PROPERTY_CML2_ARTICLE_VALUE"]){
+            $arArticle[] = $arFields["PROPERTY_CML2_ARTICLE_VALUE"];
+            CIBlockElement::SetPropertyValues($arFields["ID"], $iblockId, 2777, "WORKED_OUT");
+        }
+    }
+
+    ?>
+    <pre>
+        <?print_r($arArticle);?>
+    </pre>
+    <?
+
+    foreach ($arArticle as $key => $article) {
+
+        $arTovar = [];
+
+        $arSelect = Array("ID", "NAME", "PROPERTY_CML2_ARTICLE", "PROPERTY_KOD_TOVARA_DLYA_MEDMARKETA");
+        $arFilter = Array("IBLOCK_ID"=>IntVal($iblockId), "PROPERTY_CML2_ARTICLE"=>$article, "ACTIVE_DATE"=>"Y", "ACTIVE"=>"Y");
+        $res = CIBlockElement::GetList(Array("xml_id"=>"asc"), $arFilter, false, Array("nPageSize"=>50), $arSelect);
+        while($ob = $res->GetNextElement())
+        {
+            $arFields = $ob->GetFields();
+
+            $arTovar[] = ['ID' => $arFields["ID"],'TOVAR' => $arFields["PROPERTY_KOD_TOVARA_DLYA_MEDMARKETA_VALUE"] ];
+
+            CIBlockElement::SetPropertyValues($arFields["ID"], $iblockId, 2777, "WORKED_OUT");
+
+        }
+
+        $cntTover = count($arTovar);
+        if($cntTover>1){
+
+            if($cntTover==2){
+                foreach ($arTovar as $keyT => $tovar) {
+
+                   $arrTovar = explode('+', $tovar['TOVAR']);
+
+                   if($arrTovar[count($arrTovar)-1] == 'Товар'){
+
+                        $el = new CIBlockElement;
+                        $arFieldsUP = [ "ACTIVE" => "N" ];
+                        if (!$el->Update($tovar['ID'], $arFieldsUP)) {
+                            echo "Ошибка: " . $el->LAST_ERROR;
+                        }
+
+                   }
+                   
+
+                }
+            }else{
+                $arrComplect = [];
+                $arrTovar = [];
+                $arComplect = [];
+                $maxArComplect = 0;
+                foreach ($arTovar as $keyT => $tovar) {
+
+                   $arrTovar = explode('+', $tovar['TOVAR']);
+
+                   if($arrTovar[count($arrTovar)-1] == 'Товар'){
+
+                        $el = new CIBlockElement;
+                        $arFieldsUP = [ "ACTIVE" => "N" ];
+                        if (!$el->Update($tovar['ID'], $arFieldsUP)) {
+                            echo "Ошибка: " . $el->LAST_ERROR;
+                        }
+
+                   }
+    
+                   if($arrTovar[count($arrTovar)-1] == 'Комплект'){
+
+                        $arrComplect = explode('-', $arrTovar[count($arrTovar)-2]);
+
+                        $arComplect[$tovar['ID']] = $arrComplect[count($arrComplect)-1];
+
+                   }
+
+                }
+                if($arComplect){
+                    $maxArComplect = max($arComplect);
+
+
+                    foreach ($arComplect as $keyC => $complect) {
+
+                        if($complect!=$maxArComplect){
+                             CIBlockElement::SetPropertyValues($keyC, $iblockId, 2776, "NOINDEX");
+                        }
+        
+                    }
+                }
+
+            }
+        }
+    }
+

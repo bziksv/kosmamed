@@ -1,0 +1,1 @@
+<?define("rbs_moysklad_TEMPORARY_CACHE", "dWdWVy1gBQlrByhnB2YGf1d3");?>

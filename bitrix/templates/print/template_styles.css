@@ -1,0 +1,26 @@
+	.ps_logo, p, h1{
+		display: none;
+	}
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+}
+
+@media print {
+.header-left-top, .a-right-bottom, .time-right-bottom {
+display: none !important;
+}
+}
+
+@media print {
+     @page {
+        margin-left: 0.5in;
+        margin-right: 0.5in;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+.only_print{
+height:50px;
+}
+}

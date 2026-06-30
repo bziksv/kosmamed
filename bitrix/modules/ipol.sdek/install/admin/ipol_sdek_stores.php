@@ -1,0 +1,1 @@
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/ipol.sdek/admin/ipol_sdek_stores.php';

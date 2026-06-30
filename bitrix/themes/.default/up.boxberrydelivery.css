@@ -1,0 +1,9 @@
+#boxberry_menu_icon,
+.boxberry_menu_icon,
+#boxberry_page_icon,
+.boxberry_page_icon {
+    background-image: url(icons/up.boxberrydelivery/yandex-menu-icon.svg);
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: 18px 18px !important;
+}

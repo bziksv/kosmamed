@@ -1,0 +1,10 @@
+@media (max-width:788px){
+    .breadcrumb-share{
+        display:block!important;
+    }
+    .breadcrumb{
+        margin-bottom:20px;
+        width: 100%!important;
+        line-height: 1.6;
+    }
+}

@@ -1,0 +1,20 @@
+<?php
+$MESS["IM_LIST_RECENT_BIRTHDAY"] = "has a birthday today!";
+$MESS["IM_LIST_RECENT_BIRTHDAY_DATE"] = "today";
+$MESS["IM_LIST_RECENT_CHAT_SELF"] = "it's you";
+$MESS["IM_LIST_RECENT_CHAT_SELF_SUBTITLE"] = "Visible to you only";
+$MESS["IM_LIST_RECENT_CHAT_TYPE_GROUP_V2"] = "Group chat";
+$MESS["IM_LIST_RECENT_CHAT_TYPE_OPEN_CHANNEL"] = "Public channel";
+$MESS["IM_LIST_RECENT_CHAT_TYPE_PRIVATE_CHANNEL"] = "Private channel";
+$MESS["IM_LIST_RECENT_CHAT_TYPE_TASK_COMMENTS"] = "Task chat";
+$MESS["IM_LIST_RECENT_CONNECT_ERROR"] = "Cannot connect to your Bitrix24. Please check your internet connection and try again.";
+$MESS["IM_LIST_RECENT_DELETED_MESSAGE"] = "This message has been deleted.";
+$MESS["IM_LIST_RECENT_EMPTY"] = "There are no chats.";
+$MESS["IM_LIST_RECENT_EMPTY_STATE_INVITE_USERS"] = "Invite colleagues";
+$MESS["IM_LIST_RECENT_EMPTY_STATE_SUBTITLE"] = "The employees you add to your Bitrix24 will show up in the chat list.";
+$MESS["IM_LIST_RECENT_EMPTY_STATE_TITLE"] = "There are no chats yet";
+$MESS["IM_LIST_RECENT_INVITATION_NOT_ACCEPTED_MSGVER_1"] = "Invite pending";
+$MESS["IM_LIST_RECENT_MESSAGE_DRAFT_MSGVER_3"] = "[highlight]Draft:[/highlight] #TEXT#";
+$MESS["IM_LIST_RECENT_NEW_USER_POPUP_TEXT"] = "I'm on your team now!";
+$MESS["IM_LIST_RECENT_VACATION"] = "On leave until #VACATION_END_DATE#";
+$MESS["IM_LIST_UNREAD_RECENT_EMPTY_STATE_TITLE"] = "No unread messages.";

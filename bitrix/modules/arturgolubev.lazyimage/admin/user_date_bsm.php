@@ -1,0 +1,1 @@
+<?define("arturgolubev_lazyimage_TEMPORARY_CACHE", "I2dQBypnAwZqUitiVDBRLAEk");?>

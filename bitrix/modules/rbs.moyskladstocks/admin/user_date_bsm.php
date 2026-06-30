@@ -1,0 +1,1 @@
+<?define("rbs_moyskladstocks_TEMPORARY_CACHE", "czEEU35hBFNgAC0zBzUGKFZ2");?>
