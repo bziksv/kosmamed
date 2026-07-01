@@ -1,6 +1,6 @@
 /***CUSTOM CSS RULES FOR YOUR SITE***/
 
-/* Карточка товара: только ширина 100% (layout — float/flex из template_styles) */
+/* Карточка товара: только ширина 100% (layout — grid из kosmamed-theme.css) */
 .catalog-detail-element .catalog-detail,
 .catalog-detail-element > .catalog-detail > .column.second > .catalog-detail {
 	width: 100% !important;
@@ -11,13 +11,16 @@
 /* Фон + хлебные крошки (дубль в CSS-bundle на случай кеша kosmamed-theme.css) */
 html { background-color: #e2e8f0 !important; }
 body.km-body-bg { background-repeat: repeat !important; background-size: 640px auto !important; background-color: #e2e8f0 !important; background-position: center top !important; }
-.breadcrumb-share { display: block !important; visibility: visible !important; background: #eef2f7 !important; border: 1px solid #64748b !important; border-radius: 6px !important; padding: 12px 14px !important; margin: 0 0 12px !important; overflow: visible !important; }
-.breadcrumb { display: flex !important; flex-wrap: wrap !important; gap: 4px 8px !important; width: 100% !important; overflow: visible !important; float: none !important; }
-.breadcrumb__item, .breadcrumb__arrow { float: none !important; }
-.breadcrumb__title_main { display: inline !important; }
+.breadcrumb-share { display: block !important; visibility: visible !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 8px 0 10px !important; overflow: hidden !important; }
+.breadcrumb { display: flex !important; flex-wrap: nowrap !important; gap: 2px 6px !important; width: 100% !important; overflow-x: auto !important; overflow-y: hidden !important; float: none !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+.breadcrumb::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.breadcrumb__item, .breadcrumb__arrow { float: none !important; flex-shrink: 0 !important; white-space: nowrap !important; }
+.breadcrumb__title_main { display: none !important; }
+.content:has(.catalog-detail-element) .breadcrumb__item:last-child { display: none !important; }
+.breadcrumb__item > .breadcrumb__link, .breadcrumb__item > .breadcrumb__title { color: #64748b !important; font-size: 13px !important; font-weight: 400 !important; }
 
 @media screen and (max-width: 787px) {
-	.breadcrumb-share { padding: 8px 10px !important; margin-bottom: 8px !important; }
+	.breadcrumb-share { margin-bottom: 8px !important; }
 	.breadcrumb {
 		display: block !important;
 		flex-wrap: nowrap !important;
@@ -31,4 +34,97 @@ body.km-body-bg { background-repeat: repeat !important; background-size: 640px a
 		display: inline !important;
 		float: none !important;
 	}
+}
+
+@media (min-width: 788px) {
+	.catalog-detail-element > .catalog-detail {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+		gap: 24px;
+		align-items: start;
+	}
+	.catalog-detail-element > .catalog-detail > .column.first,
+	.catalog-detail-element > .catalog-detail > .column.second {
+		float: none !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		margin-left: 0 !important;
+		min-width: 0;
+	}
+	.catalog-detail-element > .catalog-detail > .column.first {
+		overflow: hidden;
+	}
+}
+
+/* Подвал — убрать белую полосу снизу (template_styles footer { margin-bottom: 48px }) */
+footer,
+.clvt footer,
+.clvr footer,
+.clvl footer {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.footer-bottom {
+	padding-top: 10px !important;
+	padding-bottom: 0 !important;
+}
+
+.footer_menu_soc_pay {
+	padding-bottom: 12px !important;
+}
+
+.page-wrapper:has(.catalog-detail-element) .filtered-items,
+.page-wrapper:has(.catalog-detail-element) .bigdata-items { margin-bottom: 0 !important; }
+
+@media (min-width: 1013px) {
+	header.fixed.fixed_f { top: var(--km-admin-offset, 0px); }
+	.page-wrapper:has(> header.fixed.fixed_f),
+	body.km-header-stuck .page-wrapper { padding-top: 58px; }
+}
+
+/* Шапка: симметричные отступы и иконки в ряд (дубль для CSS-bundle) */
+@media (min-width: 788px) {
+	.header_5 {
+		width: 1px !important;
+		min-width: 0;
+		white-space: nowrap;
+		padding-top: 0 !important;
+		padding-right: 30px !important;
+		vertical-align: middle !important;
+		text-align: right;
+	}
+	.header_5 .delay_line,
+	.header_5 .kabinet,
+	.header_5 .cart_line {
+		display: inline-block;
+		vertical-align: middle;
+		float: none !important;
+		margin: 0 0 0 10px;
+	}
+	.header_5 .delay_line { margin-left: 0; }
+	.header_5 .delay_line a,
+	.header_5 .cart_line a { float: none !important; display: inline-flex !important; align-items: center; justify-content: center; }
+	.header_5 .kabinet a.personal,
+	.header_5 .kabinet a.login_anch { margin: 0 !important; float: none !important; }
+}
+@media (min-width: 788px) {
+header .header_1,
+header .header_2,
+header .header_3,
+header .header_4 { padding-right: 30px !important; }
+header .header_2 #altop_search { width: 100%; max-width: none; }
+}
+@media screen and (max-width: 787px) {
+header, header.fixed, header.fixed.fixed_f { height: auto !important; min-height: 0 !important; margin-top: 46px !important; padding-top: 3px !important; padding-bottom: 3px !important; width: 100% !important; }
+header .center, header .center.inner { display: block !important; height: auto !important; min-height: 0 !important; width: 100% !important; }
+header .header_1 { display: block !important; width: 100% !important; padding-right: 0 !important; }
+header .header_3, header .header_4, header .header_5 { display: none !important; }
+header .header_2 { display: none; position: fixed !important; top: 46px !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 1002 !important; background: #fff !important; padding: 8px 10px !important; box-sizing: border-box !important; margin: 0 !important; }
+header .header_2 #altop_search { width: 100% !important; max-width: none !important; margin: 0 !important; }
+body.km-mobile-search-open header .header_2 { display: block !important; }
+header .header_1 .logo { margin: 0 !important; float: none !important; }
+header .header_1 .logo a, header .header_1 .logo a span, header .header_1 .logo span[style] { font-size: 26px !important; line-height: 1.15 !important; }
+.top_panel { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-width: none !important; height: 46px !important; z-index: 1001 !important; }
 }

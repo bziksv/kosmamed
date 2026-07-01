@@ -6,8 +6,7 @@
     border-radius: 5px;
 }
 
-.anythingContainer ul.anythingSlider {
-    width: 100%;
+.anythingContainer ul.anythingSlider.anythingBase {
     height: 100%;
 	margin: 0px;
     padding: 0px;
@@ -15,7 +14,7 @@
     position: absolute;
     left: 0px;
     top: 0px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .anythingContainer ul.anythingSlider li {
@@ -34,6 +33,10 @@
     margin: 0px;
     padding: 0px;
     text-decoration: none;
+    overflow: hidden;
+}
+.anythingContainer ul.anythingSlider li a:has(> .slide-bg-img) {
+    display: block;
 }
 
 /***PRODUCT_IN_SLIDE***/
@@ -228,6 +231,26 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
+	z-index: 0;
+	overflow: hidden;
+}
+.slide-bg-img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	z-index: 0;
+}
+.slide-bg--dim .slide-bg-img {
+	opacity: 0.15;
+}
+.anythingContainer ul.anythingSlider li a > .slide-bg-img {
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 .slide-info-title {
 	font-size: 28px;

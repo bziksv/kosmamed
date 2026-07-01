@@ -5,18 +5,18 @@ $arRecomPrFilter = array(
 <?$APPLICATION->IncludeComponent(
 	"bitrix:catalog.section", 
 	"bigdata", 
-	array(
+	[
 		"IBLOCK_TYPE" => "catalog",
 		"IBLOCK_ID" => "24",
 		"ELEMENT_SORT_FIELD" => "shows",
 		"ELEMENT_SORT_ORDER" => "DESC",
 		"ELEMENT_SORT_FIELD2" => "",
 		"ELEMENT_SORT_ORDER2" => "",
-		"PROPERTY_CODE" => array(
+		"PROPERTY_CODE" => [
 			0 => "NEWPRODUCT",
 			1 => "SALELEADER",
 			2 => "DISCOUNT",
-		),
+		],
 		"SET_META_KEYWORDS" => "N",
 		"SET_META_DESCRIPTION" => "N",
 		"SET_BROWSER_TITLE" => "N",
@@ -43,9 +43,9 @@ $arRecomPrFilter = array(
 		"DISPLAY_COMPARE" => "Y",
 		"PAGE_ELEMENT_COUNT" => "8",
 		"LINE_ELEMENT_COUNT" => "4",
-		"PRICE_CODE" => array(
-			0 => "Цена - КосмаМед Сайт",
-		),
+		"PRICE_CODE" => [
+			0 => "Цена - Медмаркет Сайт",
+		],
 		"USE_PRICE_COUNT" => "Y",
 		"SHOW_PRICE_COUNT" => "1",
 		"PRICE_VAT_INCLUDE" => "Y",
@@ -64,20 +64,20 @@ $arRecomPrFilter = array(
 		"PAGER_BASE_LINK_ENABLE" => "N",
 		"PAGER_BASE_LINK" => "",
 		"PAGER_PARAMS_NAME" => "",
-		"OFFERS_CART_PROPERTIES" => array(
+		"OFFERS_CART_PROPERTIES" => [
 			0 => "COLOR",
 			1 => "PROP2",
 			2 => "PROP3",
-		),
-		"OFFERS_FIELD_CODE" => array(
+		],
+		"OFFERS_FIELD_CODE" => [
 			0 => "",
 			1 => "",
-		),
-		"OFFERS_PROPERTY_CODE" => array(
+		],
+		"OFFERS_PROPERTY_CODE" => [
 			0 => "COLOR",
 			1 => "PROP2",
 			2 => "PROP3",
-		),
+		],
 		"OFFERS_SORT_FIELD" => "SORT",
 		"OFFERS_SORT_ORDER" => "ASC",
 		"OFFERS_SORT_FIELD2" => "ID",
@@ -99,11 +99,11 @@ $arRecomPrFilter = array(
 		"PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'3','BIG_DATA':true},{'VARIANT':'3','BIG_DATA':true},{'VARIANT':'3','BIG_DATA':false},{'VARIANT':'3','BIG_DATA':false},{'VARIANT':'3','BIG_DATA':true},{'VARIANT':'3','BIG_DATA':true},{'VARIANT':'3','BIG_DATA':true}]",
 		"DISPLAY_IMG_WIDTH" => "279",
 		"DISPLAY_IMG_HEIGHT" => "279",
-		"PROPERTY_CODE_MOD" => array(
+		"PROPERTY_CODE_MOD" => [
 			0 => "",
 			1 => "GUARANTEE",
 			2 => "",
-		),
+		],
 		"BIG_DATA_RCM_TYPE" => "any",
 		"BIG_DATA_TITLE" => "N",
 		"SHOW_MAX_QUANTITY" => "Y",
@@ -112,10 +112,10 @@ $arRecomPrFilter = array(
 		"MESS_RELATIVE_QUANTITY_MANY" => "много",
 		"MESS_RELATIVE_QUANTITY_FEW" => "мало",
 		"COMPONENT_TEMPLATE" => "bigdata",
-		"SECTION_USER_FIELDS" => array(
+		"SECTION_USER_FIELDS" => [
 			0 => "",
 			1 => "",
-		),
+		],
 		"SEF_MODE" => "N",
 		"AJAX_MODE" => "N",
 		"AJAX_OPTION_JUMP" => "N",
@@ -129,6 +129,6 @@ $arRecomPrFilter = array(
 		"COMPOSITE_FRAME_MODE" => "A",
 		"COMPOSITE_FRAME_TYPE" => "AUTO",
 		"USE_COMPARE_LIST" => "N"
-	),
+	],
 	false
 );?>

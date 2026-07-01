@@ -29,17 +29,7 @@ $APPLICATION->AddHeadString('
 					if (typeof slider.setDimensions === "function") {
 						slider.setDimensions();
 					}
-					slider.startStop(false);
-					slider.gotoPage(1, false);
-					setTimeout(function() {
-						if (typeof slider.setDimensions === "function") {
-							slider.setDimensions();
-						}
-						slider.gotoPage(1, false);
-						if (typeof window.kmApplyLazyBackgrounds === "function") {
-							window.kmApplyLazyBackgrounds(slider.$el[0]);
-						}
-					}, 100);
+					toggleControlsSlider(slider, true);
 					if(!!slider.$currentPage.data("prop") || (!!slider.$el.find("li").data("prop") && slider.$items.length == 1)) {
 						var prop = slider.$currentPage.data("prop")? eval("("+slider.$currentPage.data("prop")+")"): eval("("+slider.$el.find("li").data("prop")+")");
 						

@@ -74,7 +74,8 @@ if(count($arResult["SECTIONS"]) < 1)
 			
 			if($('.showsearch').parent('li').hasClass('active')) {
 				$('.showsearch').parent('li').removeClass('active');
-				$('.header_2').css({'display':'none'});
+				$('body').removeClass('km-mobile-search-open');
+				$('.header_2').stop(true, true).slideUp(200);
 				$('div.title-search-result').css({'display':'none'});
 			}
 

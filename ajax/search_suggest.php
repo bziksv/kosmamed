@@ -14,7 +14,7 @@ header("Content-Type: text/html; charset=UTF-8");
 header("X-Robots-Tag: noindex");
 
 const KS_IBLOCK_ID      = 24;
-const KS_PRICE_NAME     = "Цена - КосмаМед Сайт";
+const KS_PRICE_NAMES    = array("Цена - КосмаМед Сайт", "Цена - Медмаркет Сайт");
 const KS_MAX_PRODUCTS   = 8;
 const KS_MAX_CATEGORIES = 8;
 const KS_MIN_LEN        = 2;
@@ -58,6 +58,75 @@ function ks_mb_levenshtein($a, $b) {
 		$prev = $cur;
 	}
 	return $prev[$lb];
+}
+
+/** Русская раскладка ↔ латиница (English typed on RU keyboard and vice versa) */
+function ks_layout_map_ru_to_en() {
+	static $map = null;
+	if ($map !== null) {
+		return $map;
+	}
+	$pairs = array(
+		"й"=>"q","ц"=>"w","у"=>"e","к"=>"r","е"=>"t","н"=>"y","г"=>"u","ш"=>"i","щ"=>"o","з"=>"p",
+		"х"=>"[","ъ"=>"]","ф"=>"a","ы"=>"s","в"=>"d","а"=>"f","п"=>"g","р"=>"h","о"=>"j","л"=>"k",
+		"д"=>"l","ж"=>";","э"=>"'","я"=>"z","ч"=>"x","с"=>"c","м"=>"v","и"=>"b","т"=>"n","ь"=>"m",
+		"б"=>",","ю"=>".","ё"=>"`",
+		"Й"=>"Q","Ц"=>"W","У"=>"E","К"=>"R","Е"=>"T","Н"=>"Y","Г"=>"U","Ш"=>"I","Щ"=>"O","З"=>"P",
+		"Х"=>"[","Ъ"=>"]","Ф"=>"A","Ы"=>"S","В"=>"D","А"=>"F","П"=>"G","Р"=>"H","О"=>"J","Л"=>"K",
+		"Д"=>"L","Ж"=>";","Э"=>"'","Я"=>"Z","Ч"=>"X","С"=>"C","М"=>"V","И"=>"B","Т"=>"N","Ь"=>"M",
+		"Б"=>",","Ю"=>".","Ё"=>"`",
+	);
+	$map = $pairs;
+	return $map;
+}
+
+function ks_layout_swap($text, $direction = "ru_to_en") {
+	$ruToEn = ks_layout_map_ru_to_en();
+	$enToRu = array_flip($ruToEn);
+	$map = ($direction === "en_to_ru") ? $enToRu : $ruToEn;
+	$chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
+	$out = "";
+	foreach ($chars as $ch) {
+		$out .= isset($map[$ch]) ? $map[$ch] : $ch;
+	}
+	return $out;
+}
+
+/**
+ * Слова, набранные латиницей в русской раскладке (лфц → kaw, KaWe).
+ * Русские слова из словаря каталога не трогаем (отоск → не jnjcr).
+ */
+function ks_word_in_dictionary($word, array $dict) {
+	foreach ($dict as $dw) {
+		if (mb_strpos($dw, $word, 0, "UTF-8") !== false) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function ks_fix_layout_words(array $queryWords, array $dict) {
+	$fixed = array();
+	$changed = false;
+	foreach ($queryWords as $word) {
+		if (!preg_match('~[\p{Cyrillic}]~u', $word)) {
+			$fixed[] = $word;
+			continue;
+		}
+		if (ks_word_in_dictionary($word, $dict)) {
+			$fixed[] = $word;
+			continue;
+		}
+		$en = ks_layout_swap($word, "ru_to_en");
+		$enLower = mb_strtolower($en, "UTF-8");
+		if ($en !== $word && preg_match('~^[a-z0-9][a-z0-9._\-]*$~', $enLower)) {
+			$fixed[] = $enLower;
+			$changed = true;
+		} else {
+			$fixed[] = $word;
+		}
+	}
+	return array("words" => $fixed, "changed" => $changed);
 }
 
 /**
@@ -285,13 +354,28 @@ function ks_find_products(array $words, $priceTypeId) {
 	return $res;
 }
 
+function ks_price_type_id() {
+	static $id = null;
+	if ($id !== null) {
+		return $id;
+	}
+	$id = 0;
+	if (!CModule::IncludeModule("catalog")) {
+		return $id;
+	}
+	foreach (KS_PRICE_NAMES as $name) {
+		$rsG = CCatalogGroup::GetListEx(array(), array("NAME" => $name), false, false, array("ID"));
+		if ($g = $rsG->Fetch()) {
+			$id = (int)$g["ID"];
+			return $id;
+		}
+	}
+	return $id;
+}
+
 /* ---------- сбор данных ---------- */
 
-$priceTypeId = 0;
-if ($hasCatalog) {
-	$rsG = CCatalogGroup::GetListEx(array(), array("NAME" => KS_PRICE_NAME), false, false, array("ID"));
-	if ($g = $rsG->Fetch()) $priceTypeId = (int)$g["ID"];
-}
+$priceTypeId = $hasCatalog ? ks_price_type_id() : 0;
 
 $queryWords = ks_words($q);
 if (empty($queryWords)) { echo ""; die(); }
@@ -302,7 +386,17 @@ $products = ks_find_products($queryWords, $priceTypeId);
 $suggestNote = "";
 if (empty($sections) && empty($products)) {
 	$dict = ks_dictionary();
-	$corr = ks_correct_words($queryWords, $dict);
+	$layout = ks_fix_layout_words($queryWords, $dict);
+	if ($layout["changed"]) {
+		$sections = ks_find_sections($layout["words"]);
+		$products = ks_find_products($layout["words"], $priceTypeId);
+		if (!empty($sections) || !empty($products)) {
+			$suggestNote = "Исправлена раскладка: <b>".htmlspecialcharsbx(implode(" ", $layout["words"]))."</b>";
+		}
+	}
+}
+if (empty($sections) && empty($products)) {
+	$corr = ks_correct_words($queryWords, $dict ?? ks_dictionary());
 	if ($corr["changed"]) {
 		$sections = ks_find_sections($corr["words"]);
 		$products = ks_find_products($corr["words"], $priceTypeId);
@@ -376,13 +470,22 @@ if ($total === 0) { ?>
 						<?php if ($p["PRICE"] > 0): ?>
 							<span class="ks-item__price"><?=number_format($p["PRICE"], 0, ".", " ")?> ₽</span>
 						<?php endif; ?>
-						<?php if ($canAdd): ?>
-							<form action="/ajax/add2basket.php" class="ks-item__buy add2basket_form" method="post">
+						<?php if ($canAdd):
+							$qtyStep = $p["MIN_QUANTITY"] > 0 ? $p["MIN_QUANTITY"] : 1;
+							$qtyMax = $p["CHECK_QUANTITY"] ? max($qtyStep, (int)$p["QUANTITY"]) : 9999;
+						?>
+							<form action="/ajax/add2basket.php" class="ks-item__buy add2basket_form" method="post"
+								data-step="<?=htmlspecialcharsbx($qtyStep)?>"
+								data-max-qty="<?=htmlspecialcharsbx($qtyMax)?>">
 								<input type="hidden" name="ID" value="<?=$p["ID"]?>" />
-								<input type="hidden" name="quantity" value="<?=htmlspecialcharsbx($p["MIN_QUANTITY"])?>" />
 								<?php if ($props !== ""): ?>
 									<input type="hidden" name="PROPS" value="<?=htmlspecialcharsbx($props)?>" />
 								<?php endif; ?>
+								<div class="ks-item__qnt">
+									<a href="javascript:void(0)" class="minus ks-qty-minus" title="Меньше"><span>-</span></a>
+									<input type="text" name="quantity" class="quantity" value="<?=htmlspecialcharsbx($qtyStep)?>" />
+									<a href="javascript:void(0)" class="plus ks-qty-plus" title="Больше"><span>+</span></a>
+								</div>
 								<button type="button" class="btn_buy ks-item__cart" name="add2basket" title="В корзину">
 									<i class="fa fa-shopping-cart"></i><span>В корзину</span>
 								</button>

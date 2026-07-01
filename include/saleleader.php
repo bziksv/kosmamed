@@ -7,18 +7,18 @@ $arHitPrFilter = array(
 <?$APPLICATION->IncludeComponent(
 	"bitrix:catalog.section", 
 	"filtered", 
-	array(
+	[
 		"IBLOCK_TYPE" => "catalog",
 		"IBLOCK_ID" => "24",
 		"ELEMENT_SORT_FIELD" => "RAND",
 		"ELEMENT_SORT_ORDER" => "ASC",
 		"ELEMENT_SORT_FIELD2" => "",
 		"ELEMENT_SORT_ORDER2" => "",
-		"PROPERTY_CODE" => array(
+		"PROPERTY_CODE" => [
 			0 => "NEWPRODUCT",
 			1 => "SALELEADER",
 			2 => "DISCOUNT",
-		),
+		],
 		"SET_META_KEYWORDS" => "N",
 		"SET_META_DESCRIPTION" => "N",
 		"SET_BROWSER_TITLE" => "N",
@@ -44,9 +44,9 @@ $arHitPrFilter = array(
 		"DISPLAY_COMPARE" => "Y",
 		"PAGE_ELEMENT_COUNT" => "8",
 		"LINE_ELEMENT_COUNT" => "",
-		"PRICE_CODE" => array(
-			0 => "Цена - КосмаМед Сайт",
-		),
+		"PRICE_CODE" => [
+			0 => "Цена - Медмаркет Сайт",
+		],
 		"USE_PRICE_COUNT" => "Y",
 		"SHOW_PRICE_COUNT" => "1",
 		"PRICE_VAT_INCLUDE" => "Y",
@@ -65,20 +65,20 @@ $arHitPrFilter = array(
 		"PAGER_BASE_LINK_ENABLE" => "N",
 		"PAGER_BASE_LINK" => "",
 		"PAGER_PARAMS_NAME" => "",
-		"OFFERS_CART_PROPERTIES" => array(
+		"OFFERS_CART_PROPERTIES" => [
 			0 => "COLOR",
 			1 => "PROP2",
 			2 => "PROP3",
-		),
-		"OFFERS_FIELD_CODE" => array(
+		],
+		"OFFERS_FIELD_CODE" => [
 			0 => "",
 			1 => "",
-		),
-		"OFFERS_PROPERTY_CODE" => array(
+		],
+		"OFFERS_PROPERTY_CODE" => [
 			0 => "COLOR",
 			1 => "PROP2",
 			2 => "PROP3",
-		),
+		],
 		"OFFERS_SORT_FIELD" => "SORT",
 		"OFFERS_SORT_ORDER" => "ASC",
 		"OFFERS_SORT_FIELD2" => "ID",
@@ -98,22 +98,22 @@ $arHitPrFilter = array(
 		"DISABLE_INIT_JS_IN_COMPONENT" => "N",
 		"DISPLAY_IMG_WIDTH" => "279",
 		"DISPLAY_IMG_HEIGHT" => "279",
-		"PROPERTY_CODE_MOD" => array(
+		"PROPERTY_CODE_MOD" => [
 			0 => "",
 			1 => "GUARANTEE",
 			2 => "",
-		),
+		],
 		"SHOW_MAX_QUANTITY" => "M",
 		"MESS_SHOW_MAX_QUANTITY" => "В наличии",
 		"RELATIVE_QUANTITY_FACTOR" => "5",
 		"MESS_RELATIVE_QUANTITY_MANY" => "много",
 		"MESS_RELATIVE_QUANTITY_FEW" => "мало",
 		"COMPONENT_TEMPLATE" => "filtered",
-		"SECTION_USER_FIELDS" => array(
+		"SECTION_USER_FIELDS" => [
 			0 => "",
 			1 => "",
-		),
-		"CUSTOM_FILTER" => "",
+		],
+		"CUSTOM_FILTER" => "{\"CLASS_ID\":\"CondGroup\",\"DATA\":{\"All\":\"AND\",\"True\":\"True\"},\"CHILDREN\":[]}",
 		"HIDE_NOT_AVAILABLE_OFFERS" => "N",
 		"SEF_MODE" => "N",
 		"AJAX_MODE" => "N",
@@ -124,7 +124,10 @@ $arHitPrFilter = array(
 		"BROWSER_TITLE" => "-",
 		"META_KEYWORDS" => "-",
 		"META_DESCRIPTION" => "-",
-		"COMPATIBLE_MODE" => "Y"
-	),
+		"COMPATIBLE_MODE" => "Y",
+		"COMPOSITE_FRAME_MODE" => "A",
+		"COMPOSITE_FRAME_TYPE" => "AUTO",
+		"USE_COMPARE_LIST" => "N"
+	],
 	false
 );?>

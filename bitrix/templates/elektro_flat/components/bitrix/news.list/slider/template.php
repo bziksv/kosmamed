@@ -13,7 +13,9 @@ if(!empty($vmdFirstSlide['PICTURE_PREVIEW']['SRC'])) {
 
 <div class="anythingContainer anythingContainer_<?=$arParams['SLIDER_ASPECT_RATIO']?>">
 	<ul class="anythingSlider">
-		<?foreach($arResult['ITEMS'] as $arItem) {
+		<?foreach($arResult['ITEMS'] as $slideIndex => $arItem) {
+			$isFirstSlide = ($slideIndex === array_key_first($arResult['ITEMS']));
+			$slideImgAttrs = $isFirstSlide ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
 			if(!empty($arItem['PROPERTIES']['PRODUCT_LINK']['VALUE'])) {
 				$locationProduct = ($arItem['PROPERTIES']['PRODUCT_LOCATION']['VALUE_XML_ID'] == 'right'? 'right': 'left');
 				?>
@@ -83,12 +85,11 @@ if(!empty($vmdFirstSlide['PICTURE_PREVIEW']['SRC'])) {
 						if($locationProduct != 'right') {
 							echo $sBlockInfo;
 						}?>
-						<span 
-							class="slide-bg"
+						<span class="slide-bg<?=(!empty($arItem['PROPERTIES']['BACKGROUND_DIM_COLOR']['VALUE']) ? ' slide-bg--dim' : '')?>">
 							<?if(!empty($arItem['PICTURE_PREVIEW']['SRC'])) {?>
-								style="background: url(<?=$arItem['PICTURE_PREVIEW']['SRC']?>) center center / cover no-repeat; height: 100%;<?=(!empty($arItem['PROPERTIES']['BACKGROUND_DIM_COLOR']['VALUE'])? ' opacity: 0.15': '')?>" 
+								<img class="slide-bg-img" src="<?=htmlspecialcharsbx($arItem['PICTURE_PREVIEW']['SRC'])?>" alt="<?=htmlspecialcharsbx($arItem['NAME'])?>"<?=$slideImgAttrs?> />
 							<?}?>
-						></span>
+						</span>
 					</a>
 				</li>
 			<?}  else {
@@ -148,31 +149,14 @@ if(!empty($vmdFirstSlide['PICTURE_PREVIEW']['SRC'])) {
 						<?//=(!empty($arItem['PROPERTIES']['CODE_YOUTUBE']['VALUE'])? "id=\"video_{$arItem['ID']}\"": '')?> 
 						href="<?=(!empty($arItem['PROPERTIES']['URL']['VALUE'])? $arItem['PROPERTIES']['URL']['VALUE']: 'javascript:void(0)')?>" 
 						<?=(!empty($arItem['PROPERTIES']['URL']['VALUE']) && !empty($arItem["PROPERTIES"]["OPEN_URL"]['VALUE'])? 'target="_blank"': '')?> 
-						<?if(!empty($sImgUrl)) {?>
-							style="background:url(<?=$sImgUrl?>) center center no-repeat; background-size:cover;" 
-						<?}?>
 						<?/*if(!empty($arItem['PROPERTIES']['CODE_YOUTUBE']['VALUE'])) {?>
 							data-property="{videoURL: '<?=$arItem['PROPERTIES']['CODE_YOUTUBE']['VALUE']?>', mute: <?=(!empty($arItem['PROPERTIES']['MUTE_AUDIO']['VALUE'])? 'true': 'false')?>, showControls: false, quality: 'default', opacity: 1, containment: 'self', optimizeDisplay: true, loop: <?=($sAutoPlay == 'true'? 'true': 1)?>, startAt: 0, remember_last_time: false, autoPlay: <?=$sAutoPlay?>, addRaster: false, gaTrack: false}" 
 						<?}*/?>
-					></a>
+					><?if(!empty($sImgUrl)) {?>
+						<img class="slide-bg-img" src="<?=htmlspecialcharsbx($sImgUrl)?>" alt="<?=htmlspecialcharsbx($arItem['NAME'])?>"<?=$slideImgAttrs?> />
+					<?}?></a>
 				</li>
 			<?}?>
 		<?}?>
 	</ul>
 </div>
-<script>
-(function () {
-	var nodes = document.querySelectorAll('.anythingContainer [data-background-image]');
-	for (var i = 0; i < nodes.length; i++) {
-		var el = nodes[i];
-		var bg = el.getAttribute('data-background-image');
-		if (!bg) continue;
-		el.style.backgroundImage = "url('" + bg.replace(/'/g, "\\'") + "')";
-		el.style.backgroundSize = el.style.backgroundSize || 'cover';
-		el.style.backgroundPosition = el.style.backgroundPosition || 'center center';
-		el.style.backgroundRepeat = el.style.backgroundRepeat || 'no-repeat';
-		el.classList.add('agll_loaded');
-		el.classList.remove('agll');
-	}
-})();
-</script>

@@ -50,18 +50,9 @@ function fixCatalogDetailGallery() {
 	var $main = $('.detail_picture_pa');
 	var $nav = $('.more_photo ul');
 	if ($main.hasClass('slick-initialized')) {
-		var mainWidth = $main.find('.slick-list').width();
-		if (mainWidth > 0) {
-			$main.find('.slick-slide').css('width', mainWidth + 'px');
-			$main.find('.slick-track').css('width', mainWidth + 'px');
-		}
 		$main.slick('setPosition');
 	}
 	if ($nav.hasClass('slick-initialized')) {
-		var navWidth = $nav.find('.slick-list').width();
-		if (navWidth > 0) {
-			$nav.find('.slick-slide').css('width', navWidth + 'px');
-		}
 		$nav.slick('setPosition');
 	}
 }
@@ -88,14 +79,11 @@ $(function(){
 		if ($window.scrollTop() > $h){
 			$nav.addClass('fixed');
 			$nav.addClass('fixed_f');
-			$("body").removeClass(fix_b);
+			$("body").addClass('km-header-stuck').removeClass(fix_b);
 		} else {
 			//$nav.removeClass('fixed');
 			$nav.removeClass('fixed_f');
-			$("body").addClass(fix_b);
-		}
-		if ($('.catalog-detail-element').length) {
-			fixCatalogDetailGallery();
+			$("body").removeClass('km-header-stuck').addClass(fix_b);
 		}
 	});
 });
@@ -401,20 +389,16 @@ $(function() {
 	});
 	
 	//TOP_PANEL_SEARCH//
-	$(".showsearch").click(function() {
+	$(".showsearch").click(function(e) {
+		e.preventDefault();
 		var clickitem = $(this);
-		if(clickitem.parent("li").hasClass("")) {
-			clickitem.parent("li").addClass("active");
-		} else {
-			clickitem.parent("li").removeClass("active");
-			$(".title-search-result").css({"display":"none"});
-		}
+		var $li = clickitem.parent("li");
+		var $header2 = $("header .header_2");
+		var opening = !$li.hasClass("active");
+
 		if($(".showsection").parent("li").hasClass("active")) {
 			$(".showsection").parent("li").removeClass("active");
 			$(".showsection").parent("li").find(".catalog-section-list").css({"display":"none"});
-		// 	$("header").show();
-		// }else{
-		// 	$("header").hide();
 		}
 		if($(".showsubmenu").parent("li").hasClass("active")) {
 			$(".showsubmenu").parent("li").removeClass("active");
@@ -424,7 +408,20 @@ $(function() {
 			$(".showcontacts").parent("li").removeClass("active");
 			$(".header_4").css({"display":"none"});
 		}
-		$(".header_2").slideToggle();
+
+		$li.toggleClass("active", opening);
+		$("body").toggleClass("km-mobile-search-open", opening);
+		if(opening) {
+			$header2.stop(true, true).slideDown(200, function() {
+				var $input = $("#altop_search input[type=\"text\"], #altop_search input[name=\"q\"]").first();
+				if($input.length) {
+					$input.trigger("focus");
+				}
+			});
+		} else {
+			$header2.stop(true, true).slideUp(200);
+			$(".title-search-result").css({"display":"none"});
+		}
 	});
 	
 	//TABS_MAIN//

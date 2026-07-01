@@ -292,11 +292,9 @@ if( (count($fTitle)<2 && $arElement["NAME"]) && (count($fTitleA)<2) && (count($f
 												<?} else {?>
 													<form action="<?=SITE_DIR?>ajax/add2basket.php" class="add2basket_search_form">
 												<?}?>
-								<?/*
 													<a href="javascript:void(0)" class="minus" id="quantity_minus_<?=$arItemIDs['ID']?>"><span>-</span></a>
 													<input type="text" id="quantity_<?=$arItemIDs['ID']?>" name="quantity" class="quantity" value="<?=$arElement['CATALOG_MEASURE_RATIO']?>"/>
 													<a href="javascript:void(0)" class="plus" id="quantity_plus_<?=$arItemIDs['ID']?>"><span>+</span></a>
-									*/?>				
 									<input type="hidden" name="ID" value="<?=$arElement['ITEM_ID']?>"/>
 									<input type="hidden" name="action_<?=$arElement['ITEM_ID']?>" value="props" />
 													<?//if(!isset($arElement["SELECT_PROPS"]) || empty($arElement["SELECT_PROPS"])) {?>
@@ -351,11 +349,9 @@ if( (count($fTitle)<2 && $arElement["NAME"]) && (count($fTitleA)<2) && (count($f
 											<input type="hidden" name="name_<?=$arElement['ITEM_ID']?>" value="<?=$arElement["NAME"]?>" />
 
 
-								<?/*
 													<a href="javascript:void(0)" class="minus" id="quantity_minus_<?=$arItemIDs['ID']?>"><span>-</span></a>
 													<input type="text" id="quantity_<?=$arItemIDs['ID']?>" name="quantity" class="quantity" value="<?=$arElement['CATALOG_MEASURE_RATIO']?>"/>
 													<a href="javascript:void(0)" class="plus" id="quantity_plus_<?=$arItemIDs['ID']?>"><span>+</span></a>
-									*/?>				
 									<input type="hidden" name="ID" value="<?=$arElement['ITEM_ID']?>"/>
 													<?//if(!isset($arElement["SELECT_PROPS"]) || empty($arElement["SELECT_PROPS"])) {?>
 														<input type="hidden" name="ID" value="<?=$arElement['ITEM_ID']?>"/>

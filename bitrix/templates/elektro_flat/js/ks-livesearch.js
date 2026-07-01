@@ -87,6 +87,24 @@
 		});
 
 		panel.addEventListener("click", function (e) {
+			var minus = e.target.closest(".ks-qty-minus");
+			var plus = e.target.closest(".ks-qty-plus");
+			if (minus || plus) {
+				e.preventDefault();
+				e.stopPropagation();
+				var qForm = (minus || plus).closest("form");
+				if (!qForm) return;
+				var input = qForm.querySelector('input[name="quantity"]');
+				if (!input) return;
+				var step = parseFloat(qForm.getAttribute("data-step")) || 1;
+				var max = parseFloat(qForm.getAttribute("data-max-qty")) || 9999;
+				var val = parseFloat(String(input.value).replace(",", ".")) || step;
+				if (minus) val = Math.max(step, val - step);
+				if (plus) val = Math.min(max, val + step);
+				input.value = (step % 1 === 0 && val % 1 === 0) ? String(Math.round(val)) : String(val);
+				return;
+			}
+
 			var btn = e.target.closest(".ks-item__cart[name=add2basket]");
 			if (!btn || btn.disabled) return;
 			e.preventDefault();
