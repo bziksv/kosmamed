@@ -1,4 +1,34 @@
 /***CUSTOM CSS RULES FOR YOUR SITE***/
 
-/***CUSTOM CSS RULES FOR YOUR SITE***/
+/* Карточка товара: только ширина 100% (layout — float/flex из template_styles) */
+.catalog-detail-element .catalog-detail,
+.catalog-detail-element > .catalog-detail > .column.second > .catalog-detail {
+	width: 100% !important;
+	max-width: 100% !important;
+	box-sizing: border-box;
+}
 
+/* Фон + хлебные крошки (дубль в CSS-bundle на случай кеша kosmamed-theme.css) */
+html { background-color: #e2e8f0 !important; }
+body.km-body-bg { background-repeat: repeat !important; background-size: 640px auto !important; background-color: #e2e8f0 !important; background-position: center top !important; }
+.breadcrumb-share { display: block !important; visibility: visible !important; background: #eef2f7 !important; border: 1px solid #64748b !important; border-radius: 6px !important; padding: 12px 14px !important; margin: 0 0 12px !important; overflow: visible !important; }
+.breadcrumb { display: flex !important; flex-wrap: wrap !important; gap: 4px 8px !important; width: 100% !important; overflow: visible !important; float: none !important; }
+.breadcrumb__item, .breadcrumb__arrow { float: none !important; }
+.breadcrumb__title_main { display: inline !important; }
+
+@media screen and (max-width: 787px) {
+	.breadcrumb-share { padding: 8px 10px !important; margin-bottom: 8px !important; }
+	.breadcrumb {
+		display: block !important;
+		flex-wrap: nowrap !important;
+		white-space: nowrap !important;
+		overflow-x: auto !important;
+		-webkit-overflow-scrolling: touch;
+	}
+	.breadcrumb::-webkit-scrollbar { display: none; }
+	.breadcrumb__item,
+	.breadcrumb__arrow {
+		display: inline !important;
+		float: none !important;
+	}
+}

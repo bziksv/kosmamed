@@ -1,0 +1,401 @@
+<?php
+/**
+ * КосмаМед — live-поиск (быстрая выпадашка).
+ * Подстрочный поиск по товарам и категориям инфоблока 24
+ * с коррекцией опечаток (mb-Levenshtein по словарю названий).
+ * Отдаёт готовый HTML: две колонки — категории слева, товары справа.
+ */
+define("STOP_STATISTICS", true);
+define("NO_AGENT_CHECK", true);
+define("DisableEventsCheck", true);
+require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+
+header("Content-Type: text/html; charset=UTF-8");
+header("X-Robots-Tag: noindex");
+
+const KS_IBLOCK_ID      = 24;
+const KS_PRICE_NAME     = "Цена - КосмаМед Сайт";
+const KS_MAX_PRODUCTS   = 8;
+const KS_MAX_CATEGORIES = 8;
+const KS_MIN_LEN        = 2;
+const KS_DICT_TTL       = 86400; // сутки
+
+if (!CModule::IncludeModule("iblock")) { echo ""; die(); }
+$hasCatalog = CModule::IncludeModule("catalog");
+
+$q = isset($_REQUEST["q"]) ? trim((string)$_REQUEST["q"]) : "";
+$q = mb_substr($q, 0, 60, "UTF-8");
+
+if (mb_strlen($q, "UTF-8") < KS_MIN_LEN) { echo ""; die(); }
+
+/* ---------- утилиты ---------- */
+
+function ks_words($string) {
+	$string = mb_strtolower($string, "UTF-8");
+	$parts = preg_split('~[^\p{L}\p{Nd}]+~u', $string, -1, PREG_SPLIT_NO_EMPTY);
+	return is_array($parts) ? $parts : array();
+}
+
+/** GetNext() уже html-escapes поля — декодируем перед повторным выводом */
+function ks_plain($value) {
+	return htmlspecialcharsback((string)$value);
+}
+
+// Левенштейн с поддержкой UTF-8 (стандартный levenshtein() работает по байтам)
+function ks_mb_levenshtein($a, $b) {
+	$a = preg_split('//u', $a, -1, PREG_SPLIT_NO_EMPTY);
+	$b = preg_split('//u', $b, -1, PREG_SPLIT_NO_EMPTY);
+	$la = count($a); $lb = count($b);
+	if ($la === 0) return $lb;
+	if ($lb === 0) return $la;
+	$prev = range(0, $lb);
+	for ($i = 1; $i <= $la; $i++) {
+		$cur = array($i);
+		for ($j = 1; $j <= $lb; $j++) {
+			$cost = ($a[$i-1] === $b[$j-1]) ? 0 : 1;
+			$cur[$j] = min($prev[$j] + 1, $cur[$j-1] + 1, $prev[$j-1] + $cost);
+		}
+		$prev = $cur;
+	}
+	return $prev[$lb];
+}
+
+/**
+ * Словарь слов из названий разделов и товаров ИБ24 (с кэшем в файле).
+ * Используется только для коррекции опечаток.
+ */
+function ks_dictionary() {
+	$cacheFile = $_SERVER["DOCUMENT_ROOT"]."/bitrix/cache/ks_search_dict.json";
+	if (is_file($cacheFile) && (time() - filemtime($cacheFile) < KS_DICT_TTL)) {
+		$data = json_decode(file_get_contents($cacheFile), true);
+		if (is_array($data) && !empty($data)) return $data;
+	}
+
+	$words = array();
+	$add = function($name) use (&$words) {
+		foreach (ks_words($name) as $w) {
+			if (mb_strlen($w, "UTF-8") >= 4) {
+				$words[$w] = isset($words[$w]) ? $words[$w] + 1 : 1;
+			}
+		}
+	};
+
+	$rsS = CIBlockSection::GetList(array(), array("IBLOCK_ID" => KS_IBLOCK_ID), false, array("NAME"));
+	while ($s = $rsS->Fetch()) { $add($s["NAME"]); }
+
+	$rsE = CIBlockElement::GetList(
+		array(),
+		array("IBLOCK_ID" => KS_IBLOCK_ID, "ACTIVE" => "Y"),
+		false,
+		array("nTopCount" => 6000),
+		array("ID", "NAME")
+	);
+	while ($e = $rsE->Fetch()) { $add($e["NAME"]); }
+
+	$dict = array_keys($words);
+	@file_put_contents($cacheFile, json_encode($dict, JSON_UNESCAPED_UNICODE));
+	return $dict;
+}
+
+/**
+ * Коррекция опечаток: для каждого слова запроса подбираем ближайшее слово
+ * словаря, если точного вхождения нет. Возвращает массив [исправленные слова].
+ */
+function ks_correct_words(array $queryWords, array $dict) {
+	$corrected = array();
+	$changed = false;
+	foreach ($queryWords as $word) {
+		$len = mb_strlen($word, "UTF-8");
+		if ($len < 3) { $corrected[] = $word; continue; }
+
+		// если слово уже встречается как подстрока в словаре — не трогаем
+		$exists = false;
+		foreach ($dict as $dw) {
+			if (mb_strpos($dw, $word, 0, "UTF-8") !== false) { $exists = true; break; }
+		}
+		if ($exists) { $corrected[] = $word; continue; }
+
+		$maxDist = $len <= 4 ? 1 : ($len <= 7 ? 2 : 3);
+		$best = null; $bestDist = PHP_INT_MAX;
+		foreach ($dict as $dw) {
+			$dl = mb_strlen($dw, "UTF-8");
+			if (abs($dl - $len) > $maxDist) continue;
+			$d = ks_mb_levenshtein($word, $dw);
+			if ($d < $bestDist) { $bestDist = $d; $best = $dw; if ($d === 0) break; }
+		}
+		if ($best !== null && $bestDist <= $maxDist) {
+			$corrected[] = $best;
+			$changed = true;
+		} else {
+			$corrected[] = $word;
+		}
+	}
+	return array("words" => $corrected, "changed" => $changed);
+}
+
+/* ---------- поиск ---------- */
+
+function ks_section_in_stock_count($sectionId) {
+	if (!CModule::IncludeModule("catalog")) {
+		return 0;
+	}
+	$filter = array(
+		"IBLOCK_ID"           => KS_IBLOCK_ID,
+		"CHECK_PERMISSIONS"   => "Y",
+		"MIN_PERMISSION"      => "R",
+		"SECTION_ID"          => (int)$sectionId,
+		"INCLUDE_SUBSECTIONS" => "Y",
+		"ACTIVE"              => "Y",
+		"ACTIVE_DATE"         => "Y",
+		"AVAILABLE"           => "Y",
+	);
+	return (int)CIBlockElement::GetList(array(), $filter, array());
+}
+
+function ks_find_sections(array $words) {
+	// CIBlockSection::GetList не поддерживает вложенные числовые подфильтры,
+	// поэтому фильтруем по самому длинному слову через %NAME (подстрока),
+	// а соответствие всем словам проверяем в PHP.
+	usort($words, function($a, $b) {
+		return mb_strlen($b, "UTF-8") - mb_strlen($a, "UTF-8");
+	});
+	$anchor = $words[0];
+
+	$filter = array("IBLOCK_ID" => KS_IBLOCK_ID, "GLOBAL_ACTIVE" => "Y", "%NAME" => $anchor);
+	$res = array();
+	$rs = CIBlockSection::GetList(
+		array("ELEMENT_CNT" => "DESC", "left_margin" => "ASC"),
+		$filter, true,
+		array("ID", "NAME", "CODE", "PICTURE", "ELEMENT_CNT")
+	);
+	while ($s = $rs->GetNext()) {
+		if ($s["ELEMENT_CNT"] <= 0) continue;
+		$nameLower = mb_strtolower($s["NAME"], "UTF-8");
+		$allMatch = true;
+		foreach ($words as $w) {
+			if (mb_strpos($nameLower, $w, 0, "UTF-8") === false) { $allMatch = false; break; }
+		}
+		if (!$allMatch) continue;
+		$img = "";
+		if ($s["PICTURE"] > 0) {
+			$f = CFile::ResizeImageGet($s["PICTURE"], array("width" => 60, "height" => 60), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			$img = $f["src"];
+		}
+		$res[] = array(
+			"ID"      => (int)$s["ID"],
+			"NAME"    => ks_plain($s["NAME"]),
+			"URL"     => "/catalog/".$s["CODE"]."/",
+			"CNT"     => (int)$s["ELEMENT_CNT"],
+			"CNT_AVL" => ks_section_in_stock_count((int)$s["ID"]),
+			"IMG"     => $img,
+		);
+		if (count($res) >= KS_MAX_CATEGORIES) break;
+	}
+	return $res;
+}
+
+function ks_product_catalog_row($productId) {
+	$row = array(
+		"ID"             => (int)$productId,
+		"CAN_BUY"        => false,
+		"CHECK_QUANTITY" => false,
+		"QUANTITY"       => 0.0,
+		"MIN_QUANTITY"   => 1.0,
+		"HAS_OFFERS"     => false,
+	);
+	if (!CModule::IncludeModule("catalog")) {
+		return $row;
+	}
+	if (CCatalogSKU::IsExistOffers($productId)) {
+		$row["HAS_OFFERS"] = true;
+		return $row;
+	}
+	$cat = CCatalogProduct::GetByID($productId);
+	if (!$cat) {
+		return $row;
+	}
+	$row["CAN_BUY"] = ($cat["AVAILABLE"] === "Y");
+	$row["CHECK_QUANTITY"] = ($cat["QUANTITY_TRACE"] === "Y");
+	$row["QUANTITY"] = (float)$cat["QUANTITY"];
+	$ratio = CCatalogMeasureRatio::getList(array(), array("PRODUCT_ID" => $productId))->Fetch();
+	if ($ratio && (float)$ratio["RATIO"] > 0) {
+		$row["MIN_QUANTITY"] = (float)$ratio["RATIO"];
+	}
+	return $row;
+}
+
+function ks_stock_label(array $p) {
+	if (!$p["CAN_BUY"]) {
+		return array("class" => "ks-item__stock--no", "text" => "Нет в наличии");
+	}
+	if ($p["CHECK_QUANTITY"]) {
+		$qty = (int)$p["QUANTITY"];
+		if ($qty <= 0) {
+			return array("class" => "ks-item__stock--no", "text" => "Нет в наличии");
+		}
+		return array("class" => "ks-item__stock--yes", "text" => "В наличии: ".$qty." шт.");
+	}
+	return array("class" => "ks-item__stock--yes", "text" => "В наличии");
+}
+
+function ks_find_products(array $words, $priceTypeId) {
+	$filter = array(
+		"IBLOCK_ID"            => KS_IBLOCK_ID,
+		"ACTIVE"               => "Y",
+		"ACTIVE_DATE"          => "Y",
+		"SECTION_GLOBAL_ACTIVE"=> "Y",
+	);
+	foreach ($words as $w) {
+		$filter[] = array("LOGIC" => "OR", "%NAME" => $w, "%PROPERTY_CML2_ARTICLE" => $w);
+	}
+	$res = array();
+	$rs = CIBlockElement::GetList(
+		array("SORT" => "ASC", "SHOW_COUNTER" => "DESC"),
+		$filter, false,
+		array("nTopCount" => KS_MAX_PRODUCTS),
+		array("ID", "NAME", "DETAIL_PAGE_URL", "PREVIEW_PICTURE", "DETAIL_PICTURE", "PROPERTY_CML2_ARTICLE")
+	);
+	while ($e = $rs->GetNext()) {
+		$pictId = $e["PREVIEW_PICTURE"] ?: $e["DETAIL_PICTURE"];
+		$img = "";
+		if ($pictId > 0) {
+			$f = CFile::ResizeImageGet($pictId, array("width" => 70, "height" => 70), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			$img = $f["src"];
+		}
+		$price = 0;
+		if ($priceTypeId > 0) {
+			$rp = CPrice::GetList(array(), array("PRODUCT_ID" => $e["ID"], "CATALOG_GROUP_ID" => $priceTypeId));
+			if ($p = $rp->Fetch()) $price = (float)$p["PRICE"];
+		}
+		$cat = ks_product_catalog_row((int)$e["ID"]);
+		$res[] = array(
+			"ID"             => (int)$e["ID"],
+			"NAME"           => ks_plain($e["NAME"]),
+			"URL"            => $e["DETAIL_PAGE_URL"],
+			"IMG"            => $img,
+			"ARTICLE"        => ks_plain($e["PROPERTY_CML2_ARTICLE_VALUE"]),
+			"PRICE"          => $price,
+			"CAN_BUY"        => $cat["CAN_BUY"],
+			"CHECK_QUANTITY" => $cat["CHECK_QUANTITY"],
+			"QUANTITY"       => $cat["QUANTITY"],
+			"MIN_QUANTITY"   => $cat["MIN_QUANTITY"],
+			"HAS_OFFERS"     => $cat["HAS_OFFERS"],
+		);
+	}
+	return $res;
+}
+
+/* ---------- сбор данных ---------- */
+
+$priceTypeId = 0;
+if ($hasCatalog) {
+	$rsG = CCatalogGroup::GetListEx(array(), array("NAME" => KS_PRICE_NAME), false, false, array("ID"));
+	if ($g = $rsG->Fetch()) $priceTypeId = (int)$g["ID"];
+}
+
+$queryWords = ks_words($q);
+if (empty($queryWords)) { echo ""; die(); }
+
+$sections = ks_find_sections($queryWords);
+$products = ks_find_products($queryWords, $priceTypeId);
+
+$suggestNote = "";
+if (empty($sections) && empty($products)) {
+	$dict = ks_dictionary();
+	$corr = ks_correct_words($queryWords, $dict);
+	if ($corr["changed"]) {
+		$sections = ks_find_sections($corr["words"]);
+		$products = ks_find_products($corr["words"], $priceTypeId);
+		if (!empty($sections) || !empty($products)) {
+			$suggestNote = "Возможно, вы искали: <b>".htmlspecialcharsbx(implode(" ", $corr["words"]))."</b>";
+		}
+	}
+}
+
+$total = count($sections) + count($products);
+$qEsc = htmlspecialcharsbx($q);
+
+/* ---------- рендер ---------- */
+ob_start();
+if ($total === 0) { ?>
+	<div class="ks-suggest__empty">По запросу «<?=$qEsc?>» ничего не найдено</div>
+<?php } else { ?>
+	<?php if ($suggestNote !== ""): ?>
+		<div class="ks-suggest__note"><?=$suggestNote?></div>
+	<?php endif; ?>
+	<div class="ks-suggest__cols">
+		<div class="ks-suggest__col ks-suggest__col--cats">
+			<div class="ks-suggest__title">Категории</div>
+			<?php if (empty($sections)): ?>
+				<div class="ks-suggest__none">Нет подходящих категорий</div>
+			<?php else: foreach ($sections as $s): ?>
+				<a class="ks-cat" href="<?=htmlspecialcharsbx($s["URL"])?>">
+					<span class="ks-cat__name"><?=htmlspecialcharsbx($s["NAME"])?></span>
+					<span class="ks-cat__cnt" title="В наличии <?=$s["CNT_AVL"]?> из <?=$s["CNT"]?>">
+						<span class="ks-cat__cnt-in"><?=$s["CNT_AVL"]?></span><span class="ks-cat__cnt-sep">/</span><span class="ks-cat__cnt-all"><?=$s["CNT"]?></span>
+					</span>
+				</a>
+			<?php endforeach; endif; ?>
+		</div>
+		<div class="ks-suggest__col ks-suggest__col--items">
+			<div class="ks-suggest__title">Товары</div>
+			<?php if (empty($products)): ?>
+				<div class="ks-suggest__none">Нет подходящих товаров</div>
+			<?php else: foreach ($products as $p):
+				$stock = ks_stock_label($p);
+				$canAdd = $p["CAN_BUY"] && !$p["HAS_OFFERS"] && $p["PRICE"] > 0;
+				$props = "";
+				if (!empty($p["ARTICLE"])) {
+					$propsArr = array(array(
+						"NAME"  => "Артикул",
+						"CODE"  => "CML2_ARTICLE",
+						"VALUE" => $p["ARTICLE"],
+					));
+					$props = strtr(base64_encode(serialize($propsArr)), "+/=", "-_,");
+				}
+			?>
+				<div class="ks-item">
+					<a class="ks-item__link" href="<?=htmlspecialcharsbx($p["URL"])?>">
+						<span class="ks-item__img">
+							<?php if ($p["IMG"]): ?>
+								<img src="<?=htmlspecialcharsbx($p["IMG"])?>" alt="" loading="lazy" />
+							<?php else: ?>
+								<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" alt="" />
+							<?php endif; ?>
+						</span>
+						<span class="ks-item__info">
+							<span class="ks-item__name"><?=htmlspecialcharsbx($p["NAME"])?></span>
+							<?php if (!empty($p["ARTICLE"])): ?>
+								<span class="ks-item__art">Артикул: <?=htmlspecialcharsbx($p["ARTICLE"])?></span>
+							<?php endif; ?>
+							<span class="ks-item__code">Код товара: <?=(int)$p["ID"]?></span>
+							<span class="ks-item__stock <?=$stock["class"]?>"><?=htmlspecialcharsbx($stock["text"])?></span>
+						</span>
+					</a>
+					<div class="ks-item__side">
+						<?php if ($p["PRICE"] > 0): ?>
+							<span class="ks-item__price"><?=number_format($p["PRICE"], 0, ".", " ")?> ₽</span>
+						<?php endif; ?>
+						<?php if ($canAdd): ?>
+							<form action="/ajax/add2basket.php" class="ks-item__buy add2basket_form" method="post">
+								<input type="hidden" name="ID" value="<?=$p["ID"]?>" />
+								<input type="hidden" name="quantity" value="<?=htmlspecialcharsbx($p["MIN_QUANTITY"])?>" />
+								<?php if ($props !== ""): ?>
+									<input type="hidden" name="PROPS" value="<?=htmlspecialcharsbx($props)?>" />
+								<?php endif; ?>
+								<button type="button" class="btn_buy ks-item__cart" name="add2basket" title="В корзину">
+									<i class="fa fa-shopping-cart"></i><span>В корзину</span>
+								</button>
+							</form>
+						<?php elseif ($p["HAS_OFFERS"]): ?>
+							<a class="ks-item__choose" href="<?=htmlspecialcharsbx($p["URL"])?>">Выбрать</a>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php endforeach; endif; ?>
+		</div>
+	</div>
+	<a class="ks-suggest__all" href="/catalog/?q=<?=urlencode($q)?>">Показать все результаты по запросу «<?=$qEsc?>»</a>
+<?php }
+echo ob_get_clean();
+die();

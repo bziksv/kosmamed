@@ -28,4 +28,7 @@ if($arParams["CACHE_SELECTED_ITEMS"] != "Y") {
 		unset($arItem, $items);
 	}
 	unset($selectedItem);
-}?>
+}
+
+$arResult = ksSortMenuFlat($arResult);
+?>

@@ -45,7 +45,7 @@ $arHitPrFilter = array(
 		"PAGE_ELEMENT_COUNT" => "8",
 		"LINE_ELEMENT_COUNT" => "",
 		"PRICE_CODE" => array(
-			0 => "BASE",
+			0 => "Цена - КосмаМед Сайт",
 		),
 		"USE_PRICE_COUNT" => "Y",
 		"SHOW_PRICE_COUNT" => "1",

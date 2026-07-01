@@ -159,6 +159,9 @@ if($request->isPost() && check_bitrix_sessid()) {
 				"city" => $city,
 				"contacts" => $arParams["GEOLOCATION_REGIONAL_CONTACTS"] == "Y" ? (!empty($contacts) ? $contacts : false) : false
 			);
+			if (!empty($searchResult["contacts"]) && function_exists("ksPhoneTelHtml")) {
+				$searchResult["contacts"] = ksPhoneTelHtml($searchResult["contacts"]);
+			}
 			if(SITE_CHARSET != "utf-8")
 				$searchResult = Encoding::convertEncoding($searchResult, SITE_CHARSET, "utf-8");
 

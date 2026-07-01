@@ -72,14 +72,56 @@ Loc::loadMessages(__FILE__);?>
 		</script>
 	");
 	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/slick.min.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/main.js");
+	$kmMainJsPath = $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/js/main.js';
+	$kmMainJsVer = file_exists($kmMainJsPath) ? filemtime($kmMainJsPath) : time();
+	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/main.js?v=".$kmMainJsVer);
 	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/script.js");
-	$APPLICATION->ShowHead();?>
-
-	<?if(CModule::IncludeModule("altop.elektroinstrument")) {
+	$APPLICATION->ShowHead();
+	$kmThemeCssPath = $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/kosmamed-theme.css';
+	$kmThemeCssVer = file_exists($kmThemeCssPath) ? filemtime($kmThemeCssPath) : time();
+?>
+	<link rel="stylesheet" href="<?=SITE_TEMPLATE_PATH?>/kosmamed-theme.css?v=<?=$kmThemeCssVer?>" />
+<?if(CModule::IncludeModule("altop.elektroinstrument")) {
 	    CElektroinstrument::getBackground(SITE_ID);
         CElektroinstrument::SetCannonicalURL($APPLICATION->GetCurPageParam());
-    }?>
+    }
+$kmBgUrl = '';
+if (preg_match('/url\([\'"]?([^\'"\)]+)/', (string)$APPLICATION->GetProperty('backgroundImage'), $kmBgMatch)) {
+	$kmBgUrl = $kmBgMatch[1];
+}
+?>
+<style id="km-critical">
+html { background-color: #e2e8f0 !important; }
+<?php if ($kmBgUrl !== ''): ?>
+body, body.km-body-bg, body.agll, body.agll_loaded { background-image: url('<?=htmlspecialcharsbx($kmBgUrl)?>') !important; background-repeat: repeat !important; background-size: 640px auto !important; background-color: #e2e8f0 !important; background-position: center top !important; }
+<?php endif; ?>
+.page-wrapper, .content-wrapper { max-width: 100vw !important; box-sizing: border-box !important; overflow-x: visible !important; }
+.center.outer, #for-quick-view-header.center.outer { width: min(1234px, calc(100vw - 16px)) !important; max-width: min(1234px, calc(100vw - 16px)) !important; margin-left: auto !important; margin-right: auto !important; display: block !important; box-sizing: border-box !important; }
+.content-wrapper > .center, .content-wrapper > .center.inner, .page-wrapper .center.inner, header .center.inner { width: 100% !important; max-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; display: block !important; box-sizing: border-box !important; }
+@media (min-width: 1500px) { .center.outer, #for-quick-view-header.center.outer { width: min(1500px, calc(100vw - 16px)) !important; max-width: min(1500px, calc(100vw - 16px)) !important; } }
+.breadcrumb-share { display: block !important; visibility: visible !important; opacity: 1 !important; background: #eef2f7 !important; border: 1px solid #64748b !important; border-radius: 6px !important; padding: 12px 14px !important; margin: 0 0 12px !important; overflow: visible !important; box-sizing: border-box !important; position: relative !important; z-index: 2 !important; }
+.breadcrumb { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 4px 8px !important; width: 100% !important; min-height: 24px !important; overflow: visible !important; float: none !important; }
+.breadcrumb__item, .breadcrumb__arrow { float: none !important; margin: 0 !important; }
+.breadcrumb__title_main { display: inline !important; }
+.breadcrumb__item > .breadcrumb__link, .breadcrumb__item > .breadcrumb__title { color: #1e293b !important; font-size: 14px !important; font-weight: 500 !important; }
+#pagetitle { display: block !important; clear: both !important; position: relative !important; z-index: 2 !important; }
+@media (min-width: 788px) {
+.catalog-detail-element > .catalog-detail { display: grid !important; grid-template-columns: minmax(0, 1fr) clamp(260px, 34%, 450px) !important; gap: 20px !important; align-items: start !important; width: 100% !important; max-width: 100% !important; overflow: visible !important; box-sizing: border-box !important; }
+.catalog-detail-element > .catalog-detail > .column.first, .catalog-detail-element > .catalog-detail > .column.second, .catalog-detail-element .catalog-detail .column.first, .catalog-detail-element .catalog-detail .column.three { float: none !important; width: auto !important; max-width: 100% !important; min-width: 0 !important; margin: 0 !important; display: block !important; }
+.catalog-detail-element > .catalog-detail > .column.second { grid-column: 2 !important; position: relative !important; z-index: 2 !important; }
+.catalog-detail-element > .catalog-detail > .column.first { grid-column: 1 !important; overflow: hidden !important; z-index: 1 !important; }
+}
+@media (min-width: 788px) and (max-width: 1253px) {
+.catalog-detail-element > .catalog-detail { grid-template-columns: minmax(0, 1fr) clamp(240px, 38%, 320px) !important; }
+}
+@media screen and (max-width: 787px) {
+.breadcrumb-share { display: block !important; }
+.breadcrumb { display: block !important; flex-wrap: nowrap !important; white-space: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+.breadcrumb::-webkit-scrollbar { display: none; }
+.breadcrumb__item, .breadcrumb__arrow { display: inline !important; }
+.catalog-detail-element > .catalog-detail { display: block !important; }
+}
+</style>
 <?
 $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_style", 
     array(
@@ -99,6 +141,55 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 ?>
 </head>
 <body  <?=$APPLICATION->ShowProperty("bgClass")?><?=$APPLICATION->ShowProperty("backgroundColor")?><?=$APPLICATION->ShowProperty("backgroundImage")?>>
+<script>
+(function () {
+	function applySiteBackground() {
+		var body = document.body;
+		if (!body) {
+			return;
+		}
+		var bg = body.getAttribute('data-background-image');
+		if (!bg) {
+			return;
+		}
+		body.style.setProperty('background-image', "url('" + bg + "')", 'important');
+		body.style.setProperty('background-repeat', 'repeat', 'important');
+		body.style.setProperty('background-size', '640px auto', 'important');
+		body.style.setProperty('background-color', '#e2e8f0', 'important');
+		body.style.setProperty('background-position', 'center top', 'important');
+		body.classList.add('agll_loaded');
+		body.classList.remove('agll');
+		body.removeAttribute('data-background-image');
+	}
+	applySiteBackground();
+	document.addEventListener('DOMContentLoaded', applySiteBackground);
+	window.addEventListener('load', function () {
+		applySiteBackground();
+		kmApplyLazyBackgrounds();
+		setTimeout(applySiteBackground, 50);
+		setTimeout(kmApplyLazyBackgrounds, 50);
+		setTimeout(kmApplyLazyBackgrounds, 300);
+	});
+	function kmApplyLazyBackgrounds(root) {
+		(root || document).querySelectorAll('[data-background-image].agll:not(.agll_loaded), [data-background-image].agll_inited:not(.agll_loaded)').forEach(function (el) {
+			var bg = el.getAttribute('data-background-image');
+			if (!bg) return;
+			el.style.backgroundImage = "url('" + bg.replace(/'/g, "\\'") + "')";
+			el.style.backgroundSize = el.style.backgroundSize || 'cover';
+			el.style.backgroundPosition = el.style.backgroundPosition || 'center center';
+			el.style.backgroundRepeat = el.style.backgroundRepeat || 'no-repeat';
+			el.classList.add('agll_loaded');
+			el.classList.remove('agll');
+		});
+	}
+	window.kmApplyLazyBackgrounds = kmApplyLazyBackgrounds;
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', kmApplyLazyBackgrounds);
+	} else {
+		kmApplyLazyBackgrounds();
+	}
+})();
+</script>
 	<?global $arSetting;?>
 	<?
     $arSetting = $APPLICATION->IncludeComponent("altop:settings", "", array(), false, array("HIDE_ICONS" => "Y"));
@@ -145,7 +236,6 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 					<div class="header_4">
 						<div class="contacts">
 							<?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/geolocation.php"), false, array("HIDE_ICONS" => "Y"));?>
-							<a id="callbackAnch" class="btn_buy_ apuo callback_anch" href="javascript:void(0)"><span class="cont"><?/*<i class="fa fa-phone"></i*/?><span class="text"><?=Loc::getMessage("ALTOP_CALL_BACK")?></span></span></a>
 						</div>
 					</div>
 					<div class="header_5">
@@ -239,7 +329,7 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 					<div class="panel_3">
 						<ul class="contacts-vertical">
 							<li>
-								<a class="showcontacts" href="javascript:void(0)"><i class="fa fa-phone"></i></a>
+								<a class="showcontacts" href="tel:<?=htmlspecialcharsbx(ksMainPhoneTel())?>"><i class="fa fa-phone"></i></a>
 							</li>
 						</ul>
 					</div>

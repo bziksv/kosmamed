@@ -210,7 +210,9 @@ if(!empty($arCurSection)) {
                                 "COMPOSITE_FRAME_TYPE" => "AUTO",
 				"CACHE_GROUPS" => $arParams["CACHE_GROUPS"],
 				"TOP_DEPTH" => "1",
-				"SECTION_FIELDS" => array(),
+				"SECTION_FIELDS" => array(
+					0 => "PICTURE",
+				),
 				"SECTION_USER_FIELDS" => array(
 					0 => "UF_ICON"
 				),

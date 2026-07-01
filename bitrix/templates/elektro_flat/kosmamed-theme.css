@@ -1,0 +1,1344 @@
+/**
+ * КосмаМед — обновлённая цветовая схема.
+ * Белый фон контента, читаемый текст, медицинский бирюзовый акцент.
+ * Подключается после colors.css и перекрывает старую жёлто-сиреневую палитру.
+ */
+:root {
+	--km-primary: #0e7490;
+	--km-primary-dark: #155e75;
+	--km-primary-light: #ecfeff;
+	--km-accent: #0891b2;
+	--km-text: #1e293b;
+	--km-text-secondary: #475569;
+	--km-text-muted: #64748b;
+	--km-border: #e2e8f0;
+	--km-surface: #ffffff;
+	--km-surface-alt: #f8fafc;
+	--km-page-bg: #f1f5f9;
+}
+
+/* === Базовая типографика и фон страницы === */
+body {
+	color: var(--km-text-secondary) !important;
+	/* background-color и паттерн — в template_styles.css, не перебиваем */
+}
+
+a:link,
+a:visited {
+	color: var(--km-primary);
+}
+
+a:hover {
+	color: var(--km-accent);
+}
+
+/* === Шапка — фон на самом header, без ::before (псевдоэлемент уезжал на 1100px и перекрывал контент) === */
+header {
+	background: var(--km-surface) !important;
+	border-bottom: 1px solid var(--km-border);
+}
+
+header .center,
+header .center.inner {
+	background: transparent !important;
+}
+
+header.fixed.fixed_f {
+	background: none !important;
+}
+
+header.fixed.fixed_f .center.inner {
+	background: var(--km-surface) !important;
+	border-bottom: 1px solid var(--km-border);
+	box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+/* Шапка чуть ниже (было 82px) */
+header.fixed,
+header.fixed .center {
+	min-height: 72px !important;
+	height: 72px !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+header .center {
+	height: 72px !important;
+}
+
+.header_5 {
+	padding-top: 18px !important;
+}
+
+.header_1 .logo a span,
+.header_3 .schedule p,
+.header_4 .geolocation__link i,
+.header_4 .telephone p span:not(.icon) {
+	color: var(--km-text-muted) !important;
+}
+
+.header_4 .geolocation__link span,
+.header_4 .telephone p {
+	color: var(--km-text) !important;
+}
+
+.header_4 .telephone a,
+.header_4 .telephone a:visited {
+	color: var(--km-text) !important;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.header_4 .telephone a:hover {
+	color: var(--km-primary) !important;
+}
+
+.top_panel .panel_3 ul.contacts-vertical li a.showcontacts[href^="tel:"] {
+	text-decoration: none;
+}
+
+.header_4 .geolocation__link:hover i,
+.header_4 .geolocation__link:hover span {
+	color: var(--km-primary) !important;
+}
+
+/* === Горизонтальное меню (верх) === */
+.top-menu {
+	background: var(--km-surface-alt) !important;
+	border-bottom: 1px solid var(--km-border);
+}
+
+.top-menu ul.store-horizontal > li > a {
+	color: var(--km-text-secondary) !important;
+}
+
+.top-menu ul.store-horizontal > li.active > a {
+	color: var(--km-primary-dark) !important;
+	background: var(--km-surface) !important;
+}
+
+.top-menu ul.store-horizontal > li:hover > a,
+.top-menu ul.store-horizontal > li.jshover > a,
+.top-menu ul.store-horizontal > li.active:hover > a,
+.top-menu ul.store-horizontal > li.active.jshover > a {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+}
+
+.top-menu .dropdown-menu {
+	background: var(--km-primary-dark) !important;
+	border-top-color: var(--km-primary) !important;
+}
+
+.top-menu .dropdown-menu > li {
+	border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.top-menu .dropdown-menu > li > a {
+	color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.top-menu .dropdown-menu > li:hover > a,
+.top-menu .dropdown-menu > li.jshover > a,
+.top-menu .dropdown-menu > li.active > a {
+	color: var(--km-surface) !important;
+	background-color: var(--km-primary) !important;
+}
+
+/* === Жёлтая полоса каталога → белая с бирюзовым акцентом === */
+.top-catalog {
+	background: var(--km-surface) !important;
+	border-bottom: 2px solid var(--km-primary);
+}
+
+.top-catalog ul.left-menu > li > a {
+	color: var(--km-text) !important;
+}
+
+.top-catalog ul.left-menu > li:hover > a,
+.top-catalog ul.left-menu > li.selected > a {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+}
+
+.top-catalog ul.left-menu > li.parent > .arrow,
+.top-catalog ul.left-menu > li.parentMore > .arrow {
+	border-bottom-color: var(--km-primary) !important;
+}
+
+/* === Боковое меню каталога === */
+.left-column .h3,
+.vendors .h3,
+.vendors_bottom .h3,
+.already_seen .h3,
+.footer_soc .h3,
+.footer_pay .h3,
+.breadcrumb-heading,
+h1, .h1 {
+	color: var(--km-text) !important;
+}
+
+ul.left-menu > li > a {
+	color: var(--km-text-secondary) !important;
+	border-color: var(--km-border) !important;
+	background: var(--km-surface) !important;
+}
+
+ul.left-menu > li:hover > a,
+ul.left-menu > li.selected > a {
+	color: var(--km-primary-dark) !important;
+	border-color: var(--km-primary) !important;
+	background: var(--km-primary-light) !important;
+}
+
+ul.left-menu > li.parent > .catalog-section-childs,
+ul.left-menu > li.parentMore > ul.submenuMore {
+	border-color: var(--km-primary) !important;
+}
+
+ul.left-menu > li.parent > ul.submenu li a:hover,
+ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
+	color: var(--km-surface) !important;
+	border-color: var(--km-primary) !important;
+	background: var(--km-primary) !important;
+}
+
+/* === Контент — белая карточка (как colors.css .content-wrapper) === */
+.content-wrapper {
+	background: var(--km-surface) !important;
+}
+
+.catalog-item-card {
+	border: 1px solid var(--km-border) !important;
+	background: var(--km-surface) !important;
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.catalog-item-card:hover {
+	border-color: #bae6fd !important;
+	box-shadow: 0 4px 14px rgba(14, 116, 144, 0.12);
+}
+
+.catalog-item-card .item-image {
+	background: var(--km-surface-alt);
+}
+
+.catalog_item_toogle_filter .showfilter {
+	background: var(--km-primary-light) !important;
+	border: 1px solid #a5f3fc !important;
+}
+
+.catalog_item_toogle_filter .showfilter span {
+	color: var(--km-primary-dark) !important;
+	border-bottom-color: var(--km-primary) !important;
+}
+
+.catalog_item_toogle_filter .showfilter i {
+	color: var(--km-primary) !important;
+}
+
+.catalog-section-child a .child {
+	background: var(--km-surface) !important;
+	border: 1px solid var(--km-border) !important;
+}
+
+.catalog-section-child a:hover .child {
+	border-color: #bae6fd !important;
+}
+
+/* === Кнопки === */
+.btn_buy {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+}
+
+.btn_buy i {
+	color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.btn_buy:hover {
+	color: var(--km-surface) !important;
+	background: var(--km-primary-dark) !important;
+}
+
+.btn_buy.boc_anch,
+.btn_buy.subscribe_anch {
+	color: var(--km-text-secondary) !important;
+	background: var(--km-surface-alt) !important;
+	border: 1px solid var(--km-border);
+}
+
+.btn_buy.boc_anch:hover,
+.btn_buy.subscribe_anch:hover {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+}
+
+.btn_buy.apuo,
+.btn_buy.apuo.pcd,
+a.btn_buy.apuo,
+a.btn_buy.apuo.pcd {
+	color: var(--km-primary-dark) !important;
+	background: var(--km-surface) !important;
+	border: 1px solid var(--km-border) !important;
+}
+
+.btn_buy.apuo i,
+.btn_buy.apuo.pcd i,
+.btn_buy.apuo_detail i {
+	color: var(--km-primary) !important;
+}
+
+.btn_buy.apuo span,
+.btn_buy.apuo.pcd span {
+	color: inherit !important;
+}
+
+.btn_buy.apuo:hover,
+.btn_buy.apuo.pcd:hover,
+a.btn_buy.apuo:hover {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+	border-color: var(--km-primary) !important;
+}
+
+.btn_buy.apuo:hover i,
+.btn_buy.apuo.pcd:hover i {
+	color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.btn_buy.apuo_detail {
+	color: var(--km-primary-dark) !important;
+	background: var(--km-surface-alt) !important;
+}
+
+/* === Поиск в шапке === */
+#altop_search form input[type="text"] {
+	color: var(--km-text) !important;
+	border-color: var(--km-border) !important;
+}
+
+#altop_search form input[type="text"]::placeholder {
+	color: var(--km-text-muted);
+}
+
+#altop_search form input[type="submit"] {
+	color: var(--km-primary) !important;
+	border-color: var(--km-primary) !important;
+}
+
+#altop_search form input[type="submit"]:hover {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+	border-color: var(--km-primary) !important;
+}
+
+#altop_search form .fa-search {
+	color: var(--km-text-muted) !important;
+}
+
+/* === Хлебные крошки === */
+.breadcrumb-share {
+	display: block !important;
+	width: 100%;
+	margin: 0 0 12px;
+	padding: 12px 14px;
+	overflow: visible !important;
+	clear: both;
+	border: 1px solid #cbd5e1;
+	border-radius: 6px;
+	background: #eef2f7;
+	box-sizing: border-box;
+}
+
+.breadcrumb {
+	display: flex !important;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	width: 100% !important;
+	max-width: 100%;
+	float: none !important;
+	line-height: 1.6;
+	min-height: 24px;
+	overflow: visible !important;
+}
+
+.breadcrumb::after {
+	content: none;
+}
+
+.breadcrumb__item,
+.breadcrumb__arrow {
+	float: none !important;
+	margin: 0 !important;
+	flex: 0 0 auto;
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text {
+	clear: both;
+	padding: 0 !important;
+	overflow: visible !important;
+}
+
+.breadcrumb__item > .breadcrumb__link,
+.breadcrumb__item > .breadcrumb__title,
+.breadcrumb__item > .breadcrumb__icon_main {
+	font-size: 14px;
+	color: #334155 !important;
+	font-weight: 500;
+}
+
+.breadcrumb__title_main {
+	display: inline !important;
+}
+
+.breadcrumb__item > .breadcrumb__link:hover {
+	color: var(--km-primary) !important;
+}
+
+.breadcrumb__arrow {
+	color: #94a3b8 !important;
+	font-weight: 600;
+}
+
+#pagetitle {
+	clear: both;
+	padding: 4px 0 16px;
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--km-text) !important;
+}
+
+/* Фон body — сразу, не ждать lazyimage/скролл */
+html {
+	background-color: #e2e8f0 !important;
+}
+
+body.km-body-bg,
+body[data-background-image],
+body.agll {
+	background-repeat: repeat !important;
+	background-position: center top !important;
+	background-size: 640px auto !important;
+	background-color: #e2e8f0 !important;
+}
+
+/* === Каталог: разделы, карточки === */
+.catalog-section .catalog-section-title a,
+.catalog-section-child a .child .text {
+	color: var(--km-text) !important;
+}
+
+.catalog-section .catalog-section-title:hover a,
+.catalog-section-child a:hover .child .text {
+	color: var(--km-primary) !important;
+}
+
+.catalog-item-card .item-title a,
+.catalog-item-list .item-title a {
+	color: var(--km-text) !important;
+}
+
+.catalog-item-card .item-title a:hover,
+.catalog-item-list .item-title a:hover {
+	color: var(--km-primary) !important;
+}
+
+.catalog-item-card .price .values_wrapper,
+.catalog-item-list .price .values_wrapper {
+	color: var(--km-text) !important;
+}
+
+/* === Вкладки на главной === */
+.tabs__tab a {
+	color: var(--km-text-muted) !important;
+}
+
+.tabs__tab:hover a,
+.tabs__tab.current a {
+	color: var(--km-primary) !important;
+}
+
+.tabs__tab.current a span {
+	border-color: var(--km-primary) !important;
+}
+
+/* === «Вы смотрели» — нейтральная полоса, не сливается с контентом и подвалом === */
+.already_seen {
+	background: #fff !important;
+	border-top: 1px solid var(--km-border);
+	padding-bottom: 20px;
+	margin-top: 0;
+	width: 100%;
+	clear: both;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.already_seen .center.inner {
+	background: transparent !important;
+}
+
+.already_seen .h3 {
+	color: var(--km-text) !important;
+	font-size: 14px;
+	font-weight: 700;
+	margin: 0;
+	padding: 15px 0 7px 24px !important;
+	border-left: none;
+}
+
+.already_seen ul {
+	width: auto !important;
+	max-width: 100%;
+	float: none !important;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 9px;
+	margin: 0 24px !important;
+	padding: 0 !important;
+	list-style: none;
+	background: none !important;
+	box-sizing: border-box;
+}
+
+.already_seen ul li {
+	width: 68px !important;
+	height: 68px !important;
+	float: none !important;
+	flex: 0 0 68px;
+	margin: 0 !important;
+	padding: 0;
+	border: 1px solid var(--km-border) !important;
+	background: var(--km-surface) !important;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.already_seen ul li:hover {
+	margin: 0 !important;
+	border-color: #94a3b8 !important;
+	box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.already_seen ul li a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+.already_seen ul li a img {
+	max-width: 64px;
+	max-height: 64px;
+}
+
+/* === Подвал — заметно темнее полосы «Вы смотрели» === */
+footer {
+	background: #e2e8f0 !important;
+	border-top: 1px solid #cbd5e1;
+}
+
+footer .center.inner {
+	background: transparent !important;
+}
+
+.footer_menu ul li a {
+	color: var(--km-text-secondary) !important;
+}
+
+.footer_menu ul li a:hover {
+	color: var(--km-primary) !important;
+}
+
+.footer_soc ul li a {
+	background: var(--km-text-muted) !important;
+}
+
+.footer_soc ul li a:hover {
+	background: var(--km-primary) !important;
+}
+
+/* === Панель (мобильная) === */
+.top_panel {
+	background: var(--km-surface-alt) !important;
+	border-bottom: 1px solid var(--km-border);
+}
+
+.top_panel .panel_1 ul.section-vertical li a.showsection,
+.top_panel .panel_2 ul.store-vertical li a.showsubmenu,
+.top_panel .panel_2 ul.store-vertical li ul li a {
+	color: var(--km-text) !important;
+	border-color: var(--km-border) !important;
+}
+
+.top_panel .panel_2 ul.store-vertical li ul li a:hover,
+.top_panel .panel_2 ul.store-vertical li ul li a.root-item-selected {
+	color: var(--km-primary) !important;
+}
+
+.top_panel .panel_3 {
+	border-left-color: var(--km-border) !important;
+}
+
+/* === Прочие элементы со старой палитрой === */
+.personal-user,
+.personal-exit,
+ul.new_leader_disc li {
+	border-color: var(--km-border) !important;
+	background: var(--km-surface-alt) !important;
+}
+
+.personal-user:hover,
+.personal-exit:hover,
+ul.new_leader_disc li:hover {
+	border-color: var(--km-primary) !important;
+	background: var(--km-surface) !important;
+}
+
+.personal-user:hover .personal-user__title,
+ul.new_leader_disc li:hover a .text {
+	color: var(--km-primary) !important;
+}
+
+.city-change .quick-locations__val.active {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+}
+
+/* === Доставка и оплата на карточке товара === */
+.geolocation-delivery__title a span {
+	color: var(--km-primary-dark) !important;
+	border-bottom-color: var(--km-primary) !important;
+}
+
+.geolocation-delivery__title a:hover span {
+	color: var(--km-primary) !important;
+}
+
+.geolocation-delivery__title i {
+	color: var(--km-primary) !important;
+}
+
+.compare-list-result .sort a.sortbutton.current,
+.cart-items .sort a.sortbutton.current {
+	color: var(--km-surface) !important;
+	background: var(--km-primary) !important;
+}
+
+.title-search-result {
+	border-color: var(--km-primary) !important;
+	background: var(--km-surface) !important;
+}
+
+.title-search-result:before {
+	border-bottom-color: var(--km-primary) !important;
+}
+
+.title-search-result:after {
+	border-bottom-color: var(--km-surface) !important;
+}
+
+.title-search-result .search_close {
+	background: var(--km-primary-dark) !important;
+}
+
+.title-search-result .search_close:hover {
+	background: var(--km-accent) !important;
+}
+
+/* === Устойчивая вёрстка при масштабировании (zoom) === */
+/* На широком десктопе (≥1500px) — как на боевом: center 1500px, карточки 294px, float-сетка */
+header .center,
+header.fixed .center.inner,
+header.fixed.fixed_f .center,
+header.fixed.fixed_f .center.inner {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@media (max-width: 1499px) {
+	.page-wrapper,
+	.content-wrapper {
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+
+	.center,
+	.content-wrapper > .center {
+		max-width: min(1234px, 100%);
+		width: 100%;
+		box-sizing: border-box;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media (min-width: 1014px) {
+		/* flex-колонки — см. общий блок @media (min-width: 1014px) ниже по файлу */
+		.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text {
+			clear: both;
+			padding: 0 !important;
+		}
+
+		.catalog-detail-element .catalog-detail {
+			width: 100% !important;
+			max-width: 100%;
+			box-sizing: border-box;
+		}
+	}
+
+	/* Сетка только на контейнере карточек, не на .filtered-items/.bigdata-items */
+	.catalog-item-cards,
+	.catalog-item-table-view {
+		display: grid;
+		width: 100%;
+		float: none;
+		clear: both;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 13px;
+		box-sizing: border-box;
+	}
+
+	@media (min-width: 788px) and (max-width: 1253px) {
+		.catalog-item-cards,
+		.catalog-item-table-view {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 787px) {
+		.catalog-item-cards,
+		.catalog-item-table-view {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 2px;
+		}
+	}
+
+	.filtered-items .catalog-item-card,
+	.bigdata-items .catalog-item-card,
+	.catalog-item-cards .catalog-item-card,
+	.catalog-item-table-view .catalog-item-card,
+	.tabs__box .catalog-item-card,
+	.page-wrapper .catalog-item-table-view .catalog-item-card,
+	.page-wrapper .catalog-item-cards .catalog-item-card {
+		width: 100% !important;
+		max-width: 100%;
+		min-width: 0;
+		float: none !important;
+		margin: 0 !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-item-card:nth-child(4n + 2),
+	.catalog-item-card:nth-child(4n + 3),
+	.catalog-item-card:nth-child(3n + 2),
+	.catalog-item-card:nth-child(3n + 1),
+	.catalog-item-card:nth-child(3n + 3) {
+		margin: 0 !important;
+	}
+}
+
+.promotions-block {
+	overflow: visible;
+}
+
+.promotions-block__title,
+.promotions-block__all-promotions {
+	position: relative;
+	z-index: 1;
+}
+
+.promotions-block__items {
+	overflow: hidden;
+}
+
+.promotions-block__items .anythingSlider,
+.promotions-block__items .anythingSlider.anythingSlider-promotions-block,
+.workarea .anythingSlider.anythingSlider-promotions-block {
+	overflow: hidden !important;
+	max-width: 100%;
+}
+
+.promotions-block__items .anythingWindow {
+	width: 100% !important;
+	max-width: 100%;
+	overflow: hidden !important;
+}
+
+.promotions-block__slider.anythingSlider {
+	width: 100% !important;
+	max-width: 100%;
+}
+
+.workarea .anythingContainer,
+.workarea .anythingSlider,
+.workarea .anythingSlider-default {
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.anythingSlider .anythingWindow {
+	overflow: hidden !important;
+	background: transparent !important;
+}
+
+/* Слайдер главной: lazyimage pixel.gif → белая «плита» поверх контента */
+.workarea > .anythingContainer,
+.workarea > .anythingContainer .anythingSlider,
+.workarea > .anythingContainer .anythingWindow,
+.workarea > .anythingContainer .anythingSliderLi,
+.workarea > .anythingContainer .anythingSliderLi a {
+	background-color: transparent !important;
+}
+
+.workarea > .anythingContainer .anythingSliderLi a[style*="background"] {
+	min-height: 100%;
+}
+
+.page-wrapper,
+.body {
+	overflow-x: hidden;
+}
+
+/* center и контент — не шире окна (admin panel / devtools) */
+.page-wrapper,
+.content-wrapper {
+	max-width: 100vw !important;
+	box-sizing: border-box;
+}
+
+/* .center { display:table } из template_styles схлопывает колонки — пустота справа */
+.center.outer,
+#for-quick-view-header.center.outer {
+	display: block !important;
+	width: min(1234px, calc(100vw - 16px)) !important;
+	max-width: min(1234px, calc(100vw - 16px)) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	box-sizing: border-box;
+}
+
+.page-wrapper > .content-wrapper > .center,
+.content-wrapper > .center,
+.content-wrapper > .center.inner,
+.page-wrapper .center.inner,
+header .center.inner,
+.top_panel .center.inner,
+.top-catalog .center.inner,
+.top-menu .center.inner {
+	display: block !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	box-sizing: border-box;
+}
+
+@media (min-width: 1500px) {
+	.center.outer,
+	#for-quick-view-header.center.outer {
+		width: min(1500px, calc(100vw - 16px)) !important;
+		max-width: min(1500px, calc(100vw - 16px)) !important;
+	}
+}
+
+@media (min-width: 1014px) {
+	.content-wrapper > .center > .content {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: flex-start;
+		gap: 24px;
+		width: 100% !important;
+		max-width: 100% !important;
+		box-sizing: border-box;
+		float: none !important;
+		margin-left: 0 !important;
+	}
+
+	.content-wrapper > .center > .content > .left-column {
+		flex: 0 0 203px;
+		float: none !important;
+		margin: 0 !important;
+	}
+
+	.content-wrapper > .center > .content > .workarea {
+		flex: 1 1 0;
+		min-width: 0;
+		width: auto !important;
+		max-width: none !important;
+		float: none !important;
+		overflow: hidden;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) {
+		display: block !important;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) > .left-column {
+		float: left !important;
+		width: 203px;
+		flex: none;
+		margin: 0 !important;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) > .workarea {
+		float: left !important;
+		width: calc(100% - 227px) !important;
+		flex: none;
+		min-width: 0;
+		overflow: visible;
+	}
+}
+
+/* Карточка товара: CSS Grid — цена всегда справа от галереи, не под ней */
+.catalog-detail-element .catalog-detail,
+.catalog-detail-element > .catalog-detail > .column.second > .catalog-detail {
+	width: 100% !important;
+	max-width: 100% !important;
+	box-sizing: border-box;
+}
+
+@media (min-width: 788px) {
+	.page-wrapper:has(.catalog-detail-element),
+	.content-wrapper:has(.catalog-detail-element) {
+		overflow-x: visible !important;
+	}
+
+	.catalog-detail-element > .catalog-detail {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1fr) clamp(260px, 34%, 450px) !important;
+		gap: 20px;
+		align-items: start;
+		overflow: visible;
+		width: 100% !important;
+		max-width: 100% !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail-element .catalog-detail .column,
+	.catalog-detail-element > .catalog-detail > .column.first,
+	.catalog-detail-element > .catalog-detail > .column.second,
+	.catalog-detail-element .catalog-detail .column.second,
+	.catalog-detail-element .catalog-detail .column.three,
+	.catalog-detail-element > .catalog-detail > .column.second > .catalog-detail .column.three {
+		display: block !important;
+		float: none !important;
+		width: auto !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		margin: 0 !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.first,
+	.catalog-detail-element .catalog-detail .column.first {
+		grid-column: 1 !important;
+		grid-row: 1 !important;
+		position: relative;
+		z-index: 1;
+		overflow: hidden;
+		isolation: isolate;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.second {
+		grid-column: 2 !important;
+		grid-row: 1 !important;
+		position: relative;
+		z-index: 2;
+		width: auto !important;
+		max-width: 100% !important;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.second > .catalog-detail {
+		display: block !important;
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+
+	.catalog-detail-element .catalog-detail-pictures {
+		width: 100% !important;
+		max-width: 100% !important;
+		overflow: hidden;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail-element .catalog-detail-pictures .more_photo {
+		width: 160px !important;
+		max-width: 35% !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail-element .column.first .catalog-detail-pictures .catalog-detail-picture {
+		width: calc(100% - 184px) !important;
+		max-width: 560px !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail-element .detail_picture_pa,
+	.catalog-detail-element .detail_picture_pa .slick-list {
+		max-width: 100% !important;
+		width: 100% !important;
+		box-sizing: border-box;
+	}
+}
+
+@media (min-width: 788px) and (max-width: 1253px) {
+	.catalog-detail-element > .catalog-detail {
+		grid-template-columns: minmax(0, 1fr) clamp(240px, 38%, 320px) !important;
+		gap: 16px !important;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.second {
+		width: auto !important;
+		max-width: 100% !important;
+	}
+
+	.catalog-detail .column.first,
+	.catalog-detail .column.second {
+		width: auto !important;
+		max-width: 100% !important;
+		float: none !important;
+		margin-left: 0 !important;
+	}
+
+	.catalog-detail-element .catalog-detail-pictures .more_photo {
+		width: 100px !important;
+	}
+
+	.catalog-detail-element .column.first .catalog-detail-pictures .catalog-detail-picture {
+		width: calc(100% - 124px) !important;
+		max-width: 440px !important;
+	}
+}
+
+/* Slick до init: не складывать 4 слайда вертикально (3000px «дыра») */
+.catalog-detail-element .detail_picture_pa:not(.slick-initialized) .slick-slide:not(:first-child) {
+	display: none !important;
+}
+.catalog-detail-element .detail_picture_pa:not(.slick-initialized) .slick-track {
+	width: 100% !important;
+	transform: none !important;
+}
+.catalog-detail-element .detail_picture_pa:not(.slick-initialized) .slick-list {
+	overflow: hidden !important;
+	max-height: 747px;
+}
+
+/* Slick fade: слайды = ширина .slick-list, не сумма трека */
+.catalog-detail-element .detail_picture_pa.slick-slider {
+	overflow: hidden;
+	max-width: 100%;
+}
+
+.catalog-detail-element .detail_picture_pa .slick-list {
+	width: 100% !important;
+	overflow: hidden !important;
+}
+
+.catalog-detail-element .detail_picture_pa.slick-initialized .slick-track {
+	width: 100% !important;
+	transform: none !important;
+}
+
+.catalog-detail-element .detail_picture_pa.slick-initialized .slick-slide {
+	float: none !important;
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+.catalog-detail-element .detail_picture_pa.slick-initialized .slick-slide:not(.slick-active) {
+	position: absolute !important;
+	top: 0 !important;
+	left: 0 !important;
+}
+
+.catalog-detail-element .detail_picture_pa.slick-initialized .slick-slide.slick-active {
+	position: relative !important;
+}
+
+.catalog-detail-element .detail_picture_pa .slick-slide img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0 auto;
+}
+
+/* Десктоп/планшет с боковым меню */
+@media (min-width: 788px) {
+	.content-wrapper > .center > .content:has(.catalog-detail-element) {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element)::after {
+		content: '';
+		display: block;
+		clear: both;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) > .left-column {
+		float: left;
+		width: 203px;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) > .workarea {
+		float: left;
+		width: calc(100% - 227px);
+		min-width: 0;
+		box-sizing: border-box;
+	}
+}
+
+/* Мобильная: без сайдбара, workarea на всю ширину */
+@media screen and (max-width: 787px) {
+	.content-wrapper > .center > .content:has(.catalog-detail-element) > .workarea {
+		width: 100% !important;
+		float: none !important;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text {
+		display: block;
+		padding: 0 !important;
+	}
+
+	.catalog-detail-element > .catalog-detail {
+		display: block !important;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.first,
+	.catalog-detail-element > .catalog-detail > .column.second {
+		width: 100% !important;
+		max-width: 100% !important;
+		float: none !important;
+		margin-left: 0 !important;
+	}
+
+	.catalog-detail-element .column.first .catalog-detail-pictures .catalog-detail-picture {
+		max-width: 100% !important;
+		width: 100% !important;
+	}
+
+	.breadcrumb-share {
+		padding: 8px 10px;
+		margin-bottom: 8px;
+	}
+
+	.breadcrumb {
+		display: block !important;
+		flex-wrap: nowrap !important;
+		white-space: nowrap !important;
+		overflow-x: auto !important;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.breadcrumb::-webkit-scrollbar {
+		display: none;
+	}
+
+	.breadcrumb__item,
+	.breadcrumb__arrow {
+		display: inline !important;
+		float: none !important;
+	}
+
+	#pagetitle {
+		font-size: 18px;
+		padding: 4px 0 12px;
+	}
+}
+
+/* Без щели паттерна между «Похожие товары» и «Вы смотрели» */
+.content-wrapper:has(.catalog-detail-element) {
+	padding-bottom: 0 !important;
+}
+
+.page-wrapper:has(.catalog-detail-element) .already_seen {
+	margin-top: 0 !important;
+	border-top: 1px solid var(--km-border);
+}
+
+/* «Товар добавлен в корзину» — крестик внутри шапки, не за краем окна */
+#addItemInCart.popup-window,
+.pop-up.modal.popup-window {
+	overflow: visible;
+}
+
+#addItemInCart .popup-window-titlebar,
+.pop-up.modal .popup-window-titlebar {
+	background: var(--km-primary) !important;
+	padding-right: 48px !important;
+}
+
+#addItemInCart .popup-window-close-icon,
+.pop-up.modal .popup-window-close-icon {
+	top: 10px !important;
+	right: 12px !important;
+	left: auto !important;
+	width: 28px !important;
+	height: 28px !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	border-radius: 50% !important;
+	background: rgba(255, 255, 255, 0.22) !important;
+	box-sizing: border-box;
+	opacity: 1;
+}
+
+#addItemInCart .popup-window-close-icon:hover,
+.pop-up.modal .popup-window-close-icon:hover {
+	background: rgba(255, 255, 255, 0.38) !important;
+}
+
+#addItemInCart .popup-window-close-icon i,
+.pop-up.modal .popup-window-close-icon i {
+	display: block !important;
+	font-size: 14px !important;
+	line-height: 1 !important;
+	color: #fff !important;
+}
+
+/* «Похожие товары» на карточке: float-сетка шаблона (236px), не CSS grid из каталога */
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items {
+	width: 100%;
+	float: left;
+	clear: both;
+	overflow: visible;
+	margin-top: 12px;
+	margin-bottom: 0;
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-cards {
+	display: block !important;
+	width: 100%;
+	float: left;
+	clear: both;
+	grid-template-columns: none !important;
+	gap: 0 !important;
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card {
+	width: 236px !important;
+	max-width: none !important;
+	float: left !important;
+	margin: 0 0 13px 0 !important;
+	height: auto !important;
+	box-sizing: border-box;
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card:nth-child(4n + 2) {
+	margin: 0 13px 13px 13px !important;
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card:nth-child(4n + 3) {
+	margin: 0 13px 13px 0 !important;
+}
+
+@media screen and (max-width: 787px) {
+	.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card {
+		width: calc(50% - 8px) !important;
+		margin: 0 4px 8px 0 !important;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card:nth-child(4n + 2),
+	.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card:nth-child(4n + 3) {
+		margin: 0 4px 8px 0 !important;
+	}
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card .item-image {
+	height: 301px !important;
+	overflow: hidden !important;
+}
+
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card .infographics img,
+.content-wrapper > .center > .content:has(.catalog-detail-element) .body_text > .filtered-items .catalog-item-card .item-image a img {
+	max-height: 301px !important;
+	min-width: 0 !important;
+	width: auto !important;
+	max-width: 100% !important;
+	object-fit: contain;
+}
+
+/* template_styles @1500px: .content 1476px / .workarea 1230px ломают anythingSlider (слайд x:-770) */
+@media (min-width: 788px) and (max-width: 1013px) {
+	.page-wrapper .workarea,
+	.content-wrapper .workarea {
+		width: calc(100% - 227px) !important;
+		max-width: calc(100% - 227px) !important;
+		box-sizing: border-box;
+	}
+}
+
+@media (min-width: 788px) {
+	.page-wrapper .content,
+	.content-wrapper .content {
+		width: 100% !important;
+		max-width: 100% !important;
+		margin-left: 0 !important;
+		box-sizing: border-box;
+	}
+
+	.workarea > .anythingContainer,
+	.workarea > .anythingContainer .anythingSlider:not(.anythingBase),
+	.workarea > .anythingContainer .anythingWindow {
+		width: 100% !important;
+		max-width: 100% !important;
+		box-sizing: border-box;
+	}
+
+	/* anythingBase = ul с N слайдами; width:100% схлопывает float-панели → белая «дыра» */
+	.workarea > .anythingContainer .anythingBase {
+		width: auto !important;
+		max-width: none !important;
+	}
+
+	.workarea > .anythingContainer .anythingSliderLi {
+		width: auto;
+		max-width: none;
+	}
+
+	.content-wrapper > .center > .content:has(.catalog-detail-element) > .workarea {
+		width: calc(100% - 227px) !important;
+		max-width: calc(100% - 227px) !important;
+		float: left !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail-element .catalog-detail .column.first,
+	.catalog-detail-element .catalog-detail .column.second,
+	.catalog-detail-element .catalog-detail .column.three {
+		width: auto !important;
+		max-width: none !important;
+		float: none !important;
+		margin-left: 0 !important;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.three {
+		grid-column: 2 !important;
+		grid-row: 2 !important;
+	}
+}
+
+@media (min-width: 788px) and (max-width: 1499px) {
+	.catalog-detail-element .catalog-detail .column.first,
+	.catalog-detail-element > .catalog-detail > .column.first {
+		width: auto !important;
+		max-width: none !important;
+	}
+
+	.catalog-detail-element .catalog-detail .column.second,
+	.catalog-detail-element > .catalog-detail > .column.second {
+		width: auto !important;
+		max-width: none !important;
+	}
+
+	.catalog-detail-element .column.first .catalog-detail-pictures .catalog-detail-picture {
+		width: calc(100% - 124px) !important;
+		max-width: 100% !important;
+	}
+}

@@ -22,4 +22,7 @@ foreach($arResult["SECTIONS"] as $key => $arSection) {
 			);
 		}
 	}
-}?>
+}
+
+ksSortSectionsByName($arResult["SECTIONS"]);
+?>

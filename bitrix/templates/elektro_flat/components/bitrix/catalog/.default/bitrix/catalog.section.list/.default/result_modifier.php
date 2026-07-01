@@ -13,6 +13,8 @@ endforeach;
  
 $arResult["SECTIONS"] = $arSections;
 
+ksSortSectionsByName($arResult["SECTIONS"]);
+
 foreach($arResult["SECTIONS"] as $key => $arSection):	
 	if(isset($arSection["CHILDREN"]) && count($arSection["CHILDREN"]) > 0):
 		foreach($arSection["CHILDREN"] as $keyChild => $arChild):

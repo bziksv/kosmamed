@@ -23,6 +23,23 @@ $APPLICATION->AddHeadString('
 				"autoPlayLocked": '.$autoplay.',
 				"resizeContents": true,
 				"onInitialized": function(e, slider) {
+					if (typeof window.kmApplyLazyBackgrounds === "function") {
+						window.kmApplyLazyBackgrounds(slider.$el && slider.$el[0] ? slider.$el[0] : null);
+					}
+					if (typeof slider.setDimensions === "function") {
+						slider.setDimensions();
+					}
+					slider.startStop(false);
+					slider.gotoPage(1, false);
+					setTimeout(function() {
+						if (typeof slider.setDimensions === "function") {
+							slider.setDimensions();
+						}
+						slider.gotoPage(1, false);
+						if (typeof window.kmApplyLazyBackgrounds === "function") {
+							window.kmApplyLazyBackgrounds(slider.$el[0]);
+						}
+					}, 100);
 					if(!!slider.$currentPage.data("prop") || (!!slider.$el.find("li").data("prop") && slider.$items.length == 1)) {
 						var prop = slider.$currentPage.data("prop")? eval("("+slider.$currentPage.data("prop")+")"): eval("("+slider.$el.find("li").data("prop")+")");
 						
@@ -59,7 +76,7 @@ $APPLICATION->AddHeadString('
 			});
 			
 			$(window).resize(function () {
-				currentWidth = $(".content-wrapper").children(".center").width();
+				currentWidth = $(".workarea").first().width() || $(".content-wrapper").children(".center").width();
 				if(currentWidth < "768") {
 					$(".anythingContainer").css({
 						"height": currentWidth * '.$coeff.' + "px"
@@ -67,6 +84,12 @@ $APPLICATION->AddHeadString('
 				} else {
 					$(".anythingContainer").removeAttr("style");
 				}
+				$(".anythingSlider").each(function () {
+					var slider = $(this).data("AnythingSlider");
+					if (slider && typeof slider.setDimensions === "function") {
+						slider.setDimensions();
+					}
+				});
 			});
 			$(window).resize();
 		});

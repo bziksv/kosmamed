@@ -20,16 +20,6 @@ $inQuickView = in_array("QUICK_VIEW", $arSetting["GENERAL_SETTINGS"]["VALUE"]);
 
 //ITEMS//?>
 
-<?
-if($arElement["MIN_PRICE"]["BASE_PRICE"]==888888888 || $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["BASE_PRICE"]==888888888) {
-	$arElement["CAN_BUY"]=false;
-	$arElement["TOTAL_OFFERS"]["QUANTITY"]=0;
-	$arElement["TOTAL_OFFERS"]["MIN_PRICE"]["RATIO_PRICE"]=0;
-	$arElement["MIN_PRICE"]["RATIO_PRICE"]=0;
-	$sticker=false;
-}
-?>
-
 <div class="filtered-items">
 	<?if(!empty($arParams["PAGER_TITLE"])) {?>
 		<div class="h3"><?=$arParams["PAGER_TITLE"]?></div>

@@ -32,6 +32,15 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/xml_id.p
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/hide_item_sect.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/hide_item_sect.php');
 }
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/ks_phone.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/ks_phone.php');
+}
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/ks_catalog.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/ks_catalog.php');
+}
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed_body_bg.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed_body_bg.php');
+}
 function isWrapAttr($current, $target)
 {
     if($current < $target)

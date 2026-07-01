@@ -245,6 +245,20 @@ Loc::loadMessages(__FILE__);?>
 <noscript><div><img src="https://mc.yandex.ru/watch/93152340" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
 
+<?if(!empty($arSetting["SITE_BACKGROUND"]["VALUE"]) && $arSetting["SITE_BACKGROUND"]["VALUE"] == "Y" && !empty($arSetting["SITE_BACKGROUND_PICTURE"]["VALUE"])):
+	$kmBgFile = CFile::GetFileArray($arSetting["SITE_BACKGROUND_PICTURE"]["VALUE"]);
+	if(is_array($kmBgFile)):?>
+<style id="km-force-body-bg">
+body {
+	background-image: url('<?=CHTTP::urnEncode($kmBgFile["SRC"], "UTF-8")?>') !important;
+	background-repeat: repeat !important;
+	background-position: center top !important;
+	background-size: 640px auto !important;
+	background-color: #e2e8f0 !important;
+}
+</style>
+<?endif;
+endif;?>
 
 </body>
 </html>

@@ -108,10 +108,12 @@ foreach($arResult as $key => $arItem) {
 
 foreach($arResultNew as $key => $arItem) {
 	if($arItem["L2"]){
-		ksort($arItem["L2"]);
+		ksSortByNameKey($arItem["L2"]);
 		$arResultNew[$key]["L2"] = $arItem["L2"];
 	}
 }
+
+ksSortByNameKey($arResultNew);
 
 foreach($arResultNew as $key => $arItem) {
 

@@ -23,12 +23,13 @@ if($arParams["SHOW_INPUT"] !== "N"):?>
 	</div>
 <?endif?>
 
+<?php
+// КосмаМед: штатный JCTitleSearch отключён — используем собственный
+// live-поиск (подстрока + опечатки, выпадашка на всю ширину в две колонки).
+\Bitrix\Main\Page\Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/ks-livesearch.js");
+?>
 <script type="text/javascript">
-	var jsControl = new JCTitleSearch({
-		'WAIT_IMAGE': '/bitrix/themes/.default/images/wait.gif',
-		'AJAX_PAGE' : '<?=POST_FORM_ACTION_URI?>',
-		'CONTAINER_ID': '<?=$CONTAINER_ID?>',
-		'INPUT_ID': '<?=$INPUT_ID?>',
-		'MIN_QUERY_LEN': 3
-	});
+	if (window.KSLiveSearch) {
+		window.KSLiveSearch.init(document.getElementById('<?=$INPUT_ID?>'));
+	}
 </script>

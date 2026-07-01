@@ -1,1 +1,1 @@
-<span style="font-family: &quot;Arial Black&quot;, Gadget; font-size: 36pt; color=#8184a1"><a href="/">КосмаМед</a></span>
+<span style="font-family: &quot;Arial Black&quot;, Gadget; font-size: 36pt; color: #155e75"><a href="/">КосмаМед</a></span>

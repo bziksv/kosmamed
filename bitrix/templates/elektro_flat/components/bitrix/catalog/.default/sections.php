@@ -10,13 +10,16 @@ $this->setFrameMode(true);?>
 		"CACHE_TIME" => $arParams["CACHE_TIME"],
 		"CACHE_GROUPS" => $arParams["CACHE_GROUPS"],		
 		"TOP_DEPTH" => 2,
-		"SECTION_FIELDS" => array(),
+		"SECTION_FIELDS" => array(
+			0 => "PICTURE",
+		),
 		"SECTION_USER_FIELDS" => array(
 			0 => "UF_ICON"
 		),
 		"SECTION_URL" => $arResult["FOLDER"].$arResult["URL_TEMPLATES"]["section"],
 		"DISPLAY_IMG_WIDTH" => 50,
-		"DISPLAY_IMG_HEIGHT" => 50
+		"DISPLAY_IMG_HEIGHT" => 50,
+		"CUSTOM_SECTION_SORT" => array("NAME" => "asc")
 	),
 	$component,
 	array("HIDE_ICONS" => "Y")
