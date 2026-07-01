@@ -359,7 +359,7 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 					<div class="panel_3">
 						<ul class="contacts-vertical">
 							<li>
-								<a class="showcontacts" href="tel:<?=htmlspecialcharsbx(ksMainPhoneTel())?>"><i class="fa fa-phone"></i></a>
+								<a class="showcontacts" href="tel:<?=htmlspecialcharsbx(function_exists('ksMainPhoneTel') ? ksMainPhoneTel() : '+74991120845')?>"><i class="fa fa-phone"></i></a>
 							</li>
 						</ul>
 					</div>

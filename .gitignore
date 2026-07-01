@@ -5,9 +5,12 @@
 # --- медиа (управляется МойСклад/1С) ---
 upload/*
 
-# --- php_interface: только init.php в git, остальное (вкл. dbconn.php) — нет ---
+# --- php_interface: init.php + кастомные include (dbconn.php и пр. — нет) ---
 bitrix/php_interface/*
 !/bitrix/php_interface/init.php
+!/bitrix/php_interface/include/ks_phone.php
+!/bitrix/php_interface/include/ks_catalog.php
+!/bitrix/php_interface/include/kosmamed_body_bg.php
 
 # --- СЕКРЕТЫ ---
 bitrix/.settings.php
