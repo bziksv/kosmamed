@@ -8,9 +8,12 @@ upload/*
 # --- php_interface: init.php + кастомные include (dbconn.php и пр. — нет) ---
 bitrix/php_interface/*
 !/bitrix/php_interface/init.php
+!/bitrix/php_interface/include/
 !/bitrix/php_interface/include/ks_phone.php
 !/bitrix/php_interface/include/ks_catalog.php
 !/bitrix/php_interface/include/kosmamed_body_bg.php
+!/bitrix/php_interface/include/kosmamed_perf.php
+!/bitrix/php_interface/include/km_section_preview.php
 
 # --- СЕКРЕТЫ ---
 bitrix/.settings.php
