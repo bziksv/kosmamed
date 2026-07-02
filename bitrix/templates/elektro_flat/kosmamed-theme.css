@@ -500,20 +500,31 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 .catalog-item-card .item-image {
 	background: var(--km-surface) !important;
 	display: flex !important;
-	align-items: center;
-	justify-content: center;
-	height: 301px !important;
-	min-height: 301px !important;
-	max-height: 301px !important;
+	align-items: stretch;
+	justify-content: stretch;
+	/* Единая высота блока фото — цена/корзина в ряду на одном уровне */
+	aspect-ratio: 588 / 784;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
 	padding: 0 !important;
 	overflow: hidden;
 	flex-shrink: 0;
 	box-sizing: border-box;
 }
 
+/* legacy selector kept for specificity over template_styles */
+.catalog-item-card .item-image:has(a.infographics) {
+	aspect-ratio: 588 / 784;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
+}
+
 .catalog-item-card .item-image-cont {
 	flex-shrink: 0;
 	width: 100% !important;
+	overflow: hidden;
 }
 
 .catalog-item-card .infographics.item-image,
@@ -526,61 +537,279 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	display: block !important;
 	width: 100%;
 	height: 100%;
+	position: relative;
+}
+
+/* Hover-зоны — невидимы, не перекрывают точки slick */
+.catalog-item-card .item-image .magic_slide_b {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 22px;
+	z-index: 2;
+	opacity: 0;
+}
+
+/* Точки slick — на всех ширинах (в template_styles только max-width:1253px) */
+.catalog-item-card .item-image .magic_slide_ss .slick-dots {
+	z-index: 3;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	text-align: center;
+	list-style: none;
+	line-height: 0;
+}
+
+.catalog-item-card .item-image .magic_slide_ss .slick-dots li {
+	display: inline-block;
+	background: #dee0ee;
+	border-radius: 50%;
+	width: 5px;
+	height: 5px;
+	margin: 0 2px;
+	padding: 0;
+	list-style: none;
+	font-size: 0;
+	line-height: 0;
+}
+
+.catalog-item-card .item-image .magic_slide_ss .slick-dots li.slick-active {
+	background: #8b92a5;
+}
+
+.catalog-item-card .item-image .magic_slide_ss .slick-dots li button {
+	display: none !important;
+	font-size: 0;
+	line-height: 0;
+	padding: 0;
+	border: 0;
 }
 
 .catalog-item-card .item-image a:not(.infographics) {
 	display: flex !important;
 	align-items: stretch;
-	justify-content: center;
+	justify-content: stretch;
 }
 
-.catalog-item-card .item-image a img,
-.catalog-item-card .infographics img,
-.catalog-item-card .magic_slide_s img,
-.catalog-item-card .item_img {
+.catalog-item-card .item-image a.infographics {
+	display: flex !important;
+	align-items: stretch;
+	justify-content: stretch;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+/* Обычные фото товара — целиком в блоке */
+.catalog-item-card .item-image a:not(.infographics) img,
+.catalog-item-card .item-image a:not(.infographics) .magic_slide_s img,
+.catalog-item-card .item-image a:not(.infographics) .item_img {
 	width: 100% !important;
 	max-width: 100% !important;
 	height: 100% !important;
 	max-height: 100% !important;
+	min-width: 0 !important;
 	object-fit: contain;
-	object-position: top center;
+	object-position: center center;
+	transform: none;
+}
+
+/* Инфографика — на всю ширину блока, без обрезки фрагмента */
+.catalog-item-card .item-image a.infographics img,
+.catalog-item-card .item-image a.infographics .magic_slide_s img,
+.catalog-item-card .item-image a.infographics .item_img {
+	width: 100% !important;
+	max-width: 100% !important;
+	min-width: 0 !important;
+	height: 100% !important;
+	max-height: 100% !important;
+	object-fit: contain !important;
+	object-position: center center;
+	transform: none !important;
 }
 
 .catalog-item-card .catalog-item-info {
 	display: flex;
 	flex-direction: column;
 	float: none !important;
-	height: auto !important;
+	min-height: 0;
 }
 
 .catalog-item-card .items_block_desc {
-	flex: 1 1 auto;
+	flex: 0 1 auto;
 	display: flex;
 	flex-direction: column;
+	min-height: 0;
+}
+
+.catalog-item-card .item-price-cont {
+	margin-top: auto;
+	flex-shrink: 0;
 }
 
 .catalog-item-card .buy_more {
-	margin-top: auto;
+	margin-top: 0;
+	flex-shrink: 0;
+	position: relative;
 }
 
-.catalog-item-card .magic_slide_ss,
-.catalog-item-card .magic_slide_s {
+/* Каталог: одинаковая высота карточек в ряду, цена/корзина внизу */
+@media (min-width: 788px) {
+	.catalog-item-table-view {
+		display: grid !important;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 14px;
+		float: none !important;
+		width: 100% !important;
+		align-items: stretch;
+	}
+
+	.catalog-item-table-view > .catalog-item-card {
+		float: none !important;
+		width: auto !important;
+		margin: 0 !important;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
+
+	.catalog-item-table-view > .catalog-item-card .catalog-item-info {
+		flex: 1 1 auto;
+		display: flex !important;
+		flex-direction: column;
+		height: 100% !important;
+		min-height: 0;
+	}
+
+	.catalog-item-table-view > .catalog-item-card .buy_more .add2basket_block {
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+	}
+
+	.filtered-items .catalog-item-cards {
+		display: grid !important;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 14px;
+		float: none !important;
+		width: 100% !important;
+		align-items: stretch;
+	}
+
+	.filtered-items .catalog-item-cards > .catalog-item-card {
+		float: none !important;
+		width: auto !important;
+		margin: 0 !important;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
+
+	.filtered-items .catalog-item-cards > .catalog-item-card .catalog-item-info {
+		flex: 1 1 auto;
+		display: flex !important;
+		flex-direction: column;
+		height: 100% !important;
+		min-height: 0;
+	}
+
+	.filtered-items .catalog-item-cards > .catalog-item-card .buy_more .add2basket_block {
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+	}
+}
+
+@media (min-width: 1500px) {
+	.catalog-item-table-view,
+	.filtered-items .catalog-item-cards {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+.catalog-item-card .magic_slide_ss {
 	width: 100% !important;
 	height: 100% !important;
 	max-width: 100% !important;
+	max-height: 100% !important;
 }
 
-.catalog-item-card .item-image .slick-slide {
+/* До init slick — один кадр на всю ширину */
+.catalog-item-card .magic_slide_ss:not(.slick-initialized) .magic_slide_s {
+	width: 100% !important;
 	height: 100% !important;
+}
+
+/* После init ширину задаёт slick (inline px) — не перебивать width:100% */
+.catalog-item-card .magic_slide_ss.slick-initialized .magic_slide_s.slick-slide {
+	height: 100% !important;
+	min-width: 0 !important;
+	overflow: hidden !important;
+	box-sizing: border-box !important;
+}
+
+.catalog-item-card .magic_slide_ss.slick-slider {
+	position: relative;
+	width: 100% !important;
+	overflow: hidden;
+}
+
+.catalog-item-card .item-image .magic_slide_ss .slick-track {
 	display: block !important;
+	height: 100% !important;
 }
 
 .catalog-item-card .item-image .slick-track {
 	height: 100% !important;
 }
 
+.catalog-item-card .item-image .slick-slide {
+	height: 100% !important;
+	overflow: hidden !important;
+	min-width: 0 !important;
+	box-sizing: border-box !important;
+}
+
+.catalog-item-card .item-image .slick-slide > div {
+	height: 100%;
+	min-width: 0;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.catalog-item-card .item-image .slick-slide .magic_slide.item_img,
+.catalog-item-card .slick-slider .magic_slide.item_img {
+	display: block !important;
+	width: 100% !important;
+	height: 100% !important;
+	max-width: 100% !important;
+	max-height: 100% !important;
+	min-width: 0 !important;
+}
+
+/* До инициализации slick — только первый кадр */
+.catalog-item-card .magic_slide_ss:not(.slick-initialized) .magic_slide_s ~ .magic_slide_s {
+	display: none;
+}
+
 .catalog-item-card .item-image .slick-list {
 	height: 100% !important;
+	overflow: hidden !important;
+	width: 100% !important;
+}
+
+/* Slick-точки вместо дублирующих magic_slide_p */
+.catalog-item-card .magic_slide_ss.slick-initialized ~ .magic_slide_p {
+	display: none !important;
 }
 
 .catalog_item_toogle_filter .showfilter {
@@ -901,6 +1130,50 @@ a.btn_buy.apuo:hover {
 		float: none !important;
 		width: 100% !important;
 		min-width: 0 !important;
+	}
+}
+
+/* Карточка товара — мобилка: блок цены не вылезает за белую колонку на фон body */
+@media screen and (max-width: 787px) {
+	.catalog-detail-element > .catalog-detail {
+		display: flex !important;
+		flex-direction: column !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	.catalog-detail-element > .catalog-detail > .column.first,
+	.catalog-detail-element > .catalog-detail > .column.second,
+	.catalog-detail .column.three,
+	.catalog-detail .column.second .catalog-detail .column.three,
+	.column.second .catalog-detail {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		float: none !important;
+		margin-left: 0 !important;
+		box-sizing: border-box;
+	}
+
+	.catalog-detail .column.first {
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+
+	.catalog-detail .price_buy_detail {
+		width: 100% !important;
+		max-width: 100% !important;
+		margin: 12px 0 0 !important;
+		padding: 16px 12px !important;
+		box-sizing: border-box !important;
+	}
+
+	.catalog-detail .price_buy_detail > div {
+		width: 100% !important;
+		max-width: 100% !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
 	}
 }
 

@@ -48,18 +48,30 @@ foreach($arResult as $key => $arItem) {
 
 	$arResult[$key]["PARAMS"]["URL"] = $arPage[1];
 	if($arItem["DEPTH_LEVEL"] == 2) {
-		if($arItem["PARAMS"]["PICTURE"] > 0) {		
-			$arFileTmp = CFile::ResizeImageGet(
-				$arItem["PARAMS"]["PICTURE"],
-				array("width" => 50, "height" => 50),
-				BX_RESIZE_IMAGE_PROPORTIONAL,
-				true
-			);
-			$arResult[$key]["PICTURE"] = array(
-				"SRC" => $arFileTmp["src"],
-				"WIDTH" => $arFileTmp["width"],
-				"HEIGHT" => $arFileTmp["height"],
-			);
+		$pictureId = (int)($arItem["PARAMS"]["PICTURE"] ?? 0);
+		if ($pictureId <= 0 && empty($arItem["PARAMS"]["ICON"]) && !empty($arResult[$key]["ID"]) && function_exists('kmSectionPreviewFileId')) {
+			$pictureId = kmSectionPreviewFileId((int)$arResult[$key]["ID"]);
+		}
+		if ($pictureId > 0) {
+			$preview = function_exists('kmSectionPreviewResize')
+				? kmSectionPreviewResize($pictureId)
+				: null;
+			if ($preview === null) {
+				$arFileTmp = CFile::ResizeImageGet(
+					$pictureId,
+					array("width" => 50, "height" => 50),
+					BX_RESIZE_IMAGE_PROPORTIONAL,
+					true
+				);
+				$preview = array(
+					"SRC" => $arFileTmp["src"],
+					"WIDTH" => $arFileTmp["width"],
+					"HEIGHT" => $arFileTmp["height"],
+				);
+			}
+			if (!empty($preview["SRC"])) {
+				$arResult[$key]["PICTURE"] = $preview;
+			}
 		}
 	}
 }

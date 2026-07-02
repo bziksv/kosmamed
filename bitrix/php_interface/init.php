@@ -41,6 +41,12 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/ks_catal
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed_body_bg.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed_body_bg.php');
 }
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed_perf.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed_perf.php');
+}
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_section_preview.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_section_preview.php');
+}
 function isWrapAttr($current, $target)
 {
     if($current < $target)

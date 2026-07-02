@@ -97,7 +97,7 @@ while ($ob = $res->GetNext())
 						<?
 						foreach ($arPHOTOp as $key => $arFoto) {?>
 							<div class="magic_slide_s">
-								<img data-slider="<?=$key?>" class="magic_slide item_img" <?if($key!=0):?>style="display: none;"<?endif;?> src="<?=$arFoto['SRC']?>" width="100%" height="<?=$arElement['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
+								<img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="100%" height="<?=$arElement['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
 							</div>
 						<?
 						}
@@ -199,7 +199,7 @@ while ($ob = $res->GetNext())
 						<?
 						foreach ($arPHOTOp as $key => $arFoto) {?>
 							<div class="magic_slide_s">
-								<img data-slider="<?=$key?>" class="magic_slide item_img" <?if($key!=0):?>style="display: none;"<?endif;?> src="<?=$arFoto['SRC']?>" width="100%" height="<?=$arElement['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
+								<img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="100%" height="<?=$arElement['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
 							</div>
 						<?
 						}

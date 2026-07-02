@@ -1441,6 +1441,10 @@ $arResult["PROPERTIES"]["ARTNUMBER"] = $arResult["PROPERTIES"]["CML2_ARTICLE"];
 
 $arResult["NOINDEX"] = $arResult["PROPERTIES"]["NOINDEX"]["VALUE"];
 
+if (!empty($arResult['DETAIL_IMG']['SRC']) && function_exists('kmSetLcpPreload')) {
+	kmSetLcpPreload((string)$arResult['DETAIL_IMG']['SRC']);
+}
+
 //CACHE_KEYS//
 $this->__component->SetResultCacheKeys(
 	array(

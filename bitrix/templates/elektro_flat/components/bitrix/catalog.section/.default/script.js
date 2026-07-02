@@ -148,14 +148,23 @@ $('.catalog-item-card').height(h);
 							this.processShowMoreAction(result);
 						}, this)
 					);
-    if (window.innerWidth < 1253) {
-	    $('.item-image .magic_slide_ss:not(.slick-slider)').slick({
-	        dots: false,
-	        arrows: false,
-	        infinite: false,
-	        slidesToShow: 1,
-	        slidesToScroll: 1
+    if (typeof initCatalogCardSliders === 'function') {
+	    initCatalogCardSliders();
+    } else {
+	    $('.catalog-item-card .item-image .magic_slide_ss:not(.slick-slider)').each(function () {
+	        var $slider = $(this);
+	        $slider.find('.magic_slide.item_img').css('display', '');
+	        $slider.slick({
+	            dots: true,
+	            arrows: false,
+	            infinite: false,
+	            slidesToShow: 1,
+	            slidesToScroll: 1
+	        });
 	    });
+    }
+    if (typeof kmInitCatalogDeferredImages === 'function') {
+	    kmInitCatalogDeferredImages();
     }
 
 

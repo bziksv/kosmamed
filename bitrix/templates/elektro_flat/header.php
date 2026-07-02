@@ -25,31 +25,66 @@ Loc::loadMessages(__FILE__);?>
 	$APPLICATION->SetPageProperty("ogimage", (CMain::IsHTTPS()? 'https' : 'http')."://".SITE_SERVER_NAME.SITE_TEMPLATE_PATH."/images/apple-touch-icon-144.png");
 	$APPLICATION->SetPageProperty("ogimagewidth", "144");
 	$APPLICATION->SetPageProperty("ogimageheight", "144");
-	Asset::getInstance()->addCss("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+
+	$kmTplPath = SITE_TEMPLATE_PATH;
+	$kmIsHome = ($APPLICATION->GetCurPage(true) === SITE_DIR . "index.php");
+	$kmIsCatalog = CSite::InDir(SITE_DIR . "catalog/");
+	$kmIsProduct = CSite::InDir(SITE_DIR . "product/");
+	$kmIsCatalogLike = $kmIsCatalog || $kmIsProduct;
+	$kmNeedsSlider = $kmIsHome || $kmIsCatalog;
+	$kmNeedsFancybox = $kmIsCatalogLike;
+	$kmNeedsCountdown = $kmIsHome || $kmIsCatalogLike;
+	$kmNeedsSlick = $kmIsCatalogLike;
+	$GLOBALS['kmIsHome'] = $kmIsHome;
+	$GLOBALS['kmIsCatalogLike'] = $kmIsCatalogLike;
+	$GLOBALS['kmIsProduct'] = $kmIsProduct;
+	if ($kmIsCatalogLike && !defined('BX_PULL_SKIP_INIT')) {
+		define('BX_PULL_SKIP_INIT', true);
+	}
+
+	Asset::getInstance()->addCss("/bitrix/css/main/font-awesome.min.css");
 	if(!CModule::IncludeModule("altop.elastofont"))
 		// TODO Asset::getInstance()->addCss("https://d1azc1qln24ryf.cloudfront.net/130672/ELASTOFONT/style-cf.css?xk463o");
-	Asset::getInstance()->addCss("https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=latin,cyrillic-ext");
-	Asset::getInstance()->addCss(SITE_TEMPLATE_PATH."/colors.css");
+	Asset::getInstance()->addCss($kmTplPath."/colors.css");
 
-	Asset::getInstance()->addCss(SITE_TEMPLATE_PATH."/js/anythingslider/slider.css");
-	Asset::getInstance()->addCss(SITE_TEMPLATE_PATH."/js/custom-forms/custom-forms.css");
-	Asset::getInstance()->addCss(SITE_TEMPLATE_PATH."/js/fancybox/jquery.fancybox-1.3.1.css");
-	Asset::getInstance()->addCss(SITE_TEMPLATE_PATH."/js/spectrum/spectrum.css");
-	Asset::getInstance()->addCss(SITE_TEMPLATE_PATH."/css/slick.css");
+	if ($kmNeedsSlider) {
+		Asset::getInstance()->addCss($kmTplPath."/js/anythingslider/slider.css");
+		Asset::getInstance()->addJs($kmTplPath."/js/anythingslider/jquery.easing.1.2.js");
+		Asset::getInstance()->addJs($kmTplPath."/js/anythingslider/jquery.anythingslider.min.js");
+	}
+
+	if ($kmIsHome && function_exists('kmDeferStylesheet')) {
+		kmDeferStylesheet($kmTplPath . "/js/custom-forms/custom-forms.css");
+	} else {
+		Asset::getInstance()->addCss($kmTplPath."/js/custom-forms/custom-forms.css");
+	}
+
+	if ($kmNeedsFancybox) {
+		Asset::getInstance()->addCss($kmTplPath."/js/fancybox/jquery.fancybox-1.3.1.css");
+		Asset::getInstance()->addJs($kmTplPath."/js/fancybox/jquery.fancybox-1.3.1.pack.js");
+	}
+
+	if ($kmIsProduct) {
+		Asset::getInstance()->addCss($kmTplPath."/js/spectrum/spectrum.css");
+		Asset::getInstance()->addJs($kmTplPath."/js/spectrum/spectrum.js");
+	}
+
+	if ($kmNeedsSlick) {
+		Asset::getInstance()->addCss($kmTplPath."/css/slick.css");
+		Asset::getInstance()->addJs($kmTplPath."/js/slick.min.js");
+	}
+
 	CJSCore::Init(array("jquery", "popup"));
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/jquery.cookie.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/moremenu.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/jquery.inputmask.bundle.min.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/anythingslider/jquery.easing.1.2.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/anythingslider/jquery.anythingslider.min.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/custom-forms/jquery.custom-forms.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/fancybox/jquery.fancybox-1.3.1.pack.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/spectrum/spectrum.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/countUp.min.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/countdown/jquery.plugin.js");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/countdown/jquery.countdown.js");
-    Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/TweenMax.min.js");
-	Asset::getInstance()->addString("
+	Asset::getInstance()->addJs($kmTplPath."/js/jquery.cookie.js");
+	Asset::getInstance()->addJs($kmTplPath."/js/moremenu.js");
+	Asset::getInstance()->addJs($kmTplPath."/js/jquery.inputmask.bundle.min.js");
+	Asset::getInstance()->addJs($kmTplPath."/js/custom-forms/jquery.custom-forms.js");
+	Asset::getInstance()->addJs($kmTplPath."/js/countUp.min.js");
+
+	if ($kmNeedsCountdown) {
+		Asset::getInstance()->addJs($kmTplPath."/js/countdown/jquery.plugin.js");
+		Asset::getInstance()->addJs($kmTplPath."/js/countdown/jquery.countdown.js");
+		Asset::getInstance()->addString("
 		<script type='text/javascript'>
 			$(function() {
 				$.countdown.regionalOptions['ru'] = {
@@ -71,7 +106,9 @@ Loc::loadMessages(__FILE__);?>
 			});
 		</script>
 	");
-	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/slick.min.js");
+	}
+
+    Asset::getInstance()->addJs($kmTplPath."/js/TweenMax.min.js");
 	$kmMainJsPath = $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/js/main.js';
 	$kmMainJsVer = file_exists($kmMainJsPath) ? filemtime($kmMainJsPath) : time();
 	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/main.js?v=".$kmMainJsVer);
@@ -123,6 +160,10 @@ header .header_1 .logo a span, header .header_1 .logo span[style] { font-size: 2
 .top_panel { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-width: none !important; height: 46px !important; z-index: 1001 !important; }
 .content-wrapper { padding-top: 0 !important; }
 }
+.anythingContainer_DEFAULT { aspect-ratio: 958/304; }
+.anythingContainer_16_9 { aspect-ratio: 958/538; }
+.anythingContainer_16_7 { aspect-ratio: 958/419; }
+body.bg-fixed { background-attachment: scroll; }
 .breadcrumb-share { display: block !important; visibility: visible !important; opacity: 1 !important; background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; margin: 8px 0 10px !important; overflow: hidden !important; box-sizing: border-box !important; position: static !important; }
 .breadcrumb { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; gap: 2px 6px !important; width: 100% !important; min-height: 0 !important; overflow-x: auto !important; overflow-y: hidden !important; float: none !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
 .breadcrumb::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
@@ -197,11 +238,12 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 		applySiteBackground();
 		kmApplyLazyBackgrounds();
 		setTimeout(applySiteBackground, 50);
-		setTimeout(kmApplyLazyBackgrounds, 50);
-		setTimeout(kmApplyLazyBackgrounds, 300);
+		setTimeout(function () { kmApplyLazyBackgrounds(); }, 50);
+		setTimeout(function () { kmApplyLazyBackgrounds(); }, 300);
 	});
 	function kmApplyLazyBackgrounds(root) {
-		(root || document).querySelectorAll('[data-background-image].agll:not(.agll_loaded), [data-background-image].agll_inited:not(.agll_loaded)').forEach(function (el) {
+		var scope = (root && typeof root.querySelectorAll === 'function') ? root : document;
+		scope.querySelectorAll('[data-background-image].agll:not(.agll_loaded), [data-background-image].agll_inited:not(.agll_loaded)').forEach(function (el) {
 			var bg = el.getAttribute('data-background-image');
 			if (!bg) return;
 			el.style.backgroundImage = "url('" + bg.replace(/'/g, "\\'") + "')";
@@ -214,7 +256,7 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 	}
 	window.kmApplyLazyBackgrounds = kmApplyLazyBackgrounds;
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', kmApplyLazyBackgrounds);
+		document.addEventListener('DOMContentLoaded', function () { kmApplyLazyBackgrounds(); });
 	} else {
 		kmApplyLazyBackgrounds();
 	}
