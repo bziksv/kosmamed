@@ -24,13 +24,13 @@ git pull origin main
 cp -a /root/.settings.php.bak "$SITE_DIR/bitrix/.settings.php"
 chown "$OWNER" "$SITE_DIR/bitrix/.settings.php"
 
-# kosmamed: perf.php не в git — положи копии в /root/deploy/ один раз
-for f in kosmamed_perf.php km_section_preview.php; do
-  if [[ -f "/root/deploy/$f" ]]; then
-    cp -a "/root/deploy/$f" "$SITE_DIR/bitrix/php_interface/include/$f"
-    chown "$OWNER" "$SITE_DIR/bitrix/php_interface/include/$f"
-  fi
-done
+# perf-файлы в git с d392b8230 — /root/deploy/ больше не трогаем (там могут лежать старые копии)
+
+echo "--- Проверка файлов после pull (до чистки кеша) ---"
+bash "$SITE_DIR/tools/perf/prod-verify-deploy.sh" "$BASE_URL" --disk-only || {
+  echo "FAIL: на диске не те файлы / не тот commit — warmup и чистка кеша не запускаются"
+  exit 1
+}
 
 # Composite + CSS/JS. managed_cache НЕ чистим — иначе меню+preview долбят БД ~60с на каждый хит.
 find "$SITE_DIR/bitrix/html_pages" \
@@ -55,7 +55,7 @@ systemctl reload apache2
 
 chown -R "$OWNER" "$SITE_DIR"
 
-# Быстрая проверка до долгого warmup (SSH не обрывать)
+# Быстрая проверка снаружи после reload (warmup — отдельно, в фоне)
 bash "$SITE_DIR/tools/perf/prod-verify-deploy.sh" "$BASE_URL" || true
 
 # Warmup 10+ мин и рвёт SSH — в фон, лог в /tmp

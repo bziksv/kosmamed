@@ -8,6 +8,13 @@ set -euo pipefail
 SITE_DIR="${SITE_DIR:-/var/www/medmarket_su_usr/data/www/medmarket.su}"
 BASE_URL="${1:-https://kosmamed.ru}"
 EXPECT_COMMIT="${2:-}"
+DISK_ONLY=0
+if [[ "${2:-}" == "--disk-only" ]]; then
+  DISK_ONLY=1
+  EXPECT_COMMIT=""
+elif [[ "${3:-}" == "--disk-only" ]]; then
+  DISK_ONLY=1
+fi
 
 cd "$SITE_DIR"
 
@@ -54,9 +61,19 @@ DOTS=$(grep -c 'slick-dots' "$THEME_CSS" 2>/dev/null || echo 0)
 if [[ -f "$PERF_PHP" ]]; then
   grep -q kmDeferCatalogOffscreenImages "$PERF_PHP" && ok "kosmamed_perf.php на месте" || bad "kosmamed_perf.php без defer-картинок"
 else
-  bad "нет $PERF_PHP (не в git — копировать вручную)"
+  bad "нет $PERF_PHP (git pull не подтянул include/)"
 fi
 echo
+
+if [[ "$DISK_ONLY" -eq 1 ]]; then
+  if [[ "$fail" -eq 0 ]]; then
+    echo "== Итог (только диск): OK =="
+  else
+    echo "== Итог (только диск): ЕСТЬ ОШИБКИ =="
+    exit 1
+  fi
+  exit 0
+fi
 
 echo "--- Снаружи (curl) ---"
 REMOTE_MAIN=$(curl -sf "$BASE_URL/bitrix/templates/elektro_flat/js/main.js" | wc -c | tr -d ' ')
