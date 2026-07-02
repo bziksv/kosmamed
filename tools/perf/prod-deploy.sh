@@ -32,8 +32,6 @@ for f in kosmamed_perf.php km_section_preview.php; do
   fi
 done
 
-done
-
 # Composite + CSS/JS. managed_cache НЕ чистим — иначе меню+preview долбят БД ~60с на каждый хит.
 find "$SITE_DIR/bitrix/html_pages" \
   -mindepth 1 ! -name ".enabled" ! -name ".config.php" -delete 2>/dev/null || true
