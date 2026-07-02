@@ -41,12 +41,12 @@ function kmBindCatalogSliderEvents($slider) {
 }
 
 function kmGoToCatalogSlide($itemImage, index, dontAnimate) {
+	var slideIndex = parseInt(index, 10);
+	if (isNaN(slideIndex)) {
+		return false;
+	}
 	var $slider = $itemImage.find('.magic_slide_ss.slick-initialized');
 	if ($slider.length) {
-		var slideIndex = parseInt(index, 10);
-		if (isNaN(slideIndex)) {
-			return false;
-		}
 		var current = $slider.slick('slickCurrentSlide');
 		if (current === slideIndex) {
 			return true;
@@ -55,7 +55,20 @@ function kmGoToCatalogSlide($itemImage, index, dontAnimate) {
 		kmSyncCatalogSlideIndicators($slider);
 		return true;
 	}
-	return false;
+	var $wrap = $itemImage.find('.magic_slide_ss:not(.slick-initialized)');
+	if (!$wrap.length) {
+		return false;
+	}
+	var $slides = $wrap.children('.magic_slide_s');
+	if (slideIndex < 0 || slideIndex >= $slides.length) {
+		return false;
+	}
+	$slides.each(function (i) {
+		this.style.setProperty('display', i === slideIndex ? 'block' : 'none', 'important');
+	});
+	$itemImage.find('.magic_slide_p div').removeClass('act');
+	$itemImage.find('.magic_slide_p [data-sliderh="' + slideIndex + '"]').addClass('act');
+	return true;
 }
 
 function kmCatalogSlideCount($itemImage) {
@@ -230,7 +243,14 @@ function kmInitCatalogDeferredImages() {
 }
 
 /** Слайдер фото в карточках каталога — на всех ширинах экрана. */
+function kmHasSlick() {
+	return !!(jQuery.fn && typeof jQuery.fn.slick === 'function');
+}
+
 function initCatalogCardSliders() {
+	if (!kmHasSlick()) {
+		return;
+	}
 	function kmPrepareCatalogSlideImages($slider) {
 		kmRestoreDeferredImages($slider.closest('.catalog-item-card')[0] || $slider[0]);
 		$slider.find('.magic_slide.item_img').each(function () {
@@ -242,6 +262,10 @@ function initCatalogCardSliders() {
 
 	$('.catalog-item-card .item-image .magic_slide_ss:not(.slick-slider)').each(function () {
 		var $slider = $(this);
+		var slideCount = $slider.find('.magic_slide_s').length;
+		if (slideCount <= 1) {
+			return;
+		}
 		kmPrepareCatalogSlideImages($slider);
 		kmBindCatalogSliderEvents($slider);
 		$slider.slick({
@@ -372,9 +396,44 @@ function kmInitHomeTabs() {
 	$boxes.hide().first().css('display', 'block');
 }
 
+function kmInitTabCatalogSliders($box) {
+	if ($box && $box.length && typeof window.kmLoadDeferredImages === 'function') {
+		window.kmLoadDeferredImages($box[0]);
+	}
+	initCatalogCardSliders();
+	setTimeout(initCatalogCardSliders, 50);
+}
+
+/** Выпадающее подменю каталога слева — в main.js, inline-скрипт шаблона может не успеть до ошибки slick. */
+function kmInitLeftCatalogFlyout() {
+	var $root = $('.left-column');
+	if (!$root.length || $root.data('km-flyout-bound')) {
+		return;
+	}
+	$root.data('km-flyout-bound', true);
+	$root.on('mouseenter', 'ul.left-menu > li.parent', function () {
+		var $li = $(this);
+		var pos = $li.position();
+		var $dropdown = $li.children('.catalog-section-childs');
+		var top = pos.top - 5;
+		var left = pos.left + $li.outerWidth() + 9;
+		if (pos.top + $dropdown.outerHeight() > $(window).height() + $(window).scrollTop() - 46) {
+			top = pos.top - $dropdown.outerHeight() + $li.outerHeight() + 5;
+			if (top < 0) {
+				top = $(window).scrollTop();
+			}
+		}
+		$dropdown.css({ left: left + 'px', top: top + 'px', 'z-index': 9999 });
+		$dropdown.stop(true, true).delay(200).fadeIn(150);
+	}).on('mouseleave', 'ul.left-menu > li.parent', function () {
+		$(this).children('.catalog-section-childs').stop(true, true).delay(200).fadeOut(150);
+	});
+}
+
 $(function() {
 
 	kmInitHomeTabs();
+	kmInitLeftCatalogFlyout();
 
 	$nav = $('header');
 
@@ -431,25 +490,28 @@ $(function() {
 //   }
 // );
 
-    $('.tag-slider').slick({
-        dots: false,
-        arrows: true,
-        infinite: true,
-        autoplay: true,
-        variableWidth: true,
-        centerMode: true,
-        slidesToShow: 2,
-        responsive: [
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1
-                }
-            }
-        ]
-    });
+    if (kmHasSlick() && $('.tag-slider').length) {
+	    $('.tag-slider').slick({
+	        dots: false,
+	        arrows: true,
+	        infinite: true,
+	        autoplay: true,
+	        variableWidth: true,
+	        centerMode: true,
+	        slidesToShow: 2,
+	        responsive: [
+	            {
+	                breakpoint: 767,
+	                settings: {
+	                    slidesToShow: 1,
+	                    slidesToScroll: 1
+	                }
+	            }
+	        ]
+	    });
+    }
 
+    if (kmHasSlick() && $('.detail_picture_pa').length) {
     if (window.innerWidth < 1253) {
 
 
@@ -515,6 +577,7 @@ $(function() {
     // });
 
 	}
+    }
 
 	initCatalogCardSliders();
 	kmInitCatalogDeferredImages();
@@ -531,8 +594,9 @@ $(function() {
     $(document).ready(function() {
 
 	$(".tabs__tab").click(function(){
-		setTimeout(function(){
-			initCatalogCardSliders();
+		var $box = $(this).parent().siblings(".tabs__box").eq($(this).index());
+		setTimeout(function () {
+			kmInitTabCatalogSliders($box);
 		}, 0);
 	});
 
@@ -540,12 +604,17 @@ $(function() {
             $(this).hide();
             $(".subcategories .close").show();
             $(".subcategories .sub-links-2").addClass("open");
-            $('.tag-slider').slick('unslick');
+            if (kmHasSlick()) {
+	            $('.tag-slider').slick('unslick');
+            }
         });
         $(".subcategories .close").click(function(){
             $(this).hide();
             $(".subcategories .open").show();
             $(".subcategories .sub-links-2").removeClass("open");
+            if (!kmHasSlick()) {
+	            return;
+            }
             $('.tag-slider').slick({
                 dots: false,
                 arrows: true,
@@ -687,10 +756,7 @@ $(function() {
 		$(this).addClass("current").siblings().removeClass("current")
 			.parent().siblings(".tabs__box").eq($(this).index()).fadeIn(150).siblings(".tabs__box").hide();
 
-		if (window.kmLoadDeferredImages && $box.length) {
-			window.kmLoadDeferredImages($box[0]);
-		}
-		
+		kmInitTabCatalogSliders($box);
 		bindItemHeightResize($box.find(".catalog-item-card"));
 	});
 	

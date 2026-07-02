@@ -34,7 +34,7 @@ Loc::loadMessages(__FILE__);?>
 	$kmNeedsSlider = $kmIsHome || $kmIsCatalog;
 	$kmNeedsFancybox = $kmIsCatalogLike;
 	$kmNeedsCountdown = $kmIsHome || $kmIsCatalogLike;
-	$kmNeedsSlick = $kmIsCatalogLike;
+	$kmNeedsSlick = $kmIsCatalogLike || $kmIsHome;
 	$GLOBALS['kmIsHome'] = $kmIsHome;
 	$GLOBALS['kmIsCatalogLike'] = $kmIsCatalogLike;
 	$GLOBALS['kmIsProduct'] = $kmIsProduct;

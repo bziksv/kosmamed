@@ -44,3 +44,25 @@ wc -c bitrix/templates/elektro_flat/js/main.js   # 20275
 `kosmamed_perf.php`, `km_section_preview.php`, шаблон `elektro_flat`, эти скрипты.
 
 Правило для агента Cursor: `.cursor/rules/prod-deploy-git-first.mdc`.
+
+## Конфиги nginx / Apache / PHP (prod)
+
+Полная инструкция: **`PROD-SERVER-CONFIG.md`**.
+
+| Файл | Куда на сервере |
+|------|-----------------|
+| `nginx-http-globals.conf` | `/etc/nginx/conf.d/kosmamed-performance-http.conf` |
+| `nginx-kosmamed-performance.include.conf` | `.../medmarket.su.performance.conf` + include в `.includes` |
+| `nginx-kosmamed-frontend.conf` | diff с FastPanel vhost (опционально, полная замена) |
+| `kosmamed-apache-backend.conf` | `/etc/apache2/fastpanel2-sites/medmarket_su_usr/medmarket.su.conf` |
+| `kosmamed-php.ini` | `/var/www/medmarket_su_usr/data/php-bin/medmarket.su/php.ini` |
+| `nginx-apply-prod.sh` | `bash tools/perf/nginx-apply-prod.sh` (только performance include) |
+| `prod-config-check.sh` | проверка после выката nginx |
+
+Быстрый старт (на сервере):
+
+```bash
+cp tools/perf/nginx-http-globals.conf /etc/nginx/conf.d/kosmamed-performance-http.conf
+bash tools/perf/nginx-apply-prod.sh
+bash tools/perf/prod-config-check.sh https://kosmamed.ru
+```

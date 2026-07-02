@@ -47,6 +47,9 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/kosmamed
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_section_preview.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_section_preview.php');
 }
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catalog_card_photos.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catalog_card_photos.php');
+}
 function isWrapAttr($current, $target)
 {
     if($current < $target)

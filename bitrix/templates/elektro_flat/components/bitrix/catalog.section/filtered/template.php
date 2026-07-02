@@ -133,92 +133,38 @@ $inQuickView = in_array("QUICK_VIEW", $arSetting["GENERAL_SETTINGS"]["VALUE"]);
 					<div class="item-image-cont 333">
 
         <?
-$res = CIBlockElement::GetProperty($arElement['IBLOCK_ID'], $arElement['ID'], "sort", "asc", array("CODE" => "INFOGRAPHICS"));
-while ($ob = $res->GetNext())
-{    
-    if($ob['VALUE']) $arElement["PROPERTIES"]["INFOGRAPHICS"]["VALUE"][] = $ob['VALUE'];
-}
-
-        if(!$arElement["PROPERTIES"]["INFOGRAPHICS"]["VALUE"][0]){
-            $arPHOTOp = [];
-            if($arElement["PREVIEW_PICTURE"]) {
-                $arPHOTOp[] = array(
-                    "SRC" => $arElement["PREVIEW_PICTURE"]["SRC"],
-                    "WIDTH" => $arElement["PREVIEW_PICTURE"]["WIDTH"],
-                    "HEIGHT" => $arElement["PREVIEW_PICTURE"]["HEIGHT"],
-                );
-            }else{
-                if($arElement["DETAIL_PICTURE"]) {
-                    $arPHOTOp[] = array(
-                        "SRC" => $arElement["DETAIL_PICTURE"]["SRC"],
-                        "WIDTH" => $arElement["DETAIL_PICTURE"]["WIDTH"],
-                        "HEIGHT" => $arElement["DETAIL_PICTURE"]["HEIGHT"],
-                    );
-                }
-            }
-            
-
-            if(count($arPHOTOp)<5){
-
-
-
-$res = CIBlockElement::GetProperty($arElement['IBLOCK_ID'], $arElement['ID'], "sort", "asc", array("CODE" => "MORE_PHOTO"));
-while ($ob = $res->GetNext())
-{    
-    if($ob['VALUE']) $arElement["PROPERTIES"]["MORE_PHOTO"]["VALUE"][] = $ob['VALUE'];
-}
-
-                foreach ($arElement["PROPERTIES"]["MORE_PHOTO"]["VALUE"] as $key => $ifFoto) {
-                    $arFileTmpp = CFile::ResizeImageGet(
-                        $ifFoto,
-                        array("width" => 588, "height" => 784),
-                        BX_RESIZE_IMAGE_PROPORTIONAL,
-                        true
-                    );
-                    $arPHOTOp[] = array(
-                        "SRC" => $arFileTmpp["src"],
-                        "WIDTH" => $arFileTmpp["width"],
-                        "HEIGHT" => $arFileTmpp["height"],
-                    );
-                    if(count($arPHOTOp)==5) break;
-                }
-            }
-            ?>
-
-
+        $kmCardPhotos = kmCatalogCardPhotos($arElement);
+        $arPHOTOp = $kmCardPhotos['photos'];
+        $kmHasInfographics = $kmCardPhotos['hasInfographics'];
+        $kmPhotoCount = count($arPHOTOp);
+        $kmPreviewHeight = is_array($arElement['PREVIEW_PICTURE']) ? $arElement['PREVIEW_PICTURE']['HEIGHT'] : 150;
+        ?>
             <div class="item-image">
-
+                <?if(!$kmHasInfographics){?>
                 <meta content="<?=(is_array($arElement['PREVIEW_PICTURE']) ? $arElement['PREVIEW_PICTURE']['SRC'] : SITE_TEMPLATE_PATH.'/images/no-photo.svg');?>" itemprop="image" />
-        
-                <a href="<?=$arElement['DETAIL_PAGE_URL']?>">
-                    <?if(($arPHOTOp[0]["SRC"])) {
-                        ?>
-                        <div class="magic_slide_ss 33 55" >
-                        <?
-                        foreach ($arPHOTOp as $key => $arFoto) {?>
+                <?}?>
+                <a<?if($kmHasInfographics){?> class="infographics"<?}?> href="<?=$arElement['DETAIL_PAGE_URL']?>">
+                    <?if(!empty($arPHOTOp[0]['SRC'])) {?>
+                        <div class="magic_slide_ss">
+                        <?foreach ($arPHOTOp as $key => $arFoto) {?>
                             <div class="magic_slide_s">
-                                <img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="100%" height="<?=$arElement['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
+                                <img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="100%" height="<?=$kmPreviewHeight?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
                             </div>
-                        <?
-                        }
-                        ?>
+                        <?}?>
                         </div>
+                        <?if($kmPhotoCount > 1){?>
                         <div class="magic_slide_b">
                             <?foreach ($arPHOTOp as $key => $arFoto) {?>
-                                <div data-sliderh="<?=$key?>" class="magic_slide_h" style="width:<?=(100/count($arPHOTOp))?>%;"></div>
-                            <?
-                            }
-                            ?>
+                                <div data-sliderh="<?=$key?>" class="magic_slide_h" style="width:<?=(100 / $kmPhotoCount)?>%;"></div>
+                            <?}?>
                         </div>
                         <div class="magic_slide_p">
                             <?foreach ($arPHOTOp as $key => $arFoto) {?>
                                 <div data-sliderh="<?=$key?>"></div>
-                            <?
-                            }
-                            ?>
+                            <?}?>
                         </div>
-                        <?
-                    } else {?>
+                        <?}?>
+                    <?} else {?>
                         <img class="item_img" src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="150" height="150" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
                     <?}?>
                     <?=$timeBuy?>
@@ -226,110 +172,7 @@ while ($ob = $res->GetNext())
                         <img class="manufacturer" src="<?=$arElement['PROPERTIES']['MANUFACTURER']['PREVIEW_PICTURE']['SRC']?>" width="<?=$arElement['PROPERTIES']['MANUFACTURER']['PREVIEW_PICTURE']['WIDTH']?>" height="<?=$arElement['PROPERTIES']['MANUFACTURER']['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$arElement['PROPERTIES']['MANUFACTURER']['NAME']?>" title="<?=$arElement['PROPERTIES']['MANUFACTURER']['NAME']?>" />
                     <?}?>
                 </a>
-
             </div>
-        <?}else{
-            $arPHOTOp = [];
-
-
-
-            foreach ($arElement["PROPERTIES"]["INFOGRAPHICS"]["VALUE"] as $key => $ifFoto) {
-                $arFileTmpp = CFile::ResizeImageGet(
-                    $ifFoto,
-                    array("width" => 588, "height" => 784),
-                    BX_RESIZE_IMAGE_PROPORTIONAL,
-                    true
-                );
-                $arPHOTOp[] = array(
-                    "SRC" => $arFileTmpp["src"],
-                    "WIDTH" => $arFileTmpp["width"],
-                    "HEIGHT" => $arFileTmpp["height"],
-                );
-                if($key==4) break;
-            }
-            if(count($arPHOTOp)<5){
-                if($arElement["PREVIEW_PICTURE"]) {
-                    $arPHOTOp[] = array(
-                        "SRC" => $arElement["PREVIEW_PICTURE"]["SRC"],
-                        "WIDTH" => $arElement["PREVIEW_PICTURE"]["WIDTH"],
-                        "HEIGHT" => $arElement["PREVIEW_PICTURE"]["HEIGHT"],
-                    );
-                }else{
-                    if($arElement["DETAIL_PICTURE"]) {
-                        $arPHOTOp[] = array(
-                            "SRC" => $arElement["DETAIL_PICTURE"]["SRC"],
-                            "WIDTH" => $arElement["DETAIL_PICTURE"]["WIDTH"],
-                            "HEIGHT" => $arElement["DETAIL_PICTURE"]["HEIGHT"],
-                        );
-                    }
-                }
-            }
-
-            if(count($arPHOTOp)<5){
-
-$res = CIBlockElement::GetProperty($arElement['IBLOCK_ID'], $arElement['ID'], "sort", "asc", array("CODE" => "MORE_PHOTO"));
-while ($ob = $res->GetNext())
-{    
-    if($ob['VALUE']) $arElement["PROPERTIES"]["MORE_PHOTO"]["VALUE"][] = $ob['VALUE'];
-}
-
-                foreach ($arElement["PROPERTIES"]["MORE_PHOTO"]["VALUE"] as $key => $ifFoto) {
-                    $arFileTmpp = CFile::ResizeImageGet(
-                        $ifFoto,
-                        array("width" => 588, "height" => 784),
-                        BX_RESIZE_IMAGE_PROPORTIONAL,
-                        true
-                    );
-                    $arPHOTOp[] = array(
-                        "SRC" => $arFileTmpp["src"],
-                        "WIDTH" => $arFileTmpp["width"],
-                        "HEIGHT" => $arFileTmpp["height"],
-                    );
-                    if(count($arPHOTOp)==5) break;
-                }
-            }
-
-            
-            ?>
-            <div class="item-image">
-                <a class="infographics" href="<?=$arElement['DETAIL_PAGE_URL']?>">
-                    <?if(($arPHOTOp[0]["SRC"])) {
-                        ?>
-                        <div class="magic_slide_ss 44">
-                        <?
-                        foreach ($arPHOTOp as $key => $arFoto) {?>
-                            <div class="magic_slide_s">
-                                <img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="100%" height="<?=$arElement['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
-                            </div>
-                        <?
-                        }
-                        ?>
-                        </div>
-                        <div class="magic_slide_b">
-                            <?foreach ($arPHOTOp as $key => $arFoto) {?>
-                                <div data-sliderh="<?=$key?>" class="magic_slide_h" style="width:<?=(100/count($arPHOTOp))?>%;"></div>
-                            <?
-                            }
-                            ?>
-                        </div>
-                        <div class="magic_slide_p">
-                            <?foreach ($arPHOTOp as $key => $arFoto) {?>
-                                <div data-sliderh="<?=$key?>"></div>
-                            <?
-                            }
-                            ?>
-                        </div>
-                        <?
-                    } else {?>
-                        <img class="item_img" src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="150" height="150" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
-                    <?}?>
-                    <?=$timeBuy?>            
-                    <?if(is_array($arElement["PROPERTIES"]["MANUFACTURER"]["PREVIEW_PICTURE"])) {?>
-                        <img class="manufacturer" src="<?=$arElement['PROPERTIES']['MANUFACTURER']['PREVIEW_PICTURE']['SRC']?>" width="<?=$arElement['PROPERTIES']['MANUFACTURER']['PREVIEW_PICTURE']['WIDTH']?>" height="<?=$arElement['PROPERTIES']['MANUFACTURER']['PREVIEW_PICTURE']['HEIGHT']?>" alt="<?=$arElement['PROPERTIES']['MANUFACTURER']['NAME']?>" title="<?=$arElement['PROPERTIES']['MANUFACTURER']['NAME']?>" />
-                    <?}?>
-                </a>
-            </div>            
-        <?}?>
 					</div>
 					<?//ITEM_TITLE//?>
 					<div class="items_block_desc">

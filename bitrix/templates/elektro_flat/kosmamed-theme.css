@@ -473,6 +473,17 @@ ul.left-menu > li.parentMore > ul.submenuMore {
 	border-color: var(--km-primary) !important;
 }
 
+/* Flyout подменю каталога слева — не обрезать overflow */
+.left-column,
+.left-column #catalog_wrap,
+.left-column ul.left-menu {
+	overflow: visible !important;
+}
+
+.left-column ul.left-menu > li.parent > .catalog-section-childs {
+	z-index: 9999;
+}
+
 ul.left-menu > li.parent > ul.submenu li a:hover,
 ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	color: var(--km-surface) !important;
@@ -749,6 +760,15 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 }
 
 /* До init slick — один кадр на всю ширину */
+.catalog-item-card .item-image a:has(.magic_slide_ss:not(.slick-initialized)) {
+	display: block !important;
+}
+
+.catalog-item-card .magic_slide_ss:not(.slick-initialized) {
+	overflow: hidden !important;
+	width: 100% !important;
+}
+
 .catalog-item-card .magic_slide_ss:not(.slick-initialized) .magic_slide_s {
 	width: 100% !important;
 	height: 100% !important;
@@ -805,7 +825,7 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 
 /* До инициализации slick — только первый кадр */
 .catalog-item-card .magic_slide_ss:not(.slick-initialized) .magic_slide_s ~ .magic_slide_s {
-	display: none;
+	display: none !important;
 }
 
 .catalog-item-card .item-image .slick-list {
