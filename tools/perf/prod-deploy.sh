@@ -32,9 +32,20 @@ for f in kosmamed_perf.php km_section_preview.php; do
   fi
 done
 
-find "$SITE_DIR/bitrix/cache" "$SITE_DIR/bitrix/managed_cache" \
-     "$SITE_DIR/bitrix/stack_cache" "$SITE_DIR/bitrix/html_pages" \
+done
+
+# Composite + CSS/JS. managed_cache НЕ чистим — иначе меню+preview долбят БД ~60с на каждый хит.
+find "$SITE_DIR/bitrix/html_pages" \
+  -mindepth 1 ! -name ".enabled" ! -name ".config.php" -delete 2>/dev/null || true
+find "$SITE_DIR/bitrix/cache/css" "$SITE_DIR/bitrix/cache/js" \
   -mindepth 1 -delete 2>/dev/null || true
+
+if [[ "${FULL_CACHE_CLEAR:-}" == "1" ]]; then
+  echo "FULL_CACHE_CLEAR=1 — чистим bitrix/cache, managed_cache, stack_cache"
+  find "$SITE_DIR/bitrix/cache" "$SITE_DIR/bitrix/managed_cache" \
+       "$SITE_DIR/bitrix/stack_cache" \
+    -mindepth 1 -delete 2>/dev/null || true
+fi
 
 touch "$SITE_DIR/bitrix/html_pages/.enabled"
 chown "$OWNER" "$SITE_DIR/bitrix/html_pages/.enabled"

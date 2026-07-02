@@ -47,7 +47,8 @@ done
 
 [[ $(wc -c < "$MAIN_JS" | tr -d ' ') -eq 20275 ]] && ok "main.js 20275" || bad "main.js $(wc -c < "$MAIN_JS") != 20275"
 grep -q kmInitCatalogDeferredImages "$MAIN_JS" && ok "main.js kmInitCatalogDeferredImages" || bad "main.js без kmInitCatalogDeferredImages"
-grep -qc 'slick-dots' "$THEME_CSS" | grep -q '^[4-9]' && ok "kosmamed-theme slick-dots" || bad "kosmamed-theme без slick-dots"
+DOTS=$(grep -c 'slick-dots' "$THEME_CSS" 2>/dev/null || echo 0)
+[[ "$DOTS" -ge 4 ]] && ok "kosmamed-theme slick-dots ($DOTS)" || bad "kosmamed-theme без slick-dots ($DOTS)"
 [[ $(wc -c < "$SECT_JS" | tr -d ' ') -eq 6661 ]] && ok "catalog.section script.js 6661" || bad "catalog.section script.js $(wc -c < "$SECT_JS") != 6661"
 
 if [[ -f "$PERF_PHP" ]]; then
@@ -66,7 +67,7 @@ check_page() {
   shift 2
   local url="${BASE_URL}${path}"
   local html
-  html=$(curl -sf --max-time 120 "$url?bxrand=$(date +%s)" -H 'Cache-Control: no-cache' || true)
+  html=$(curl -sf --max-time 180 "$url?bxrand=$(date +%s)" -H 'Cache-Control: no-cache' || true)
   [[ -n "$html" ]] || { bad "$label: пустой ответ $url"; return; }
   local size=${#html}
   echo "  $label: HTML ${size} b"

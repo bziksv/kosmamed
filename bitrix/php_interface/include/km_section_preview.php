@@ -19,7 +19,19 @@ if (!function_exists('kmSectionPreviewFileId')) {
 			return $cache[$sectionId];
 		}
 
+		$cacheDir = '/km_section_preview';
+		$cacheId = 'file_id_' . $sectionId;
+		$obCache = new CPHPCache();
+		if ($obCache->InitCache(86400, $cacheId, $cacheDir)) {
+			$vars = $obCache->GetVars();
+			return $cache[$sectionId] = (int)($vars['fileId'] ?? 0);
+		}
+
 		if (!CModule::IncludeModule('iblock')) {
+			return $cache[$sectionId] = 0;
+		}
+
+		if (!$obCache->StartDataCache()) {
 			return $cache[$sectionId] = 0;
 		}
 
@@ -37,6 +49,7 @@ if (!function_exists('kmSectionPreviewFileId')) {
 			}
 		}
 
+		$obCache->EndDataCache(['fileId' => $fileId]);
 		return $cache[$sectionId] = $fileId;
 	}
 }
@@ -53,7 +66,7 @@ if (!function_exists('kmSectionPreviewFileIdInSection')) {
 				'ACTIVE' => 'Y',
 			],
 			false,
-			['nTopCount' => 100],
+			['nTopCount' => 15],
 			['ID', 'PREVIEW_PICTURE', 'DETAIL_PICTURE']
 		);
 
