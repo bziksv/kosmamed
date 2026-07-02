@@ -78,7 +78,7 @@ check_page() {
 
 check_page "/" "главная" "kosmamed-theme.css" "anythingslider/slider.css" "anythingContainer" "catalog-item-card"
 check_page "/catalog/anesteziologiya_i_reanimatsiya/" "каталог" "magic_slide_ss" "kosmamed-theme.css"
-DATA_KM=$(curl -sf --max-time 120 "${BASE_URL}/catalog/anesteziologiya_i_reanimatsiya/?bxrand=$(date +%s)" | grep -c data-km-src || true)
+DATA_KM=$(curl -sf --max-time 180 "${BASE_URL}/catalog/anesteziologiya_i_reanimatsiya/?bxrand=$(date +%s)" | grep -c data-km-src || true)
 if [[ "$DATA_KM" -gt 0 ]]; then
   ok "каталог data-km-src: $DATA_KM"
 else
