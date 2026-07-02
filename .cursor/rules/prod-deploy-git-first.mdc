@@ -1,0 +1,57 @@
+---
+description: Деплой kosmamed.ru — только через git, затем prod-deploy на сервере
+alwaysApply: true
+---
+
+# Выкат: сначала git, потом сайт
+
+**Единственный путь на прод:** commit + push в `origin/main` → `git pull` на сервере → `tools/perf/prod-deploy.sh`.
+
+## Запрещено
+
+- Копировать файлы на прод через `scp`, `/root/deploy/`, правки напрямую в `/var/www/.../medmarket.su/` без commit.
+- Запускать warmup/verify, пока на сервере не совпадают commit и размеры ключевых файлов с git.
+- Полная чистка `bitrix/managed_cache` при обычном деплое (`find ... managed_cache -delete`). Только `FULL_CACHE_CLEAR=1` и осознанно.
+
+## Локально (Mac)
+
+```bash
+cd medmarket.su
+git add … && git commit -m "…" && git push origin main
+```
+
+Perf-файлы **в git**: `bitrix/php_interface/include/kosmamed_perf.php`, `km_section_preview.php`.
+
+## На сервере
+
+```bash
+ssh kosmamed   # 155.212.171.103, root
+cd /var/www/medmarket_su_usr/data/www/medmarket.su
+cp -a bitrix/.settings.php /root/.settings.php.bak
+bash tools/perf/prod-deploy.sh
+cp -a /root/.settings.php.bak bitrix/.settings.php
+chown medmarket_su_usr:medmarket_su_usr bitrix/.settings.php
+```
+
+`prod-deploy.sh` сам: checkout footer/counter → pull → проверка файлов на диске → чистка `html_pages` + css/js bundles → `reload php8.3-fpm` → verify → warmup в фоне.
+
+## Проверка «файлы = git»
+
+На сервере:
+
+```bash
+git rev-parse --short HEAD    # = origin/main
+bash tools/perf/prod-verify-deploy.sh https://kosmamed.ru --disk-only
+```
+
+Ожидаемые размеры: `main.js` **20275**, `kosmamed-theme.css` **45385**, `catalog.section/.../script.js` **6661**.
+
+Снаружи: `curl -s https://kosmamed.ru/bitrix/templates/elektro_flat/js/main.js | wc -c` → **20275**.
+
+## Допустимые расхождения с git на проде
+
+Не код деплоя — runtime-мусор: логи МойСклад, `bitrix/js/ipol.sdek/list.json`, `catalog_export/yandex_*.php`, `description.php` шаблона. На выкат каталога/JS/CSS **не влияют**.
+
+## Агент
+
+После правок в репозитории: push → SSH на `kosmamed` → `prod-deploy.sh` → curl-verify. Не просить пользователя «обновить страницу», пока не проверил сам.
