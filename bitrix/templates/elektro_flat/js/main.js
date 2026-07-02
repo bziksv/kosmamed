@@ -40,42 +40,95 @@ function kmBindCatalogSliderEvents($slider) {
 	$slider.data('km-slick-bound', true);
 }
 
-function kmGoToCatalogSlide($itemImage, index) {
+function kmGoToCatalogSlide($itemImage, index, dontAnimate) {
 	var $slider = $itemImage.find('.magic_slide_ss.slick-initialized');
 	if ($slider.length) {
 		var slideIndex = parseInt(index, 10);
 		if (isNaN(slideIndex)) {
 			return false;
 		}
-		$slider.slick('slickGoTo', slideIndex);
+		var current = $slider.slick('slickCurrentSlide');
+		if (current === slideIndex) {
+			return true;
+		}
+		$slider.slick('slickGoTo', slideIndex, dontAnimate === true);
 		kmSyncCatalogSlideIndicators($slider);
 		return true;
 	}
 	return false;
 }
 
-$(document).on({
-    mouseenter: function () {
-	    var id = $( this ).data('sliderh');
-	    var $itemImage = $( this ).parents('.item-image');
-	    if (kmGoToCatalogSlide($itemImage, id)) {
-	    	return;
-	    }
-	    $itemImage.find('.magic_slide_p div').removeClass('act');
-	    $itemImage.find('[data-sliderh='+id+']').addClass('act');
-	    $itemImage.find( ".magic_slide" ).hide();
-	    $itemImage.find('[data-slider='+id+']').show();
-    },
-    click: function (e) {
-	    e.preventDefault();
-	    e.stopPropagation();
-	    kmGoToCatalogSlide($(this).parents('.item-image'), $(this).data('sliderh'));
-    },
-    mouseleave: function () {
-  	// $( this ).parents('.item-image').find( ".magic_slide" ).hide();
-   //  $( this ).parents('.item-image').find('[data-slider=0]').show();
-    }
-}, '.magic_slide_h');
+function kmCatalogSlideCount($itemImage) {
+	var $slider = $itemImage.find('.magic_slide_ss.slick-initialized');
+	if ($slider.length) {
+		return $slider.find('.slick-slide:not(.slick-cloned)').length;
+	}
+	return $itemImage.find('.magic_slide_h').length;
+}
+
+function kmHoverIndexFromX($itemImage, clientX) {
+	var el = $itemImage[0];
+	if (!el) {
+		return null;
+	}
+	var rect = el.getBoundingClientRect();
+	if (rect.width <= 0) {
+		return null;
+	}
+	var count = kmCatalogSlideCount($itemImage);
+	if (count <= 1) {
+		return null;
+	}
+	var ratio = Math.max(0, Math.min(0.999999, (clientX - rect.left) / rect.width));
+	return Math.floor(ratio * count);
+}
+
+var kmCatalogHoverRaf = 0;
+var kmCatalogHoverPending = null;
+
+function kmFlushCatalogHoverSlide() {
+	kmCatalogHoverRaf = 0;
+	if (!kmCatalogHoverPending) {
+		return;
+	}
+	var pending = kmCatalogHoverPending;
+	kmCatalogHoverPending = null;
+	var idx = kmHoverIndexFromX(pending.$itemImage, pending.clientX);
+	if (idx !== null) {
+		kmGoToCatalogSlide(pending.$itemImage, idx, true);
+	}
+}
+
+$(document).on('mouseenter', '.catalog-item-card .item-image', function () {
+	var card = this.closest('.catalog-item-card');
+	kmRestoreDeferredImages(card || this);
+});
+
+$(document).on('mousemove', '.catalog-item-card .item-image', function (e) {
+	if ($(e.target).closest('.slick-dots').length) {
+		return;
+	}
+	kmCatalogHoverPending = {
+		$itemImage: $(this),
+		clientX: e.clientX
+	};
+	if (!kmCatalogHoverRaf) {
+		kmCatalogHoverRaf = window.requestAnimationFrame(kmFlushCatalogHoverSlide);
+	}
+});
+
+$(document).on('mouseleave', '.catalog-item-card .item-image', function () {
+	kmCatalogHoverPending = null;
+	if (kmCatalogSlideCount($(this)) > 1) {
+		kmGoToCatalogSlide($(this), 0, true);
+	}
+});
+
+$(document).on('click', '.catalog-item-card .magic_slide_h', function (e) {
+	e.preventDefault();
+	e.stopPropagation();
+	kmGoToCatalogSlide($(this).parents('.item-image'), $(this).data('sliderh'), true);
+});
 
 $(document).on('click', '.catalog-item-card .magic_slide_p div', function (e) {
 	e.preventDefault();
@@ -196,7 +249,10 @@ function initCatalogCardSliders() {
 			arrows: false,
 			infinite: false,
 			slidesToShow: 1,
-			slidesToScroll: 1
+			slidesToScroll: 1,
+			speed: 0,
+			waitForAnimate: false,
+			cssEase: 'linear'
 		});
 		$slider.slick('setPosition');
 		kmSyncCatalogSlideIndicators($slider);
@@ -292,7 +348,33 @@ function getSliderSettings(){
 
 
 
+/** Вкладки «Рекомендуем / Новинки / …» на главной — вызывать до slick, иначе при ошибке слайдера блок остаётся display:none. */
+function kmInitHomeTabs() {
+	var $wrap = $('.tabs-wrap.tabs-main');
+	if (!$wrap.length) {
+		return;
+	}
+	if ($('.tabs__box.new .filtered-items').length < 1) {
+		$('.tabs__tab.new, .tabs__box.new').remove();
+	}
+	if ($('.tabs__box.hit .filtered-items').length < 1) {
+		$('.tabs__tab.hit, .tabs__box.hit').remove();
+	}
+	if ($('.tabs__box.discount .filtered-items').length < 1) {
+		$('.tabs__tab.discount, .tabs__box.discount').remove();
+	}
+	var $tabs = $wrap.find('.tabs__tab');
+	var $boxes = $wrap.children('.tabs__box');
+	if (!$tabs.length || !$boxes.length) {
+		return;
+	}
+	$tabs.removeClass('current').first().addClass('current');
+	$boxes.hide().first().css('display', 'block');
+}
+
 $(function() {
+
+	kmInitHomeTabs();
 
 	$nav = $('header');
 
@@ -572,18 +654,7 @@ $(function() {
 		}
 	});
 	
-	//TABS_MAIN//
-	if($(".tabs__box.new .filtered-items").length < 1)
-		$(".tabs__tab.new, .tabs__box.new").remove();
-	if($(".tabs__box.hit .filtered-items").length < 1)
-		$(".tabs__tab.hit, .tabs__box.hit").remove();
-	if($(".tabs__box.discount .filtered-items").length < 1)
-		$(".tabs__tab.discount, .tabs__box.discount").remove();
-	
-	$(".tabs-main .tabs__tab").first().addClass("current");	
-	$(".tabs-main .tabs__box").first().css({"display":"block"});
-
-	//ITEMS_HEIGHT//
+	//CHANGE_TAB//
 	var kmItemHeightViewportHandler = null;
 
 	function bindItemHeightResize(itemsTable) {
@@ -591,7 +662,9 @@ $(function() {
 			return;
 		}
 		var syncHeights = function() {
-			adjustItemHeight(itemsTable);
+			if (typeof adjustItemHeight === 'function') {
+				adjustItemHeight(itemsTable);
+			}
 		};
 		$(window).off("resize.kmItemHeight orientationchange.kmItemHeight");
 		$(window).on("resize.kmItemHeight orientationchange.kmItemHeight", syncHeights);

@@ -1144,6 +1144,10 @@ if (!function_exists('kmInjectHomeDeferredLoader')) {
 			. 'if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var sc=e.target.closest("picture")||e.target;kmLoadDeferredImages(sc);io.unobserve(e.target);}});},{rootMargin:"200px"});'
 			. 'document.querySelectorAll("img[data-km-src]").forEach(function(i){io.observe(i);});}'
 			. 'else{kmLoadDeferredImages(document);}'
+			. 'var tw=document.querySelector(".tabs-wrap.tabs-main");'
+			. 'if(tw){var tb=tw.querySelector(".tabs__box");var tt=tw.querySelector(".tabs__tab");'
+			. 'if(tb&&getComputedStyle(tb).display==="none"){tb.style.display="block";}'
+			. 'if(tt&&!tw.querySelector(".tabs__tab.current")){tt.classList.add("current");}}'
 			. 'var vb=document.querySelector(".tabs-main .tabs__box[style*=block]")||document.querySelector(".tabs-main .tabs__box");'
 			. 'if(vb){kmLoadDeferredImages(vb);}'
 			. '});</script>';

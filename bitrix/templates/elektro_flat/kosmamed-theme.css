@@ -540,15 +540,17 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	position: relative;
 }
 
-/* Hover-зоны — невидимы, не перекрывают точки slick */
+/* Hover-зоны — невидимы; mousemove слушаем на .item-image (magic_slide_b мог иметь width:0) */
 .catalog-item-card .item-image .magic_slide_b {
 	position: absolute;
 	left: 0;
 	right: 0;
 	top: 0;
 	bottom: 22px;
+	width: 100%;
 	z-index: 2;
 	opacity: 0;
+	pointer-events: none;
 }
 
 /* Точки slick — на всех ширинах (в template_styles только max-width:1253px) */
@@ -693,7 +695,8 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 		left: auto !important;
 	}
 
-	.filtered-items .catalog-item-cards {
+	.filtered-items .catalog-item-cards,
+	.tabs-main .catalog-item-cards {
 		display: grid !important;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 14px;
@@ -702,7 +705,8 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 		align-items: stretch;
 	}
 
-	.filtered-items .catalog-item-cards > .catalog-item-card {
+	.filtered-items .catalog-item-cards > .catalog-item-card,
+	.tabs-main .catalog-item-cards > .catalog-item-card {
 		float: none !important;
 		width: auto !important;
 		margin: 0 !important;
@@ -712,7 +716,8 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 		min-height: 0;
 	}
 
-	.filtered-items .catalog-item-cards > .catalog-item-card .catalog-item-info {
+	.filtered-items .catalog-item-cards > .catalog-item-card .catalog-item-info,
+	.tabs-main .catalog-item-cards > .catalog-item-card .catalog-item-info {
 		flex: 1 1 auto;
 		display: flex !important;
 		flex-direction: column;
@@ -720,7 +725,8 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 		min-height: 0;
 	}
 
-	.filtered-items .catalog-item-cards > .catalog-item-card .buy_more .add2basket_block {
+	.filtered-items .catalog-item-cards > .catalog-item-card .buy_more .add2basket_block,
+	.tabs-main .catalog-item-cards > .catalog-item-card .buy_more .add2basket_block {
 		position: relative !important;
 		top: auto !important;
 		left: auto !important;
@@ -729,7 +735,8 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 
 @media (min-width: 1500px) {
 	.catalog-item-table-view,
-	.filtered-items .catalog-item-cards {
+	.filtered-items .catalog-item-cards,
+	.tabs-main .catalog-item-cards {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 }
@@ -1246,6 +1253,18 @@ body.agll {
 }
 
 /* === Вкладки на главной === */
+.tabs-wrap.tabs-main > .tabs__box:first-of-type {
+	display: block;
+}
+
+.tabs-wrap.tabs-main > .tabs > .tabs__tab:first-child a {
+	color: var(--km-primary) !important;
+}
+
+.tabs-wrap.tabs-main > .tabs > .tabs__tab:first-child a span {
+	border-color: var(--km-primary) !important;
+}
+
 .tabs__tab a {
 	color: var(--km-text-muted) !important;
 }

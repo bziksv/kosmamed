@@ -159,7 +159,10 @@ $('.catalog-item-card').height(h);
 	            arrows: false,
 	            infinite: false,
 	            slidesToShow: 1,
-	            slidesToScroll: 1
+	            slidesToScroll: 1,
+	            speed: 0,
+	            waitForAnimate: false,
+	            cssEase: 'linear'
 	        });
 	    });
     }

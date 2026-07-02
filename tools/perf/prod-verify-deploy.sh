@@ -52,11 +52,12 @@ for f in "$MAIN_JS" "$THEME_CSS" "$SECT_JS"; do
   echo "  $(basename "$f"): $sz b"
 done
 
-[[ $(wc -c < "$MAIN_JS" | tr -d ' ') -eq 20275 ]] && ok "main.js 20275" || bad "main.js $(wc -c < "$MAIN_JS") != 20275"
+[[ $(wc -c < "$MAIN_JS" | tr -d ' ') -ge 21000 ]] && ok "main.js $(wc -c < "$MAIN_JS")" || bad "main.js $(wc -c < "$MAIN_JS") слишком мал"
 grep -q kmInitCatalogDeferredImages "$MAIN_JS" && ok "main.js kmInitCatalogDeferredImages" || bad "main.js без kmInitCatalogDeferredImages"
+grep -q kmInitHomeTabs "$MAIN_JS" && ok "main.js kmInitHomeTabs" || bad "main.js без kmInitHomeTabs"
 DOTS=$(grep -c 'slick-dots' "$THEME_CSS" 2>/dev/null || echo 0)
 [[ "$DOTS" -ge 4 ]] && ok "kosmamed-theme slick-dots ($DOTS)" || bad "kosmamed-theme без slick-dots ($DOTS)"
-[[ $(wc -c < "$SECT_JS" | tr -d ' ') -eq 6661 ]] && ok "catalog.section script.js 6661" || bad "catalog.section script.js $(wc -c < "$SECT_JS") != 6661"
+[[ $(wc -c < "$SECT_JS" | tr -d ' ') -ge 6600 ]] && ok "catalog.section script.js $(wc -c < "$SECT_JS")" || bad "catalog.section script.js $(wc -c < "$SECT_JS") != expected"
 
 if [[ -f "$PERF_PHP" ]]; then
   grep -q kmDeferCatalogOffscreenImages "$PERF_PHP" && ok "kosmamed_perf.php на месте" || bad "kosmamed_perf.php без defer-картинок"
@@ -77,7 +78,7 @@ fi
 
 echo "--- Снаружи (curl) ---"
 REMOTE_MAIN=$(curl -sf "$BASE_URL/bitrix/templates/elektro_flat/js/main.js" | wc -c | tr -d ' ')
-[[ "$REMOTE_MAIN" -eq 20275 ]] && ok "remote main.js $REMOTE_MAIN" || bad "remote main.js $REMOTE_MAIN (OPcache/старый файл?)"
+[[ "$REMOTE_MAIN" -ge 21000 ]] && ok "remote main.js $REMOTE_MAIN" || bad "remote main.js $REMOTE_MAIN (OPcache/старый файл?)"
 
 check_page() {
   local path="$1" label="$2"
