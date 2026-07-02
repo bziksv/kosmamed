@@ -46,6 +46,17 @@ systemctl reload apache2
 
 chown -R "$OWNER" "$SITE_DIR"
 
-bash "$SITE_DIR/tools/perf/prod-warmup.sh" "$BASE_URL"
-bash "$SITE_DIR/tools/perf/prod-composite-check.sh" "$BASE_URL"
-bash "$SITE_DIR/tools/perf/prod-verify-deploy.sh" "$BASE_URL"
+# Быстрая проверка до долгого warmup (SSH не обрывать)
+bash "$SITE_DIR/tools/perf/prod-verify-deploy.sh" "$BASE_URL" || true
+
+# Warmup 10+ мин и рвёт SSH — в фон, лог в /tmp
+if [[ "${SKIP_WARMUP:-}" == "1" ]]; then
+  echo "SKIP_WARMUP=1 — прогрев пропущен"
+else
+  LOG="/tmp/kosmamed-warmup-$(date +%Y%m%d-%H%M%S).log"
+  echo "Warmup в фоне → $LOG (SSH можно закрывать)"
+  nohup bash "$SITE_DIR/tools/perf/prod-warmup.sh" "$BASE_URL" >>"$LOG" 2>&1 &
+  echo "  tail -f $LOG"
+fi
+
+bash "$SITE_DIR/tools/perf/prod-composite-check.sh" "$BASE_URL" || true
