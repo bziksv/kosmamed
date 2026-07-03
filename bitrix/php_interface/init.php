@@ -53,7 +53,9 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catal
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php');
 }
+AddEventHandler('sale', 'OnSaleComponentOrderJsData', 'kmOnSaleComponentOrderJsData');
 AddEventHandler('sale', 'OnSaleComponentOrderResultPrepared', 'kmOnSaleComponentOrderResultPrepared');
+AddEventHandler('sale', 'OnSaleComponentOrderShowAjaxAnswer', 'kmOnSaleComponentOrderShowAjaxAnswer');
 function isWrapAttr($current, $target)
 {
     if($current < $target)

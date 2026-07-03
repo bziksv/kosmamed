@@ -116,7 +116,7 @@ if(!empty($arSetting["ORDER_MIN_PRICE"]["VALUE"])){
 		"USE_PHONE_NORMALIZATION" => "N",	// Использовать нормализацию номера телефона
 		"ADDITIONAL_PICT_PROP_16" => "-",	// Дополнительная картинка [Торговые предложения]
 		"ADDITIONAL_PICT_PROP_24" => "-",	// Дополнительная картинка [Основной каталог товаров]
-		"COMPOSITE_FRAME_MODE" => "A",	// Голосование шаблона компонента по умолчанию
+		"COMPOSITE_FRAME_MODE" => "N",	// Не кешировать: result_modifier и фото корзины должны собираться на каждый запрос
 		"COMPOSITE_FRAME_TYPE" => "AUTO",	// Содержимое компонента
 		"MESS_AUTH_BLOCK_NAME" => "Авторизация",	// Название блока авторизации
 		"MESS_REG_BLOCK_NAME" => "Регистрация",	// Название блока регистрации

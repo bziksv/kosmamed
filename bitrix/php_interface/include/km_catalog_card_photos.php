@@ -546,19 +546,39 @@ function kmBasketItemPicture($productId, $width = 65, $height = 65)
 /**
  * Превью в блоке «Товары в заказе» (sale.order.ajax) — MORE_PHOTO / MoySklad, не только DETAIL_PICTURE.
  */
+function kmOrderBasketExistingPhotoWorks(array $data): bool
+{
+	foreach (array('PREVIEW_PICTURE_SRC', 'DETAIL_PICTURE_SRC') as $key) {
+		$src = trim((string)($data[$key] ?? ''));
+		if ($src !== '' && kmCatalogCardPhotoFileExists(0, $src)) {
+			return true;
+		}
+	}
+
+	foreach (array('PREVIEW_PICTURE', 'DETAIL_PICTURE') as $key) {
+		$fileId = (int)($data[$key] ?? 0);
+		if ($fileId > 0 && kmCatalogCardPhotoFileExists($fileId)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function kmApplyOrderBasketPictures(array &$grid, $width = 110, $height = 110)
 {
 	if (empty($grid['ROWS']) || !is_array($grid['ROWS']) || !function_exists('kmBasketItemPicture')) {
 		return;
 	}
 
+	$applied = 0;
 	foreach ($grid['ROWS'] as &$row) {
-		if (empty($row['data']) || !is_array($row['data'])) {
+		if (!isset($row['data']) || !is_array($row['data'])) {
 			continue;
 		}
 
 		$data = &$row['data'];
-		if (!empty($data['PREVIEW_PICTURE_SRC']) || !empty($data['DETAIL_PICTURE_SRC'])) {
+		if (kmOrderBasketExistingPhotoWorks($data)) {
 			continue;
 		}
 
@@ -591,16 +611,48 @@ function kmApplyOrderBasketPictures(array &$grid, $width = 110, $height = 110)
 			$row['columns']['PREVIEW_PICTURE'] = $col;
 			$row['columns']['DETAIL_PICTURE'] = $col;
 		}
+		++$applied;
 	}
 	unset($row);
+
+	$GLOBALS['kmOrderBasketPicturesApplied'] = ($GLOBALS['kmOrderBasketPicturesApplied'] ?? 0) + $applied;
 }
 
 /** sale.order.ajax: AJAX refreshOrderAjax не вызывает result_modifier — патчим здесь. */
-function kmOnSaleComponentOrderResultPrepared($order, &$arUserResult, $request, &$arParams, &$arResult)
+function kmOnSaleComponentOrderJsData(&$arResult, &$arParams)
 {
-	if (empty($arResult['GRID']) || !function_exists('kmApplyOrderBasketPictures')) {
+	if (!function_exists('kmApplyOrderBasketPictures')) {
 		return;
 	}
 
-	kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+	if (!empty($arResult['GRID'])) {
+		kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+	}
+	if (!empty($arResult['JS_DATA']['GRID'])) {
+		kmApplyOrderBasketPictures($arResult['JS_DATA']['GRID'], 110, 110);
+	}
+}
+
+function kmOnSaleComponentOrderResultPrepared($order, &$arUserResult, $request, &$arParams, &$arResult)
+{
+	if (!function_exists('kmApplyOrderBasketPictures')) {
+		return;
+	}
+
+	if (!empty($arResult['GRID'])) {
+		kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+	}
+
+	if (!empty($arResult['JS_DATA']['GRID'])) {
+		kmApplyOrderBasketPictures($arResult['JS_DATA']['GRID'], 110, 110);
+	}
+}
+
+function kmOnSaleComponentOrderShowAjaxAnswer(&$result)
+{
+	if (empty($result['order']['GRID']) || !function_exists('kmApplyOrderBasketPictures')) {
+		return;
+	}
+
+	kmApplyOrderBasketPictures($result['order']['GRID'], 110, 110);
 }

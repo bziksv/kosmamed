@@ -3610,14 +3610,38 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			if (!data)
 				return;
 
-			var logoNode, logotype;
+			var logoNode, logotype, src1x, src2x;
 
 			logoNode = BX.create('DIV', {props: {className: 'bx-soa-item-imgcontainer'}});
 
 			if (data.PREVIEW_PICTURE_SRC && data.PREVIEW_PICTURE_SRC.length)
+			{
+				src1x = data.PREVIEW_PICTURE_SRC;
+				src2x = data.PREVIEW_PICTURE_SRC_2X || src1x;
 				logotype = this.getImageSources(data, 'PREVIEW_PICTURE');
+				if (!logotype || !logotype.src_1x)
+				{
+					logotype = {
+						src_1x: src1x,
+						src_2x: src2x,
+						src_orig: data.PREVIEW_PICTURE_SRC_ORIGINAL || src1x
+					};
+				}
+			}
 			else if (data.DETAIL_PICTURE_SRC && data.DETAIL_PICTURE_SRC.length)
+			{
+				src1x = data.DETAIL_PICTURE_SRC;
+				src2x = data.DETAIL_PICTURE_SRC_2X || src1x;
 				logotype = this.getImageSources(data, 'DETAIL_PICTURE');
+				if (!logotype || !logotype.src_1x)
+				{
+					logotype = {
+						src_1x: src1x,
+						src_2x: src2x,
+						src_orig: data.DETAIL_PICTURE_SRC_ORIGINAL || src1x
+					};
+				}
+			}
 
 			if (logotype && logotype.src_2x)
 			{

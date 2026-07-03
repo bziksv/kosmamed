@@ -2,8 +2,13 @@
 
 global $arSetting;
 
-if (function_exists('kmApplyOrderBasketPictures') && !empty($arResult['GRID'])) {
-	kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+if (function_exists('kmApplyOrderBasketPictures')) {
+	if (!empty($arResult['GRID'])) {
+		kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+	}
+	if (!empty($arResult['JS_DATA']['GRID'])) {
+		kmApplyOrderBasketPictures($arResult['JS_DATA']['GRID'], 110, 110);
+	}
 }
 
 $component = $this->__component;
