@@ -6,6 +6,19 @@ $arParams = $component->applyTemplateModifications();
 $arSetting = CElektroinstrument::GetFrontParametrsValues(SITE_ID);
 $arResult["SETTING"] = $arSetting;
 
+$maxItemsPerSection = (int)($arParams['MAX_ITEMS_PER_SECTION'] ?? 0);
+if ($maxItemsPerSection > 0 && !empty($arResult['ITEMS'])) {
+	$displayCount = (int)($arParams['KM_SECTION_LIMIT_DISPLAY_COUNT'] ?? $arParams['PAGE_ELEMENT_COUNT'] ?? 8);
+	$sectionDepth = (int)($arParams['KM_SECTION_LIMIT_DEPTH'] ?? 0);
+	$arResult['ITEMS'] = kmCatalogLimitItemsPerSection(
+		$arResult['ITEMS'],
+		$maxItemsPerSection,
+		$displayCount,
+		$sectionDepth,
+		(int)($arParams['IBLOCK_ID'] ?? 24)
+	);
+}
+
 //USE_PRICE_RATIO//
 $inPriceRatio = in_array("PRICE_RATIO", $arSetting["GENERAL_SETTINGS"]);
 $inMinPrice = in_array("MIN_PRICE", $arSetting["PRODUCT_TABLE_VIEW"]);
