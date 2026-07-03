@@ -30,7 +30,10 @@ if(isset($templateData["JS_OBJ"])) {?>
 //META_PROPERTY//
 $APPLICATION->SetPageProperty("ogtype", "product");
 if (!empty($arResult['DETAIL_IMG']['SRC']) && function_exists('kmSetLcpPreload')) {
-	kmSetLcpPreload((string)$arResult['DETAIL_IMG']['SRC']);
+	$lcpSrc = function_exists('kmPicturePreloadSrc')
+		? kmPicturePreloadSrc($arResult['DETAIL_IMG'])
+		: (string)$arResult['DETAIL_IMG']['SRC'];
+	kmSetLcpPreload((string)$lcpSrc);
 }
 if(isset($arResult["JS_OFFERS"]) && !empty($arResult["JS_OFFERS"])):
 	foreach($arResult["JS_OFFERS"] as $key => $arOffer):

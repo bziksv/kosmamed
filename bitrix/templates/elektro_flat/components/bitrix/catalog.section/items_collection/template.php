@@ -654,6 +654,8 @@ $signedParams = $signer->sign(base64_encode(serialize($arResult["ORIGINAL_PARAME
 					),
 					"PRODUCT" => array(
 						"ID" => $arElement["ID"],
+						"NAME" => $arElement["NAME"],
+						"PICT" => kmCatalogCardPictForJs($arElement),
 						"ITEM_PRICE_MODE" => isset($arElement["OFFERS"]) && !empty($arElement["OFFERS"]) ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["ITEM_PRICE_MODE"] : $arElement["ITEM_PRICE_MODE"],
 						"ITEM_PRICES" => isset($arElement["OFFERS"]) && !empty($arElement["OFFERS"]) ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["ITEM_PRICES"] : $arElement["ITEM_PRICES"],
 						"ITEM_PRICE_SELECTED" => isset($arElement["OFFERS"]) && !empty($arElement["OFFERS"]) ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["ITEM_PRICE_SELECTED"] : $arElement["ITEM_PRICE_SELECTED"],
@@ -683,7 +685,7 @@ $signedParams = $signer->sign(base64_encode(serialize($arResult["ORIGINAL_PARAME
 					"PRODUCT" => array(
 						"ID" => $arElement["ID"],
 						"NAME" => $arElement["NAME"],
-						"PICT" => is_array($arElement["PREVIEW_PICTURE"]) ? $arElement["PREVIEW_PICTURE"] : array("SRC" => SITE_TEMPLATE_PATH."/images/no-photo.svg", "WIDTH" => 150, "HEIGHT" => 150),
+						"PICT" => kmCatalogCardPictForJs($arElement),
 						"ITEM_PRICE_MODE" => $arElement["ITEM_PRICE_MODE"],
 						"ITEM_PRICES" => $arElement["ITEM_PRICES"],
 						"ITEM_PRICE_SELECTED" => $arElement["ITEM_PRICE_SELECTED"],

@@ -508,12 +508,24 @@ else
 				<?php
 				endif;
 				?>
-<div>
-<label>
-<input type="checkbox" required>
-<span>Я согласен на обработку персональных данных и принимаю условия <a target="_blank" href="/upload/mm_politics.png">Политики</a></span>
-</label>
-</div>
+				<?php
+				global $arSetting;
+				$kmConsentText = !empty($arSetting['TEXT_PERSONAL_DATA']['VALUE'])
+					? $arSetting['TEXT_PERSONAL_DATA']['VALUE']
+					: 'Я согласен на обработку персональных данных и принимаю условия <a target="_blank" href="/upload/mm_politics.png">Политики</a>';
+				?>
+				<div id="hint_agreement" class="hint_agreement order km-order-consent">
+					<input type="hidden" name="PERSONAL_DATA" id="PERSONAL_DATA_order" value="N">
+					<p class="km-order-consent__error" id="km_consent_error" hidden>Подтвердите согласие на обработку персональных данных — отметьте галочку ниже.</p>
+					<div class="km-order-consent__row">
+						<div class="km-order-consent__check">
+							<span class="input-checkbox" id="input-checkbox_order" role="checkbox" aria-checked="false" tabindex="0"></span>
+						</div>
+						<div class="km-order-consent__text">
+							<?=$kmConsentText?>
+						</div>
+					</div>
+				</div>
 
 				<!--	ORDER SAVE BLOCK	-->
 				<div id="bx-soa-orderSave">
@@ -697,6 +709,23 @@ else
 			],
 		]); ?>);
 	</script>
+	<?php
+	$APPLICATION->AddHeadScript(SITE_TEMPLATE_PATH . '/js/km_order_consent.js');
+
+	if (\Bitrix\Main\Loader::includeModule('ipol.sdek')) {
+		$kmSdekPickupIds = array_merge(
+			(array)CDeliverySDEK::getDeliveryId('pickup'),
+			(array)CDeliverySDEK::getDeliveryId('postamat')
+		);
+		$kmSdekPickupIds = array_values(array_unique(array_map('intval', $kmSdekPickupIds)));
+		$APPLICATION->AddHeadScript(SITE_TEMPLATE_PATH . '/js/km_order_sdek_pvz.js');
+		?>
+		<script>
+			window.KM_SDEK_PICKUP = {deliveryIds: <?=CUtil::PhpToJSObject($kmSdekPickupIds)?>};
+		</script>
+		<?php
+	}
+	?>
 	<?php
 	if ($arParams['SHOW_PICKUP_MAP'] === 'Y' || $arParams['SHOW_MAP_IN_PROPS'] === 'Y')
 	{

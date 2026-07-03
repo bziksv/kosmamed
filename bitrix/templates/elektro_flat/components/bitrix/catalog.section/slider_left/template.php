@@ -12,6 +12,9 @@ $inMinPrice = in_array("MIN_PRICE", $arSetting["PRODUCT_TABLE_VIEW"]["VALUE"]);
 <script type="text/javascript">
 	//<![CDATA[
 	$(function() {
+		if (typeof $.fn.anythingSlider !== "function") {
+			return;
+		}
 		$(".leftSlider").anythingSlider({
 			"theme": "left-slider",
 			"resizeContents": false,

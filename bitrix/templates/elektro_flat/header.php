@@ -31,7 +31,8 @@ Loc::loadMessages(__FILE__);?>
 	$kmIsCatalog = CSite::InDir(SITE_DIR . "catalog/");
 	$kmIsProduct = CSite::InDir(SITE_DIR . "product/");
 	$kmIsCatalogLike = $kmIsCatalog || $kmIsProduct;
-	$kmNeedsSlider = $kmIsHome || $kmIsCatalog;
+	// slider_left (left sidebar) uses anythingSlider on catalog + product pages
+	$kmNeedsSlider = $kmIsHome || $kmIsCatalogLike;
 	$kmNeedsFancybox = $kmIsCatalogLike;
 	$kmNeedsCountdown = $kmIsHome || $kmIsCatalogLike;
 	$kmNeedsSlick = $kmIsCatalogLike || $kmIsHome;

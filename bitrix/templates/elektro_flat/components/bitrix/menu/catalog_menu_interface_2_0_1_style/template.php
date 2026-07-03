@@ -42,7 +42,10 @@ if(!$isSiteClosed && !empty($arResult)) {
 				@chmod($cacheFile, 0644);
 			}
 			$cssHref = '/bitrix/cache/km_menu_css/' . $cacheName;
-			if (function_exists('kmDeferStylesheet')) {
+			// На /product/ подписи пунктов flyout — через ::before; defer ломает hover до загрузки CSS
+			global $APPLICATION;
+			$kmMenuCssSync = is_object($APPLICATION) && strpos((string)$APPLICATION->GetCurDir(), '/product/') === 0;
+			if (function_exists('kmDeferStylesheet') && !$kmMenuCssSync) {
 				kmDeferStylesheet($cssHref . '?v=' . filemtime($cacheFile));
 			} else {
 				\Bitrix\Main\Page\Asset::getInstance()->addCss($cssHref . '?v=' . filemtime($cacheFile));

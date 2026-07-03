@@ -707,6 +707,7 @@ if (!function_exists('kmDeferCatalogScripts')) {
 			'fancybox',
 			'catalog.element',
 			'geolocation',
+			'geolocation.delivery/delivery/script.js',
 		];
 
 		$deferNeedles = [
@@ -966,9 +967,24 @@ if (!function_exists('kmFindCatalogListingStart')) {
 if (!function_exists('kmDeferImagesInHtmlFragment')) {
 	function kmDeferImagesInHtmlFragment(string $html, string $placeholder): string
 	{
+		$skipNoLazy = static function (array $m) use ($placeholder): string {
+			if (preg_match('/\bclass=["\'][^"\']*\bno-lazy\b/i', $m[0])) {
+				return $m[0];
+			}
+
+			return preg_replace(
+				'/\ssrc="(\/[^"]+\.(?:webp|jpe?g|png))"/i',
+				' src="' . $placeholder . '" data-km-src="$1" fetchpriority="low"',
+				$m[0]
+			);
+		};
+
 		$html = preg_replace_callback(
 			'#<picture>(.*?)</picture>#is',
-			static function (array $m) use ($placeholder): string {
+			static function (array $m) use ($placeholder, $skipNoLazy): string {
+				if (preg_match('/\bclass=["\'][^"\']*\bno-lazy\b/i', $m[0])) {
+					return $m[0];
+				}
 				$inner = $m[1];
 				$inner = preg_replace(
 					'/\ssrcset="([^"]+)"/i',
@@ -986,11 +1002,43 @@ if (!function_exists('kmDeferImagesInHtmlFragment')) {
 			$html
 		);
 
-		return preg_replace(
-			'/\ssrc="(\/[^"]+\.(?:webp|jpe?g|png))"/i',
-			' src="' . $placeholder . '" data-km-src="$1" fetchpriority="low"',
+		return preg_replace_callback(
+			'/<img\b[^>]*>/i',
+			$skipNoLazy,
 			$html
 		);
+	}
+}
+
+if (!function_exists('kmDeferTailBoundaryPos')) {
+	/** Do not defer images in footer / «Вы смотрели» / related blocks below the listing. */
+	function kmDeferTailBoundaryPos(string $html, int $searchFrom = 0): int
+	{
+		$markers = [
+			'<footer',
+			'id="already_seen"',
+			'class="already_seen"',
+			'<div class="filtered-items"',
+			'<div class="bigdata-items"',
+		];
+		$cut = strlen($html);
+		foreach ($markers as $marker) {
+			$pos = stripos($html, $marker, $searchFrom);
+			if ($pos !== false && $pos < $cut) {
+				$cut = $pos;
+			}
+		}
+
+		return $cut;
+	}
+}
+
+if (!function_exists('kmTruncateDeferFragment')) {
+	function kmTruncateDeferFragment(string $html): string
+	{
+		$cut = kmDeferTailBoundaryPos($html, 0);
+
+		return $cut < strlen($html) ? substr($html, 0, $cut) : $html;
 	}
 }
 
@@ -1027,9 +1075,21 @@ if (!function_exists('kmDeferCatalogOffscreenImages')) {
 			$openTag = array_shift($parts);
 			$cardBody = array_shift($parts) ?? '';
 			$cardIndex++;
-			if ($cardIndex > $skip) {
-				$cardBody = kmDeferImagesInHtmlFragment($cardBody, $ph);
+
+			$boundary = kmDeferTailBoundaryPos($cardBody, 0);
+			if ($boundary < strlen($cardBody)) {
+				$deferPart = substr($cardBody, 0, $boundary);
+				$tailPart = substr($cardBody, $boundary);
+			} else {
+				$deferPart = $cardBody;
+				$tailPart = '';
 			}
+
+			if ($cardIndex > $skip) {
+				$deferPart = kmDeferImagesInHtmlFragment($deferPart, $ph);
+			}
+
+			$cardBody = $deferPart . $tailPart;
 			$result .= $openTag . $cardBody;
 		}
 
@@ -1058,9 +1118,14 @@ if (!function_exists('kmDeferProductOffscreenImages')) {
 			return;
 		}
 
+		$deferEnd = kmDeferTailBoundaryPos($content, $deferStart);
 		$head = substr($content, 0, $deferStart);
-		$tail = kmDeferImagesInHtmlFragment(substr($content, $deferStart), kmPlaceholderImg());
-		$content = $head . $tail;
+		$middle = kmDeferImagesInHtmlFragment(
+			substr($content, $deferStart, $deferEnd - $deferStart),
+			kmPlaceholderImg()
+		);
+		$tail = substr($content, $deferEnd);
+		$content = $head . $middle . $tail;
 	}
 }
 
@@ -1077,6 +1142,7 @@ if (!function_exists('kmFixCatalogSliderImages')) {
 			static function (array $m): string {
 				$attrs = preg_replace('/\sstyle="display:\s*none;"/i', '', $m[1]);
 				$attrs = preg_replace('/\sloading="lazy"/i', '', $attrs);
+				$attrs = preg_replace('/\s\/\s*$/', '', $attrs);
 				if (!preg_match('/\bloading\s*=/i', $attrs)) {
 					$attrs .= ' loading="eager"';
 				}
@@ -1085,6 +1151,69 @@ if (!function_exists('kmFixCatalogSliderImages')) {
 			},
 			$content
 		);
+	}
+}
+
+if (!function_exists('kmFixBrokenImgTags')) {
+	/** arturgolubev.lazyimage + kmInjectLazyImages can duplicate loading= or break self-closing tags. */
+	function kmFixBrokenImgTags(string &$content): void
+	{
+		if (stripos($content, '<img') === false) {
+			return;
+		}
+
+		$content = preg_replace('/\sloading="lazy"\s+loading="lazy"/i', ' loading="lazy"', $content);
+		$content = preg_replace('/\sloading="eager"\s+loading="lazy"/i', ' loading="eager"', $content);
+		$content = preg_replace('/\sloading="lazy"\s+loading="eager"/i', ' loading="eager"', $content);
+		$content = preg_replace('/\s\/\s+loading="([^"]+)">/i', ' loading="$1">', $content);
+	}
+}
+
+if (!function_exists('kmFixFooterPaymentImages')) {
+	/** Иконки «Способы оплаты» в подвале — всегда сразу, не через km-defer / lazyimage. */
+	function kmFixFooterPaymentImages(string &$content): void
+	{
+		if (stripos($content, 'footer_pay') === false) {
+			return;
+		}
+
+		$start = stripos($content, '<div class="footer_pay">');
+		if ($start === false) {
+			return;
+		}
+
+		$end = stripos($content, '</footer>', $start);
+		if ($end === false) {
+			$end = strlen($content);
+		}
+
+		$chunk = substr($content, $start, $end - $start);
+		$fixed = preg_replace_callback(
+			'/<img\b([^>]*)>/i',
+			static function (array $m): string {
+				$attrs = trim($m[1]);
+				$attrs = preg_replace('/\s\/\s*$/', '', $attrs);
+				if (preg_match('/\sdata-km-src=["\']([^"\']+)["\']/i', $attrs, $srcMatch)) {
+					$realSrc = $srcMatch[1];
+					if (preg_match('/\ssrc=["\'][^"\']*["\']/i', $attrs)) {
+						$attrs = preg_replace('/\ssrc=["\'][^"\']*["\']/i', ' src="' . $realSrc . '"', $attrs);
+					} else {
+						$attrs = ' src="' . $realSrc . '"' . $attrs;
+					}
+					$attrs = preg_replace('/\sdata-km-src=["\'][^"\']*["\']/i', '', $attrs);
+				}
+				$attrs = preg_replace('/\sfetchpriority=["\']low["\']/i', '', $attrs);
+				$attrs = preg_replace('/\sloading=["\'][^"\']*["\']/i', '', $attrs);
+				$attrs = preg_replace('/\sclass=["\'][^"\']*["\']/i', '', $attrs);
+				$attrs = trim($attrs);
+
+				return '<img class="no-lazy" loading="eager"' . ($attrs !== '' ? ' ' . $attrs : '') . ' />';
+			},
+			$chunk
+		);
+
+		$content = substr($content, 0, $start) . $fixed . substr($content, $end);
+		$content = preg_replace('/(<img class="no-lazy" loading="eager")\s+loading="lazy"/i', '$1', $content);
 	}
 }
 
@@ -1151,7 +1280,7 @@ if (!function_exists('kmFixLcpImages')) {
 if (!function_exists('kmInjectHomeDeferredLoader')) {
 	function kmInjectHomeDeferredLoader(string &$content): void
 	{
-		if (empty($GLOBALS['kmIsHome']) && empty($GLOBALS['kmIsCatalogLike'])) {
+		if (empty($GLOBALS['kmIsHome']) && empty($GLOBALS['kmIsCatalogLike']) && empty($GLOBALS['kmIsProduct'])) {
 			return;
 		}
 		if (stripos($content, 'km-deferred-images') !== false) {
@@ -1207,16 +1336,19 @@ if (!function_exists('kmOnEndBufferContentPost')) {
 	{
 		kmFixCatalogSliderImages($content);
 		kmFixLcpImages($content);
+		kmFixBrokenImgTags($content);
 		kmInjectWebpImages($content);
 		kmInjectWebpDeferredAttributes($content);
 		kmInjectBackgroundWebp($content);
 		kmFixYandexMetrikaInformer($content);
+		kmFixFooterPaymentImages($content);
 	}
 }
 
 if (function_exists('AddEventHandler')) {
 	AddEventHandler('main', 'OnEndBufferContent', 'kmOnEndBufferContent');
 	AddEventHandler('main', 'OnEndBufferContent', 'kmOnEndBufferContentPost', 200);
+	AddEventHandler('main', 'OnEndBufferContent', 'kmFixFooterPaymentImages', 500001);
 	AddEventHandler('main', 'OnPageStart', 'kmDisablePullOnStorefront');
 	AddEventHandler('main', 'OnAfterFileSave', 'kmWebpOnAfterFileSave');
 }
@@ -1259,6 +1391,51 @@ if (!function_exists('kmEnsureCssinliner')) {
 
 if (function_exists('AddEventHandler')) {
 	AddEventHandler('main', 'OnPageStart', 'kmEnsureCssinliner');
+}
+
+if (!function_exists('kmFormatCatalogSectionHtml')) {
+	/**
+	 * Section PREVIEW/DESCRIPTION: HTML as-is; markdown/SEO plain text → product-block_new HTML.
+	 * Strips SEO density markers like «(28 раз)» before rendering.
+	 */
+	function kmFormatCatalogSectionHtml(string $text): string
+	{
+		$text = trim($text);
+		if ($text === '') {
+			return '';
+		}
+
+		if (preg_match('/<(div|p|h[1-6]|ul|ol|table|section|br)\b/i', $text)) {
+			return $text;
+		}
+
+		$text = preg_replace('/\s*\(\d+\s+раз\)/u', '', $text);
+		$text = preg_replace('/\*\*([^*]+)\*\*\s*\(\d+\)/u', '**$1**', $text);
+
+		if (!class_exists('Arturgolubev\\Chatgpt\\Vendor\\Parsedown', false)) {
+			$parsedownPath = $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/arturgolubev.chatgpt/lib/vendor/parsedown.php';
+			if (is_file($parsedownPath)) {
+				require_once $parsedownPath;
+			}
+		}
+
+		if (class_exists('Arturgolubev\\Chatgpt\\Vendor\\Parsedown')) {
+			$parser = new \Arturgolubev\Chatgpt\Vendor\Parsedown();
+			$parser->setSafeMode(true);
+			$html = $parser->text($text);
+		} else {
+			$html = '<p>' . nl2br(htmlspecialcharsbx($text, ENT_QUOTES)) . '</p>';
+		}
+
+		$html = preg_replace('/<h1(\b[^>]*)>/i', '<h2$1>', $html);
+		$html = str_ireplace('</h1>', '</h2>', $html);
+
+		if (stripos($html, 'product-block_new') === false) {
+			$html = '<div class="product-block_new">' . $html . '</div>';
+		}
+
+		return $html;
+	}
 }
 
 if (!function_exists('kmDeferStylesheet')) {

@@ -15,7 +15,7 @@ if(count($arResult["ITEMS"]) < 1)
 				<?else:?>
 					<a href="javascript:void(0)" title="<?=$arItem['NAME']?>">
 				<?endif;?>
-					<img src="<?=$arItem['PICTURE_PREVIEW']['SRC']?>" width="<?=$arItem['PICTURE_PREVIEW']['WIDTH']?>" height="<?=$arItem['PICTURE_PREVIEW']['HEIGHT']?>" alt="<?=$arItem['NAME']?>" />
+					<img class="no-lazy" loading="eager" src="<?=$arItem['PICTURE_PREVIEW']['SRC']?>" width="<?=$arItem['PICTURE_PREVIEW']['WIDTH']?>" height="<?=$arItem['PICTURE_PREVIEW']['HEIGHT']?>" alt="<?=$arItem['NAME']?>" />
 				</a>
 			</li>
 		<?endforeach;?>

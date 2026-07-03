@@ -452,3 +452,33 @@ function kmCatalogCardPhotos(array $arElement, $maxPhotos = 5)
 		'wideImage' => $hasInfographics || $isPoster,
 	);
 }
+
+/**
+ * Картинка для popup «Товар добавлен в корзину» — та же логика, что в карточке каталога.
+ */
+function kmCatalogCardPictForJs(array $arElement)
+{
+	$cardPhotos = kmCatalogCardPhotos($arElement, 1);
+	if (!empty($cardPhotos['photos'][0]['SRC'])) {
+		$p = $cardPhotos['photos'][0];
+		return array(
+			'SRC' => $p['SRC'],
+			'WIDTH' => (int)($p['WIDTH'] ?? 150),
+			'HEIGHT' => (int)($p['HEIGHT'] ?? 150),
+		);
+	}
+
+	if (is_array($arElement['PREVIEW_PICTURE'] ?? null) && !empty($arElement['PREVIEW_PICTURE']['SRC'])) {
+		return $arElement['PREVIEW_PICTURE'];
+	}
+
+	if (is_array($arElement['DETAIL_PICTURE'] ?? null) && !empty($arElement['DETAIL_PICTURE']['SRC'])) {
+		return $arElement['DETAIL_PICTURE'];
+	}
+
+	return array(
+		'SRC' => SITE_TEMPLATE_PATH . '/images/no-photo.svg',
+		'WIDTH' => 150,
+		'HEIGHT' => 150,
+	);
+}

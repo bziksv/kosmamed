@@ -159,4 +159,32 @@
 
 	window.kmFlyToCart = flyToCart;
 	window.kmFlyToCartFromButton = fromButton;
+
+	window.kmResolveBasketPopupPict = function (product, visual) {
+		var pict = (product && product.pict) ? product.pict : {};
+		var src = pict.SRC || "";
+		var width = pict.WIDTH || 150;
+		var height = pict.HEIGHT || 150;
+
+		if (src && src.indexOf("undefined") === -1) {
+			return {SRC: src, WIDTH: width, HEIGHT: height};
+		}
+
+		var btnId = visual && (visual.BTN_BUY_ID || visual.PROPS_BTN_ID);
+		if (btnId && window.BX) {
+			var btn = BX(btnId);
+			if (btn) {
+				var img = findProductImage(btn);
+				if (img && img.src) {
+					return {
+						SRC: img.currentSrc || img.src,
+						WIDTH: img.naturalWidth || img.width || 150,
+						HEIGHT: img.naturalHeight || img.height || 150
+					};
+				}
+			}
+		}
+
+		return {SRC: NO_PHOTO, WIDTH: 150, HEIGHT: 150};
+	};
 })();

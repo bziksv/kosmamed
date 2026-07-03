@@ -154,6 +154,7 @@ BX.GeolocationDelivery = function(elementId) {
 		{
 			sessid: BX.bitrix_sessid(),
 			action: "geolocationDelivery",
+			template: BX("geolocationDelivery-" + elementId).getAttribute("data-component-template") || "delivery",
 			arParams: {
 				"ELEMENT_ID": elementId,
 				"ELEMENT_COUNT": BX("geolocationDelivery-" + elementId).getAttribute("data-element-count"),

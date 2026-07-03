@@ -141,6 +141,7 @@ if(isset($arResult['ITEM'])) {
 					"PRODUCT" => array(
 						"ID" => $arElement['ID'],
 						"NAME"=> $arElement["NAME"],
+						"PICT" => kmCatalogCardPictForJs($arElement),
 						"ITEM_PRICE_MODE" => $haveOffers ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["ITEM_PRICE_MODE"] : $arElement["ITEM_PRICE_MODE"],
 						"ITEM_PRICES" => $haveOffers ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["ITEM_PRICES"] : $arElement["ITEM_PRICES"],
 						"ITEM_PRICE_SELECTED" => $haveOffers ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["ITEM_PRICE_SELECTED"] : $arElement["ITEM_PRICE_SELECTED"],
@@ -172,7 +173,7 @@ if(isset($arResult['ITEM'])) {
 					"PRODUCT" => array(
 						"ID" => $arElement["ID"],
 						"NAME" => $arElement["NAME"],
-						"PICT" => is_array($arElement["PREVIEW_PICTURE"]) ? $arElement["PREVIEW_PICTURE"] : array("SRC" => SITE_TEMPLATE_PATH."/images/no-photo.svg", "WIDTH" => 150, "HEIGHT" => 150),
+						"PICT" => kmCatalogCardPictForJs($arElement),
 						"ITEM_PRICE_MODE" => $arElement["ITEM_PRICE_MODE"],
 						"ITEM_PRICES" => $arElement["ITEM_PRICES"],
 						"ITEM_PRICE_SELECTED" => $arElement["ITEM_PRICE_SELECTED"],

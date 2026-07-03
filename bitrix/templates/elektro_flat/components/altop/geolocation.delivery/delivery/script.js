@@ -19,6 +19,7 @@ BX.ShowGeolocationDelivery = function(arParams) {
 		{
 			sessid: BX.bitrix_sessid(),
 			action: "geolocationDelivery",
+			template: arParams.TEMPLATE || "delivery",
 			arParams: arParams.PARAMS
 		},
 		BX.delegate(function(result)

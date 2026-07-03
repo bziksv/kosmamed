@@ -455,6 +455,9 @@ if(is_array($arResult["DETAIL_PICTURE"])) {
 	} else {
 		$arResult["DETAIL_IMG"] = $arResult["DETAIL_PICTURE"];
 	}
+	if (!empty($arResult['DETAIL_IMG']['SRC']) && function_exists('kmAttachWebp')) {
+		$arResult['DETAIL_IMG'] = kmAttachWebp($arResult['DETAIL_IMG']);
+	}
 
 	//PREVIEW_IMG//
 	if($arResult["DETAIL_PICTURE"]["WIDTH"] > $arParams["DISPLAY_IMG_WIDTH"] || $arResult["DETAIL_PICTURE"]["HEIGHT"] > $arParams["DISPLAY_IMG_HEIGHT"]) {
@@ -1443,7 +1446,10 @@ $arResult["PROPERTIES"]["ARTNUMBER"] = $arResult["PROPERTIES"]["CML2_ARTICLE"];
 $arResult["NOINDEX"] = $arResult["PROPERTIES"]["NOINDEX"]["VALUE"];
 
 if (!empty($arResult['DETAIL_IMG']['SRC']) && function_exists('kmSetLcpPreload')) {
-	kmSetLcpPreload((string)$arResult['DETAIL_IMG']['SRC']);
+	$lcpSrc = function_exists('kmPicturePreloadSrc')
+		? kmPicturePreloadSrc($arResult['DETAIL_IMG'])
+		: (string)$arResult['DETAIL_IMG']['SRC'];
+	kmSetLcpPreload((string)$lcpSrc);
 }
 
 //CACHE_KEYS//

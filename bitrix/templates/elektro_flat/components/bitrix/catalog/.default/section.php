@@ -260,8 +260,13 @@ if(!empty($arCurSection)) {
 
 
 	<?//PREVIEW//  else need for fast link
-	if(!$_REQUEST["PAGEN_1"] || empty($_REQUEST["PAGEN_1"]) || $_REQUEST["PAGEN_1"] <= 1) {?>
-		<div class="catalog_preview"><?=(!empty($arCurSection["PREVIEW"]) && empty($pageSeo["PREVIEW_TEXT"]) ? $arCurSection["PREVIEW"] : $pageSeo["PREVIEW_TEXT"])?></div>
+	if(!$_REQUEST["PAGEN_1"] || empty($_REQUEST["PAGEN_1"]) || $_REQUEST["PAGEN_1"] <= 1) {
+		$kmSectionPreviewHtml = (!empty($arCurSection["PREVIEW"]) && empty($pageSeo["PREVIEW_TEXT"]) ? $arCurSection["PREVIEW"] : $pageSeo["PREVIEW_TEXT"]);
+		if (function_exists('kmFormatCatalogSectionHtml')) {
+			$kmSectionPreviewHtml = kmFormatCatalogSectionHtml((string)$kmSectionPreviewHtml);
+		}
+	?>
+		<div class="catalog_preview"><?=$kmSectionPreviewHtml?></div>
 	<?}else{?>
 	    <div class="catalog_preview"></div>
 	<?}
@@ -640,8 +645,13 @@ $intSectionID = $APPLICATION->IncludeComponent("bitrix:catalog.section", "",
 );?>
 
 <?//DESCRIPTION//
-if(!$_REQUEST["PAGEN_1"] || empty($_REQUEST["PAGEN_1"]) || $_REQUEST["PAGEN_1"] <= 1) {?>
-	<div class="catalog_preview"><?=(!empty($arCurSection["DESCRIPTION"]) && empty($pageSeo["SEO_TEXT"]) ? $arCurSection["DESCRIPTION"] : $pageSeo["SEO_TEXT"])?></div>
+if(!$_REQUEST["PAGEN_1"] || empty($_REQUEST["PAGEN_1"]) || $_REQUEST["PAGEN_1"] <= 1) {
+	$kmSectionDescriptionHtml = (!empty($arCurSection["DESCRIPTION"]) && empty($pageSeo["SEO_TEXT"]) ? $arCurSection["DESCRIPTION"] : $pageSeo["SEO_TEXT"]);
+	if (function_exists('kmFormatCatalogSectionHtml')) {
+		$kmSectionDescriptionHtml = kmFormatCatalogSectionHtml((string)$kmSectionDescriptionHtml);
+	}
+?>
+	<div class="catalog_preview"><?=$kmSectionDescriptionHtml?></div>
 <?}
 
 //FILTER_SEO_ADD_CHAIN//

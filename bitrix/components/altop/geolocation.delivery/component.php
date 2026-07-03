@@ -41,8 +41,8 @@ $basket = false;
 if($arParams["CART_PRODUCTS"] == "Y")
 	$basket = Sale\Basket::loadItemsForFUser(Sale\Fuser::getId(), Bitrix\Main\Context::getCurrent()->getSite())->getOrderableItems();
 
-if($this->StartResultCache(false, array($userId, $basket))) {
-	if($arParams["AJAX_CALL"] == "Y" && $arParams["GEOLOCATION_LOCATION_ID"] > 0) {
+if($this->StartResultCache(false, array($userId, $arParams["CART_PRODUCTS"], $arParams["ELEMENT_ID"], $arParams["ELEMENT_COUNT"], $arParams["GEOLOCATION_LOCATION_ID"]))) {
+	if($arParams["GEOLOCATION_LOCATION_ID"] > 0) {
 		//CATALOG_MEASURE_RATIO//
 		$rsRatio = CCatalogMeasureRatio::getList(
 			array(),
@@ -137,7 +137,7 @@ if($this->StartResultCache(false, array($userId, $basket))) {
 		
 		if(!empty($arResult["DELIVERY"]))
 			Collection::sortByColumn($arResult["DELIVERY"], array("PRICE" => SORT_ASC));
-		else
+		elseif($arParams["AJAX_CALL"] == "Y")
 			$this->abortResultCache();
 	}
 	

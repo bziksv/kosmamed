@@ -3,25 +3,25 @@ cmodule::includeModule('sale');
 IncludeModuleLangFile(__FILE__);
 
 /*
-	IPOLSDEK_CACHE_TIME - время кэша в секундах
-	IPOLSDEK_NOCACHE    - если задан - не использовать кэш
-    IPOLSDEK_DOWNCOMPLECTS - выгружать комплекты отдельными товарами
+	IPOLSDEK_CACHE_TIME -    
+	IPOLSDEK_NOCACHE    -   -   
+    IPOLSDEK_DOWNCOMPLECTS -    
     IPOLSDEK_IGNORECANBUY - skip CAN_BUY check
 
-	onBeforeDimensionsCount - габариты товаров [документировано]
-	onCompabilityBefore - годнота профилей [документировано]
-	onCalculate - готовность расчета [документировано]
-	onTarifPriority - приоритет расчета тарифов [документировано]
-	onCalculatePriceDelivery - перед расчетом, для добавления доп. услуг (должен возвращать массив услуг id => параметр)
-	onBeforeShipment - для разбиения на разные заказы
+	onBeforeDimensionsCount -   []
+	onCompabilityBefore -   []
+	onCalculate -   []
+	onTarifPriority -    []
+	onCalculatePriceDelivery -  ,   .  (    id => )
+	onBeforeShipment -     
 */
 
 class CDeliverySDEK extends sdekHelper{
 	static $profiles     = false;
-	static $hasPVZ       = false;//грузим ли ПВЗ
+	static $hasPVZ       = false;//  
 
-	static $date         = false; // срок доставки
-	private static $_date = false; // дата доставки
+	static $date         = false; //  
+	private static $_date = false; //  
 
 	static $price        = false;
 
@@ -30,15 +30,15 @@ class CDeliverySDEK extends sdekHelper{
 
     /**
      * @var bool|string
-     * Сохраняет город Битрикса в Compability и Calculate, чтобы учитывать необходимость узнавать город СДЭКа из БД
-     * Учитывая, что sdekCity может быть установлен извне, проверяется на false в калькуляторе
+     *     Compability  Calculate,        
+     * ,  sdekCity    ,   false  
      */
     static $bitrixCity   = false;
 	static $sdekCity     = false;
 	static $sdekCityCntr = false;
 	static $sdekSender   = false;
 	private static $extSdekSender = false;
-	static $goods        = false; // кг, см
+	static $goods        = false; // , 
 	static $PVZcities    = false;
 	static $POSTAMATcities = false;
 
@@ -49,8 +49,8 @@ class CDeliverySDEK extends sdekHelper{
 	private static $auth    = false;
     private static $account = false;
 
-	static $preSet       = false; // флаг установки габаритов
-	static $lastCnt      = false; // значение последнего расчета стоимости
+	static $preSet       = false; //   
+	static $lastCnt      = false; //    
 
     /**
      * @var string if constant defined, CAN_BUY check skipped when receiving basket goods
@@ -58,7 +58,7 @@ class CDeliverySDEK extends sdekHelper{
     protected static $ignoreCanBuy = 'IPOLSDEK_IGNORECANBUY';
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													База службы доставки
+													  
 		== Init ==  == SetSettings ==  == GetSettings ==  == Compability ==  == Calculate ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
@@ -229,7 +229,8 @@ class CDeliverySDEK extends sdekHelper{
                 // checking country
                 if (
                     !empty($arConfig) &&
-                    array_key_exists('COUNTRIES', $arConfig) &&
+                    !empty($arConfig['COUNTRIES']) &&
+                    is_array($arConfig['COUNTRIES']) &&
                     array_key_exists('VALUE', $arConfig['COUNTRIES']) &&
                     $arConfig['COUNTRIES']['VALUE']
                 ) {
@@ -273,6 +274,8 @@ class CDeliverySDEK extends sdekHelper{
                 sdekShipmentCollection::$accountId = self::$account;
             } elseif (
                 !empty($arConfig) &&
+                !empty($arConfig['ACCOUNT']) &&
+                is_array($arConfig['ACCOUNT']) &&
                 array_key_exists('VALUE', $arConfig['ACCOUNT']) &&
                 $arConfig['ACCOUNT']['VALUE']
             ) {
@@ -295,7 +298,7 @@ class CDeliverySDEK extends sdekHelper{
             if (!(array_key_exists('isdek_action', $_POST) && $_POST['isdek_action'])
                 && strpos($_SERVER['REQUEST_URI'], "bitrix/admin/sale_order_new.php") === false) {
                 if (!self::$preSet && $arItems = sdekShipmentCollection::formation($arOrder)) {
-                    // событие заполнения порядка
+                    //   
                     $order = array();
                     foreach (GetModuleEvents(self::$MODULE_ID, "onBeforeShipment", true) as $arEvent)
                         ExecuteModuleEventEx($arEvent, array(&$order, $arItems));
@@ -398,13 +401,15 @@ class CDeliverySDEK extends sdekHelper{
 						sdekShipmentCollection::$accountId = self::$account;
 					}elseif(
 						!empty($arConfig) &&
+						!empty($arConfig['ACCOUNT']) &&
+						is_array($arConfig['ACCOUNT']) &&
 						array_key_exists('VALUE',$arConfig['ACCOUNT']) &&
 						$arConfig['ACCOUNT']['VALUE']
 					){
 						sdekShipmentCollection::$accountId = $arConfig['ACCOUNT']['VALUE'];
 					}
 
-					// событие заполнения порядка
+					//   
 					if($arItems)
 						sdekShipmentCollection::init(self::$sdekCity,$arItems,$order);
 				}else
@@ -416,8 +421,8 @@ class CDeliverySDEK extends sdekHelper{
 
 			if($curProfile){
 				if($curProfile['RESULT'] == "OK"){
-					// определение валют
-					/* нет
+					//  
+					/* 
 					$currency = self::getCountryOptions();
 					if(
 						array_key_exists(self::$sdekCityCntr,$currency) && 
@@ -527,6 +532,8 @@ class CDeliverySDEK extends sdekHelper{
             return false;
 
         if(
+            !empty($arConfig['ACCOUNT']) &&
+            is_array($arConfig['ACCOUNT']) &&
             array_key_exists('VALUE',$arConfig['ACCOUNT']) &&
             $arConfig['ACCOUNT']['VALUE']
         ){
@@ -557,6 +564,8 @@ class CDeliverySDEK extends sdekHelper{
 
 		if(
 		    !empty($arConfig) &&
+            !empty($arConfig['SENDER']) &&
+            is_array($arConfig['SENDER']) &&
             array_key_exists('VALUE',$arConfig['SENDER']) &&
             $arConfig['SENDER']['VALUE'] &&
 			in_array($arConfig['SENDER']['VALUE'],$citySenders)
@@ -569,12 +578,12 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													Запрос расчета
+													 
 		== formCalcRequest ==  == calculateDost ==  == getActiveCountries ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
 
-	// суть - проверяет тяжелогрузы и экспрессы и делает столько запросов, сколько надо
+	//  -        ,  
 	static function formCalcRequest($profile,$account = false){
 		$timeOutCheck = \Ipolh\SDEK\option::get('sdekDeadServer');
 		if($timeOutCheck && (time() - $timeOutCheck) <  60 * \Ipolh\SDEK\option::get('timeoutRollback'))
@@ -638,12 +647,12 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													Расчеты товаров
+													 
 		== setOrderGoods ==  == setShipmentGoods ==  == setGoods ==  == handleBitrixComplects ==  == getGoodsDimensions ==  == getBasketGoods ==  == sumSizeOneGoods ==  == sumSize ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
 
-	// расчитывает товары для заказа
+	//    
 	public static function setOrderGoods($orderId=false){
 		if (isset($orderId) && $orderId > 0)
 			$arFilter = array("ORDER_ID" => $orderId);
@@ -657,7 +666,7 @@ class CDeliverySDEK extends sdekHelper{
 		return $goods;
 	}
 
-	// рассчитывает товары для отгрузки
+	//    
 	public static function setShipmentGoods($shipmentID,$orderId=false){
 		if(!self::canShipment())
 			return false;
@@ -670,7 +679,7 @@ class CDeliverySDEK extends sdekHelper{
 		self::setGoods($arOrderGoods);
 	}
 
-	public static function filterShipmentGoods($shipmentID,$goods){ // фильтрует товары по наличию их в отправлении setShipmentGoods && sdekclass::getGoodsArray
+	public static function filterShipmentGoods($shipmentID,$goods){ //        setShipmentGoods && sdekclass::getGoodsArray
 		if(!self::canShipment())
 			return false;
 		$arGoods = array();
@@ -697,7 +706,7 @@ class CDeliverySDEK extends sdekHelper{
 		return $goods;
 	}
 
-	// устанавнивает $goods по $arOrderGoods
+	//  $goods  $arOrderGoods
 	public static function setGoods($arOrderGoods){
 		self::$goods = false;
 
@@ -741,12 +750,12 @@ class CDeliverySDEK extends sdekHelper{
 		if($arGoods['isNoW'])
 			$TW = ($TW > $arDefSetups['W']) ? $TW : $arDefSetups['W'];
 
-		// СДЭК не воспринимает габариты меньше сантиметра
+		//      
 		foreach(array('L','W','H') as $lbl)
 			if($result[$lbl] < 1)
 				$result[$lbl] = 1;
 
-		// перераспределение LWH в магии sumSize
+		//  LWH   sumSize
 		self::$goods = array(
 			"D_L" => $result['L'],
 			"D_W"  => $result['W'],
@@ -757,7 +766,7 @@ class CDeliverySDEK extends sdekHelper{
 			self::$orderWeight=$TW*1000;
 	}
 
-	// режет товары из комплектов
+	//    
 	static function handleBitrixComplects($goods){
 		$arComplects = array();
 		foreach($goods as $good)
@@ -782,7 +791,7 @@ class CDeliverySDEK extends sdekHelper{
 		return $goods;
 	}
 
-	// засовывает в товары габариты по установленным дефолтам
+	//       
 	public static function getGoodsDimensions($arOrderGoods,$arDefSetups=false,$isDef='ungiven'){
 		if(!$arDefSetups)
 			$arDefSetups = array(
@@ -828,7 +837,7 @@ class CDeliverySDEK extends sdekHelper{
 		);
 	}
 
-	// берет товары из корзин по фильтру arFilter, считает общую цену | setOrderGoods, packController
+	//       arFilter,    | setOrderGoods, packController
 	static function getBasketGoods($arFilter=array()){
 		$arGoods = array();
         $noCanBuy = (defined(self::$ignoreCanBuy) && constant(self::$ignoreCanBuy) === true);
@@ -860,7 +869,7 @@ class CDeliverySDEK extends sdekHelper{
 		return $arGoods;
 	}
 
-	// отсортировать грузы по возрастанию
+	//    
 	static function sumSizeOneGoods($xi,$yi,$zi,$qty){
 		$ar = array($xi,$yi,$zi);
 		sort($ar);
@@ -889,12 +898,12 @@ class CDeliverySDEK extends sdekHelper{
 		return (array('X'=>$x1*$ar[0],'Y'=>$y1*$ar[1],'Z'=>$z1*$ar[2]));
 	}
 
-	//Суммируем размеры груза для вычисления объемного веса
+	//      
 	static function sumSize($a){
 		$n = count($a);
 		if (!($n>0)) return(array('L'=>'0','W'=>'0','H'=>'0'));
 		for($i3=1;$i3<$n;$i3++){
-			// отсортировать размеры по убыванию
+			//    
 			for($i2=$i3-1;$i2<$n;$i2++){
 				for($i=0;$i<=1;$i++){
 					if($a[$i2]['X']<$a[$i2]['Y']){
@@ -908,9 +917,9 @@ class CDeliverySDEK extends sdekHelper{
 						$a[$i2]['Z'] = $a1;
 					}
 				}
-				$a[$i2]['Sum'] = $a[$i2]['X'] + $a[$i2]['Y'] + $a[$i2]['Z']; // сумма сторон
+				$a[$i2]['Sum'] = $a[$i2]['X'] + $a[$i2]['Y'] + $a[$i2]['Z']; //  
 			}
-			// отсортировать грузы по возрастанию
+			//    
 			for($i2=$i3;$i2<$n;$i2++)
 				for($i=$i3;$i<$n;$i++)
 					if($a[$i-1]['Sum']>$a[$i]['Sum']){
@@ -918,11 +927,11 @@ class CDeliverySDEK extends sdekHelper{
 						$a[$i] = $a[$i-1];
 						$a[$i-1] = $a2;
 					}
-			// расчитать сумму габаритов двух самых маленьких грузов
+			//       
 			if($a[$i3-1]['X']>$a[$i3]['X']) $a[$i3]['X'] = $a[$i3-1]['X'];
 			if($a[$i3-1]['Y']>$a[$i3]['Y']) $a[$i3]['Y'] = $a[$i3-1]['Y'];
 			$a[$i3]['Z'] = $a[$i3]['Z'] + $a[$i3-1]['Z'];
-			$a[$i3]['Sum'] = $a[$i3]['X'] + $a[$i3]['Y'] + $a[$i3]['Z']; // сумма сторон
+			$a[$i3]['Sum'] = $a[$i3]['X'] + $a[$i3]['Y'] + $a[$i3]['Z']; //  
 		}
 
 		return( array(
@@ -934,7 +943,7 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													Виджет
+													
 		== pickupLoader ==  == loadComponent ==  == onBufferContent ==  == no_json ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
@@ -949,7 +958,7 @@ class CDeliverySDEK extends sdekHelper{
 	}
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													Проверки ПВЗ и Почтоматов
+													   
 		== weightPVZ ==  == checkPVZ ==  == checkPOSTAMAT ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
@@ -1083,7 +1092,7 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-												проверки на возможность оплаты нал / безнал
+												     / 
 		== checkNalD2P ==  == checkNalP2D ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
@@ -1174,7 +1183,7 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-												блокировка оформления заказа без ПВЗ
+												    
 		== noPVZOldTemplate ==  == noPVZNewTemplate ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
@@ -1253,12 +1262,12 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-												расчет стороннего заказа
+												  
 		== setOrder ==  == countDelivery ==  == cntDelivsOld ==  == cntDelivsConverted ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
 
-	static function setOrder($params=array()){ // устанавливает данные для заказа-пустышки
+	static function setOrder($params=array()){ //    -
 		self::$orderWeight = ($params['WEIGHT']) ? $params['WEIGHT'] : \Ipolh\SDEK\option::get('weightD');
 		self::$orderPrice  = ($params['PRICE'])  ? $params['PRICE']  : 1000;
 		if($params['CITY_TO'])
@@ -1381,7 +1390,7 @@ class CDeliverySDEK extends sdekHelper{
 		return false;
 	}
 
-	static function cntDelivsOld($arOrder){//Выдает срок и стоимость доставки для виджета
+	static function cntDelivsOld($arOrder){//      
 		$cityFrom = \Ipolh\SDEK\option::get('departure');
 
 		if(!self::$preSet)
@@ -1500,7 +1509,7 @@ class CDeliverySDEK extends sdekHelper{
 
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													Авторизации
+													
 		== setAuth ==  == setAuthById ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 
@@ -1524,7 +1533,7 @@ class CDeliverySDEK extends sdekHelper{
 	}
 
 	/*()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
-													Общие функции модуля
+													  
 		== getListOfTarifs ==  == getDateDeliv ==
 	()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()*/
 

@@ -1751,6 +1751,44 @@ footer .center.inner {
 	padding-bottom: 12px !important;
 }
 
+.footer_pay .payment_methods ul {
+	display: flex !important;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	float: none !important;
+}
+
+.footer_pay ul li {
+	float: none !important;
+	display: block !important;
+	width: auto !important;
+	height: auto !important;
+	margin: 0 !important;
+}
+
+.footer_pay ul li a {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	width: auto !important;
+	height: auto !important;
+	overflow: visible !important;
+	padding: 4px 6px;
+	background: #fff;
+	border: 1px solid var(--km-border);
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.footer_pay ul li a img {
+	display: block;
+	width: auto;
+	height: 30px;
+	max-width: 66px;
+	object-fit: contain;
+}
+
 .footer_menu ul li a {
 	color: var(--km-text-secondary) !important;
 }
@@ -2158,6 +2196,16 @@ header.fixed.fixed_f .center.inner {
 	color: #fff !important;
 }
 
+#addItemInCart .item_image_full img {
+	display: inline-block;
+	max-width: 150px;
+	max-height: 130px;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	vertical-align: middle;
+}
+
 @media screen and (max-width: 787px) {
 	.breadcrumb-share {
 		padding: 0;
@@ -2416,4 +2464,204 @@ header.fixed.fixed_f .center.inner {
 	.km-error-404__search-btn {
 		width: 100%;
 	}
+}
+
+/* Оформление заказа: обязательный выбор ПВЗ СДЭК */
+.sdek_pvzLair.km-sdek-pvz-error {
+	margin-top: 10px;
+	padding: 12px 14px;
+	border: 1px solid #f4a5a5;
+	border-radius: 10px;
+	background: linear-gradient(180deg, #fff8f8 0%, #fff 100%);
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+	animation: km-sdek-pvz-pulse 1.6s ease-in-out 2;
+}
+
+.sdek_pvzLair.km-sdek-pvz-error .SDEK_selectPVZ {
+	border-color: #dc2626 !important;
+	background: #dc2626 !important;
+	color: #fff !important;
+	box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+}
+
+.km-sdek-pvz-error-msg {
+	margin-top: 10px;
+	padding: 8px 10px;
+	border-left: 3px solid #dc2626;
+	background: #fef2f2;
+	color: #991b1b;
+	font-size: 13px;
+	line-height: 1.45;
+	border-radius: 0 6px 6px 0;
+}
+
+#bx-soa-delivery.bx-step-error .sdek_pvzLair.km-sdek-pvz-error {
+	scroll-margin-top: 120px;
+}
+
+/* Оформление заказа: согласие на обработку персональных данных */
+#hint_agreement.km-order-consent {
+	display: block;
+	margin: 16px 0 8px;
+	padding: 12px 14px;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	background: #fafafa;
+	font-size: 14px;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__row {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check,
+#hint_agreement.km-order-consent .km-order-consent__text {
+	float: none !important;
+	vertical-align: initial !important;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check {
+	flex: 0 0 18px;
+	width: 18px;
+	height: 20px;
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__text {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 14px !important;
+	font-weight: 400 !important;
+	line-height: 20px !important;
+	text-align: left !important;
+	white-space: normal !important;
+	color: #374151 !important;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__text span,
+#hint_agreement.km-order-consent .km-order-consent__text p,
+#hint_agreement.km-order-consent .km-order-consent__text font,
+#hint_agreement.km-order-consent .km-order-consent__text div {
+	color: #374151 !important;
+	font-size: inherit !important;
+	line-height: inherit !important;
+	text-align: left !important;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__text a {
+	color: #1d4ed8 !important;
+	text-decoration: underline;
+	vertical-align: baseline;
+	line-height: inherit !important;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__text a:hover {
+	color: #1e40af !important;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox {
+	display: block !important;
+	width: 18px !important;
+	height: 18px !important;
+	margin: 0 !important;
+	box-sizing: border-box !important;
+	text-align: center;
+	border: 2px solid #b7bbd3;
+	border-radius: 4px;
+	background: #b7bbd3;
+	cursor: pointer;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox:hover {
+	border-color: #cc9900;
+	background: #cc9900;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox.cheked {
+	border-color: #9cc218;
+	background: #fff;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox.cheked:hover {
+	border-color: #cc9900;
+	background: #fff;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox i {
+	display: block;
+	font-size: 11px;
+	color: #9cc218;
+	line-height: 12px;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox:hover i {
+	color: #cc9900;
+}
+
+#hint_agreement.km-order-consent .km-order-consent__error {
+	margin: 0 0 10px;
+	padding: 8px 10px;
+	border-left: 3px solid #dc2626;
+	background: #fef2f2;
+	color: #991b1b !important;
+	font-size: 13px;
+	line-height: 1.4;
+	border-radius: 0 6px 6px 0;
+}
+
+#hint_agreement.km-order-consent.km-consent-error {
+	border-color: #dc2626;
+	background: #fff5f5;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+#hint_agreement.km-order-consent.km-consent-error .input-checkbox {
+	border-color: #dc2626 !important;
+	background: #fff !important;
+	box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+}
+
+#hint_agreement.km-order-consent.km-consent-error .km-order-consent__error {
+	display: block !important;
+}
+
+#hint_agreement .alertMsg.bad {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0 0 10px;
+	padding: 8px 10px;
+	border-left: 3px solid #dc2626;
+	background: #fef2f2;
+	border-radius: 0 6px 6px 0;
+}
+
+#hint_agreement .alertMsg.bad .text {
+	color: #991b1b !important;
+}
+
+#hint_agreement .alertMsg.bad i {
+	color: #dc2626 !important;
+}
+
+#hint_agreement.km-consent-error {
+	scroll-margin-top: 120px;
+}
+
+@keyframes km-consent-pulse {
+	0%, 100% { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08); }
+	50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.14); }
+}
+
+@keyframes km-sdek-pvz-pulse {
+	0%, 100% { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08); }
+	50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.16); }
 }
