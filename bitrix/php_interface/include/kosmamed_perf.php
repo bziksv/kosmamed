@@ -29,15 +29,22 @@ if (!function_exists('kmEnsureWebpSrc')) {
 			return null;
 		}
 
-		$webpRelative = (string)preg_replace('/\.(jpe?g|png)$/i', '.webp', $relativeSrc);
-		$webpPath = $docRoot . $webpRelative;
+		// append: photo.jpg -> photo.jpg.webp (nginx $webp_suffix + webp-warmup.sh)
+		$appendRelative = $relativeSrc . '.webp';
+		$appendPath = $docRoot . $appendRelative;
+		if (is_file($appendPath) && filemtime($appendPath) >= filemtime($sourcePath)) {
+			return $appendRelative;
+		}
 
-		if (is_file($webpPath) && filemtime($webpPath) >= filemtime($sourcePath)) {
-			return $webpRelative;
+		// legacy replace: photo.jpg -> photo.webp
+		$replaceRelative = (string)preg_replace('/\.(jpe?g|png)$/i', '.webp', $relativeSrc);
+		$replacePath = $docRoot . $replaceRelative;
+		if (is_file($replacePath) && filemtime($replacePath) >= filemtime($sourcePath)) {
+			return $replaceRelative;
 		}
 
 		// Do not generate WebP during HTTP — blocks TTFB on catalog (many images per page).
-		// Run: php tools/perf/webp-warmup.php --limit=1000 (on server, after deploy).
+		// Run: bash tools/perf/webp-warmup.sh /path/to/upload 80 (on server, after deploy).
 		return null;
 	}
 }
@@ -66,7 +73,7 @@ if (!function_exists('kmGenerateWebpSrc')) {
 			return null;
 		}
 
-		$webpRelative = (string)preg_replace('/\.(jpe?g|png)$/i', '.webp', $relativeSrc);
+		$webpRelative = $relativeSrc . '.webp';
 		$webpPath = $docRoot . $webpRelative;
 
 		if (is_file($webpPath) && filemtime($webpPath) >= filemtime($sourcePath)) {
@@ -335,66 +342,82 @@ if (!function_exists('kmInjectLcpPreload')) {
 	}
 }
 
+if (!function_exists('kmWebpUrlFor')) {
+	/** Map jpg/png URL to cached webp twin when present. */
+	function kmWebpUrlFor(string $src): ?string
+	{
+		$src = (string)preg_replace('#\?.*$#', '', $src);
+		if ($src === '' || !preg_match('/\.(?:png|jpe?g)$/i', $src)) {
+			return null;
+		}
+
+		return kmEnsureWebpSrc($src);
+	}
+}
+
+if (!function_exists('kmReplaceImageUrlAttr')) {
+	function kmReplaceImageUrlAttr(string $html, string $attr, string $src): string
+	{
+		$webp = kmWebpUrlFor($src);
+		if ($webp === null) {
+			return $html;
+		}
+
+		return str_replace(
+			$attr . '="' . $src . '"',
+			$attr . '="' . htmlspecialcharsbx($webp, ENT_QUOTES) . '"',
+			$html
+		);
+	}
+}
+
 if (!function_exists('kmInjectWebpImages')) {
-	/** Wrap <img> in <picture> when .webp exists; skip already-wrapped and tiny vendor logos. */
+	/** Swap img src to .webp twin when pre-generated on disk. */
 	function kmInjectWebpImages(string &$content): void
 	{
 		if (stripos($content, '<img') === false) {
 			return;
 		}
 
-		// Collapse duplicate nested <picture> from template + buffer.
-		$prev = '';
-		while ($prev !== $content) {
-			$prev = $content;
-			$content = preg_replace(
-				'/(<picture>\s*<source[^>]+>\s*)<picture>\s*<source[^>]+>\s*(<img\b[^>]+>)\s*<\/picture>\s*<\/picture>/i',
-				'$1$2</picture>',
-				$content
-			);
-		}
+		$content = preg_replace_callback(
+			'/<img\b([^>]*\ssrc="(\/[^"?]+\.(?:png|jpe?g))"[^>]*)>/i',
+			static function (array $m): string {
+				if (preg_match('/\bclass="[^"]*\bno-webp\b/i', $m[1])) {
+					return $m[0];
+				}
 
-		$offset = 0;
-		while (preg_match('/<img\b([^>]*\ssrc="(\/[^"?]+\.(?:png|jpe?g))"[^>]*)>/i', $content, $m, PREG_OFFSET_CAPTURE, $offset)) {
-			$fullMatch = $m[0][0];
-			$pos = (int)$m[0][1];
-			$attrs = $m[1][0];
-			$src = $m[2][0];
-			$nextOffset = $pos + strlen($fullMatch);
+				$webp = kmWebpUrlFor($m[2]);
+				if ($webp === null) {
+					return $m[0];
+				}
 
-			$before = substr($content, max(0, $pos - 300), min(300, $pos));
-			if (preg_match('/<picture\b[^>]*>\s*(?:<source[^>]*>\s*)?$/i', $before)) {
-				$offset = $nextOffset;
-				continue;
-			}
-
-			if (preg_match('/\bclass="[^"]*\bno-webp\b/i', $attrs)) {
-				$offset = $nextOffset;
-				continue;
-			}
-
-			$webp = kmEnsureWebpSrc($src);
-			if ($webp === null) {
-				$offset = $nextOffset;
-				continue;
-			}
-
-			// Vendor logos and other tiny thumbs: one request, src=.webp (no <picture>).
-			if (preg_match('#/resize_cache/iblock/[^/]+/69_24_1/#', $src)
-				|| preg_match('#/upload/resize_cache/[^/]+/\d+_\d+_1/#', $src)) {
-				$replacement = str_replace(
-					'src="' . $src . '"',
-					'src="' . $webp . '"',
-					$fullMatch
+				return str_replace(
+					'src="' . $m[2] . '"',
+					'src="' . htmlspecialcharsbx($webp, ENT_QUOTES) . '"',
+					$m[0]
 				);
-			} else {
-				$replacement = '<picture><source srcset="' . htmlspecialcharsbx($webp, ENT_QUOTES) . '" type="image/webp">'
-					. $fullMatch . '</picture>';
-			}
+			},
+			$content
+		);
+	}
+}
 
-			$content = substr_replace($content, $replacement, $pos, strlen($fullMatch));
-			$offset = $pos + strlen($replacement);
-		}
+if (!function_exists('kmInjectWebpDeferredAttributes')) {
+	/** After lazy/defer passes: data-km-src* still point at jpg/png. */
+	function kmInjectWebpDeferredAttributes(string &$content): void
+	{
+		$content = preg_replace_callback(
+			'/\s((?:data-km-src|data-km-srcset))="(\/[^"?]+\.(?:png|jpe?g)[^"]*)"/i',
+			static function (array $m): string {
+				$webp = kmWebpUrlFor($m[2]);
+				if ($webp === null) {
+					return $m[0];
+				}
+
+				return ' ' . $m[1] . '="' . htmlspecialcharsbx($webp, ENT_QUOTES) . '"';
+			},
+			$content
+		);
 	}
 }
 
@@ -1164,8 +1187,6 @@ if (!function_exists('kmOnEndBufferContent')) {
 		kmInjectCriticalHomeCss($content);
 		kmInjectLcpPreload($content);
 		kmInjectLazyImages($content);
-		kmInjectWebpImages($content);
-		kmInjectBackgroundWebp($content);
 		kmFixFontDisplay($content);
 		kmDeferHomeStylesheets($content);
 		kmDeferCatalogStylesheets($content);
@@ -1186,6 +1207,9 @@ if (!function_exists('kmOnEndBufferContentPost')) {
 	{
 		kmFixCatalogSliderImages($content);
 		kmFixLcpImages($content);
+		kmInjectWebpImages($content);
+		kmInjectWebpDeferredAttributes($content);
+		kmInjectBackgroundWebp($content);
 		kmFixYandexMetrikaInformer($content);
 	}
 }
