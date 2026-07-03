@@ -482,3 +482,63 @@ function kmCatalogCardPictForJs(array $arElement)
 		'HEIGHT' => 150,
 	);
 }
+
+/**
+ * Миниатюра для корзины / отложенных — та же логика фото, что в карточке каталога.
+ *
+ * @return array{src:string,width:int,height:int}|null
+ */
+function kmBasketItemPicture($productId, $width = 65, $height = 65)
+{
+	$productId = (int)$productId;
+	$width = (int)$width;
+	$height = (int)$height;
+	if ($productId <= 0) {
+		return null;
+	}
+
+	$ar = CIBlockElement::GetList(
+		array(),
+		array('ID' => $productId),
+		false,
+		false,
+		array('ID', 'IBLOCK_ID', 'NAME', 'PREVIEW_PICTURE', 'DETAIL_PICTURE')
+	)->Fetch();
+	if (!$ar) {
+		return null;
+	}
+
+	if (!empty($ar['PREVIEW_PICTURE'])) {
+		$ar['PREVIEW_PICTURE'] = CFile::GetFileArray($ar['PREVIEW_PICTURE']);
+	}
+	if (!empty($ar['DETAIL_PICTURE'])) {
+		$ar['DETAIL_PICTURE'] = CFile::GetFileArray($ar['DETAIL_PICTURE']);
+	}
+
+	$photos = kmCatalogCardPhotos($ar, 1);
+	if (!empty($photos['photos'][0]['ID'])) {
+		$resized = kmCatalogCardResizePhoto((int)$photos['photos'][0]['ID'], $width, $height);
+		if (is_array($resized) && !empty($resized['SRC'])) {
+			return array(
+				'src' => $resized['SRC'],
+				'width' => (int)$resized['WIDTH'],
+				'height' => (int)$resized['HEIGHT'],
+			);
+		}
+	}
+	if (!empty($photos['photos'][0]['SRC'])) {
+		$p = $photos['photos'][0];
+		return array(
+			'src' => $p['SRC'],
+			'width' => max(1, (int)($p['WIDTH'] ?? $width)),
+			'height' => max(1, (int)($p['HEIGHT'] ?? $height)),
+		);
+	}
+
+	$mxResult = CCatalogSku::GetProductInfo($productId);
+	if (is_array($mxResult) && (int)$mxResult['ID'] > 0 && (int)$mxResult['ID'] !== $productId) {
+		return kmBasketItemPicture((int)$mxResult['ID'], $width, $height);
+	}
+
+	return null;
+}

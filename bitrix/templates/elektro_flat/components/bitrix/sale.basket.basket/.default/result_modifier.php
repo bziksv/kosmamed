@@ -11,31 +11,38 @@ $arResult["OFFERS_IBLOCK"] = is_array($arSKU) ? $arSKU["IBLOCK_ID"] : 0;
 
 //BASKET_ITEMS//
 if(is_array($arResult["ITEMS"]["AnDelCanBuy"])) {
-	foreach($arResult["ITEMS"]["AnDelCanBuy"] as $key => $arItem) {		
-		$ar = CIBlockElement::GetList(
-			array(), 
-			array("ID" => $arItem["PRODUCT_ID"]), 
-			false, 
-			false, 
-			array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
-		)->Fetch();		
-		if($ar["DETAIL_PICTURE"] > 0) {
-			$arResult["ITEMS"]["AnDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+	foreach($arResult["ITEMS"]["AnDelCanBuy"] as $key => $arItem) {
+		if (function_exists('kmBasketItemPicture')) {
+			$pict = kmBasketItemPicture((int)$arItem['PRODUCT_ID']);
+			if (is_array($pict)) {
+				$arResult['ITEMS']['AnDelCanBuy'][$key]['DETAIL_PICTURE'] = $pict;
+			}
 		} else {
-			$mxResult = CCatalogSku::GetProductInfo($ar["ID"]);
-			if(is_array($mxResult)) {
-				$ar = CIBlockElement::GetList(
-					array(), 
-					array("ID" => $mxResult["ID"]), 
-					false, 
-					false, 
-					array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
-				)->Fetch();
-				if($ar["DETAIL_PICTURE"] > 0) {
-					$arResult["ITEMS"]["AnDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			$ar = CIBlockElement::GetList(
+				array(),
+				array("ID" => $arItem["PRODUCT_ID"]),
+				false,
+				false,
+				array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
+			)->Fetch();
+			if($ar["DETAIL_PICTURE"] > 0) {
+				$arResult["ITEMS"]["AnDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			} else {
+				$mxResult = CCatalogSku::GetProductInfo($ar["ID"]);
+				if(is_array($mxResult)) {
+					$ar = CIBlockElement::GetList(
+						array(),
+						array("ID" => $mxResult["ID"]),
+						false,
+						false,
+						array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
+					)->Fetch();
+					if($ar["DETAIL_PICTURE"] > 0) {
+						$arResult["ITEMS"]["AnDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+					}
 				}
 			}
-		}		
+		}
 
 		//MEASURE_RATIO//
 		if(!isset($arItem["MEASURE_RATIO"]))
@@ -147,27 +154,34 @@ if(isset($_REQUEST["BasketClear"]) && $_REQUEST["BasketClear"] == "Y") {
 //DELAY_ITEMS//
 if(is_array($arResult["ITEMS"]["DelDelCanBuy"])) {
 	foreach($arResult["ITEMS"]["DelDelCanBuy"] as $key => $arItem) {
-		$ar = CIBlockElement::GetList(
-			array(), 
-			array("ID" => $arItem["PRODUCT_ID"]), 
-			false, 
-			false, 
-			array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
-		)->Fetch();		
-		if($ar["DETAIL_PICTURE"] > 0) {
-			$arResult["ITEMS"]["DelDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+		if (function_exists('kmBasketItemPicture')) {
+			$pict = kmBasketItemPicture((int)$arItem['PRODUCT_ID']);
+			if (is_array($pict)) {
+				$arResult['ITEMS']['DelDelCanBuy'][$key]['DETAIL_PICTURE'] = $pict;
+			}
 		} else {
-			$mxResult = CCatalogSku::GetProductInfo($ar["ID"]);
-			if(is_array($mxResult)) {
-				$ar = CIBlockElement::GetList(
-					array(), 
-					array("ID" => $mxResult["ID"]), 
-					false, 
-					false, 
-					array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
-				)->Fetch();
-				if($ar["DETAIL_PICTURE"] > 0) {
-					$arResult["ITEMS"]["DelDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			$ar = CIBlockElement::GetList(
+				array(),
+				array("ID" => $arItem["PRODUCT_ID"]),
+				false,
+				false,
+				array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
+			)->Fetch();
+			if($ar["DETAIL_PICTURE"] > 0) {
+				$arResult["ITEMS"]["DelDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			} else {
+				$mxResult = CCatalogSku::GetProductInfo($ar["ID"]);
+				if(is_array($mxResult)) {
+					$ar = CIBlockElement::GetList(
+						array(),
+						array("ID" => $mxResult["ID"]),
+						false,
+						false,
+						array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
+					)->Fetch();
+					if($ar["DETAIL_PICTURE"] > 0) {
+						$arResult["ITEMS"]["DelDelCanBuy"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 65, "height" => 65), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+					}
 				}
 			}
 		}

@@ -52,7 +52,7 @@ use Bitrix\Sale\DiscountCouponsManager;?>
 						<div class="tr_into">
 							<div class="cart-item-image">
 								<?if(is_array($arBasketItems["DETAIL_PICTURE"])):?>
-									<img src="<?=$arBasketItems['DETAIL_PICTURE']['src']?>" width="<?=$arBasketItems['DETAIL_PICTURE']['width']?>" height="<?=$arBasketItems['DETAIL_PICTURE']['height']?>" />
+									<img class="no-lazy" loading="eager" src="<?=$arBasketItems['DETAIL_PICTURE']['src']?>" width="<?=$arBasketItems['DETAIL_PICTURE']['width']?>" height="<?=$arBasketItems['DETAIL_PICTURE']['height']?>" alt="" />
 								<?else:?>
 									<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="65" height="65" />
 								<?endif?>
