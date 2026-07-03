@@ -529,10 +529,10 @@ if(is_array($arResult["MORE_PHOTO"]) && count($arResult["MORE_PHOTO"]) > 0) {
 			BX_RESIZE_IMAGE_PROPORTIONAL,
 			true
 		);
-		$arResult["MORE_PHOTO"][$key]["PREVIEW"] = array(
-			"SRC" => $arFileTmp["src"],
-			"WIDTH" => $arFileTmp["width"],
-			"HEIGHT" => $arFileTmp["height"],
+		$arResult["MORE_PHOTO"][$key]["PREVIEW"] = kmDetailGalleryPreviewMeta(
+			is_array($arFile) ? $arFile : array(),
+			$arFileTmp,
+			$arParams
 		);
 	}
 }
@@ -1305,10 +1305,11 @@ if($arResult["CATALOG"] && isset($arResult["OFFERS"]) && !empty($arResult["OFFER
 					$arWaterMark
 				);
 				
-				$arMorePhoto[$key_photo]["PREVIEW"] = array(
-					"SRC" => $arFileTmp["src"],
-					"WIDTH" => $arFileTmp["width"],
-					"HEIGHT" => $arFileTmp["height"],
+				$arFileInfoForPreview = CFile::GetFileArray($pic);
+				$arMorePhoto[$key_photo]["PREVIEW"] = kmDetailGalleryPreviewMeta(
+					is_array($arFileInfoForPreview) ? $arFileInfoForPreview : array(),
+					$arFileTmp,
+					$arParams
 				);
 			}
 		}

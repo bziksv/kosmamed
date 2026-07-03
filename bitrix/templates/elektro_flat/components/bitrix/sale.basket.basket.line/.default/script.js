@@ -36,7 +36,9 @@ BitrixSmallCart.prototype = {
 
 		basketCont = $(this.cartElement);
 		
-		basketCont.find(".qnt").text($(result).find(".qnt").text());
+		var qntText = $(result).find(".qnt").text().trim();
+		basketCont.find(".qnt").text(qntText);
+		basketCont.find(".qnt_cont").toggleClass("qnt_cont--empty", !qntText || qntText === "0");
 		
 		basketCont.find(".sum").data("decimal", $(result).find(".sum").data("decimal"));
 		

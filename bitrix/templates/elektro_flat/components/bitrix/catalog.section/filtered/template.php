@@ -136,19 +136,22 @@ $inQuickView = in_array("QUICK_VIEW", $arSetting["GENERAL_SETTINGS"]["VALUE"]);
         $kmCardPhotos = kmCatalogCardPhotos($arElement);
         $arPHOTOp = $kmCardPhotos['photos'];
         $kmHasInfographics = $kmCardPhotos['hasInfographics'];
+        $kmWideImage = !empty($kmCardPhotos['wideImage']);
+        $kmIsPoster = !empty($kmCardPhotos['isPoster']);
+        $kmImageLinkClass = $kmWideImage ? ($kmIsPoster ? 'infographics poster-card' : 'infographics') : '';
         $kmPhotoCount = count($arPHOTOp);
         $kmPreviewHeight = is_array($arElement['PREVIEW_PICTURE']) ? $arElement['PREVIEW_PICTURE']['HEIGHT'] : 150;
         ?>
             <div class="item-image">
-                <?if(!$kmHasInfographics){?>
+                <?if(!$kmWideImage){?>
                 <meta content="<?=(is_array($arElement['PREVIEW_PICTURE']) ? $arElement['PREVIEW_PICTURE']['SRC'] : SITE_TEMPLATE_PATH.'/images/no-photo.svg');?>" itemprop="image" />
                 <?}?>
-                <a<?if($kmHasInfographics){?> class="infographics"<?}?> href="<?=$arElement['DETAIL_PAGE_URL']?>">
+                <a<?if($kmImageLinkClass !== ''){?> class="<?=$kmImageLinkClass?>"<?}?> href="<?=$arElement['DETAIL_PAGE_URL']?>">
                     <?if(!empty($arPHOTOp[0]['SRC'])) {?>
                         <div class="magic_slide_ss">
                         <?foreach ($arPHOTOp as $key => $arFoto) {?>
                             <div class="magic_slide_s">
-                                <img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="100%" height="<?=$kmPreviewHeight?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
+                                <img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="<?=(int)($arFoto['WIDTH'] ?? 588)?>" height="<?=(int)($arFoto['HEIGHT'] ?? $kmPreviewHeight)?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
                             </div>
                         <?}?>
                         </div>

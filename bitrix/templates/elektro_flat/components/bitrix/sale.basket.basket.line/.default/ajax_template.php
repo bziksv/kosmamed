@@ -8,9 +8,9 @@ $this->IncludeLangFile("template.php");?>
 <a href="<?=$arParams['PATH_TO_BASKET']?>" class="cart" title="<?=GetMessage('TSBS')?>" rel="nofollow">
 	<i class="fa fa-shopping-cart"></i>
 	<span class="text"><?=GetMessage("TSBS")?></span>
-	<span class="qnt_cont">
+	<span class="qnt_cont<?=(IntVal($arResult['QUANTITY']) <= 0 ? ' qnt_cont--empty' : '')?>">
 		<span class="qnt"><?=$arResult["QUANTITY"]?></span>
-	</span>	
+	</span>
 </a>				
 <span class="sum_cont">
 	<span class="sum" data-sum="<?=$arResult['SUM']?>" data-separator="<?=$arResult['THOUSANDS_SEP']?>" data-decimal="<?=$arResult['DECIMALS']?>" data-dec-point="<?=$arResult['DEC_POINT']?>">

@@ -310,10 +310,14 @@ if($arResult["MIN_PRICE"]["BASE_PRICE"]==888888888 || $arResult["TOTAL_OFFERS"][
 							}?>
 
 							<?//if($arResult["PROPERTIES"]["INFOGRAPHICS"]["VALUE"]) {
-								if($arOffer['DETAIL_PICTURE']['SRC'] || $arResult['DETAIL_PICTURE']['SRC']){?>
+								if($arResult['DETAIL_PICTURE']['SRC']){
+									$detailThumb = !empty($arResult['PREVIEW_IMG']['SRC'])
+										? $arResult['PREVIEW_IMG']
+										: $arResult['DETAIL_PICTURE'];
+									?>
 									<li class="<?=$active; $active='';?>" style="<?=($arParams['DISPLAY_MORE_PHOTO_WIDTH'] ? 'width:'.$arParams['DISPLAY_MORE_PHOTO_WIDTH'].'px;' : '').($arParams['DISPLAY_MORE_PHOTO_HEIGHT'] ? 'height:'.$arParams['DISPLAY_MORE_PHOTO_HEIGHT'].'px;' : '');?>">
 										<a  class="catalog-detail-images  444" >
-											<img src="<?=($isOfferDetailImg ? $arOffer['DETAIL_PICTURE']['SRC'] : $arResult['DETAIL_PICTURE']['SRC']);?>" width="90" height="120" alt="<?=$arResult['NAME']?>" title="<?=$arResult['NAME']?>" />
+											<img src="<?=$detailThumb['SRC']?>" width="<?=max(1, (int)($detailThumb['WIDTH'] ?: 90))?>" height="<?=max(1, (int)($detailThumb['HEIGHT'] ?: 120))?>" alt="<?=$arResult['NAME']?>" title="<?=$arResult['NAME']?>" />
 										</a>
 									</li>
 								<?}
@@ -323,7 +327,7 @@ if($arResult["MIN_PRICE"]["BASE_PRICE"]==888888888 || $arResult["TOTAL_OFFERS"][
 								foreach($arResult["MORE_PHOTO"] as $PHOTO) {?>
 									<li class="<?=$active; $active='';?>" style="<?=($arParams['DISPLAY_MORE_PHOTO_WIDTH'] ? 'width:'.$arParams['DISPLAY_MORE_PHOTO_WIDTH'].'px;' : '').($arParams['DISPLAY_MORE_PHOTO_HEIGHT'] ? 'height:'.$arParams['DISPLAY_MORE_PHOTO_HEIGHT'].'px;' : '');?>">
 										<a  class="catalog-detail-images  555" >
-											<img src="<?=$PHOTO['PREVIEW']['SRC']?>" width="<?=$PHOTO['PREVIEW']['WIDTH']?>" height="<?=$PHOTO['PREVIEW']['HEIGHT']?>" alt="<?=$arResult['NAME']?>" title="<?=$arResult['NAME']?>" />
+											<img src="<?=$PHOTO['PREVIEW']['SRC']?>" width="<?=max(1, (int)($PHOTO['PREVIEW']['WIDTH'] ?? 0))?>" height="<?=max(1, (int)($PHOTO['PREVIEW']['HEIGHT'] ?? 0))?>" alt="<?=$arResult['NAME']?>" title="<?=$arResult['NAME']?>" />
 										</a>
 									</li>
 								<?}

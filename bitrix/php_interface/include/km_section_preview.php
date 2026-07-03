@@ -5,8 +5,8 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
 
 if (!function_exists('kmSectionPreviewFileId')) {
 	/**
-	 * Preview for catalog menu: first available product image in section subtree,
-	 * then parent sections (direct products only). Mirrors tools/section-previews/generate.php.
+	 * Preview for catalog menu: first product image in this section subtree only.
+	 * No parent fallback — otherwise empty subsections share one parent photo.
 	 */
 	function kmSectionPreviewFileId(int $sectionId): int
 	{
@@ -36,18 +36,6 @@ if (!function_exists('kmSectionPreviewFileId')) {
 		}
 
 		$fileId = kmSectionPreviewFileIdInSection($sectionId, true);
-		if ($fileId <= 0) {
-			$section = CIBlockSection::GetByID($sectionId)->Fetch();
-			$parentId = $section ? (int)$section['IBLOCK_SECTION_ID'] : 0;
-			while ($parentId > 0 && $fileId <= 0) {
-				$fileId = kmSectionPreviewFileIdInSection($parentId, false);
-				if ($fileId > 0) {
-					break;
-				}
-				$parent = CIBlockSection::GetByID($parentId)->Fetch();
-				$parentId = $parent ? (int)$parent['IBLOCK_SECTION_ID'] : 0;
-			}
-		}
 
 		$obCache->EndDataCache(['fileId' => $fileId]);
 		return $cache[$sectionId] = $fileId;
@@ -89,14 +77,21 @@ if (!function_exists('kmSectionPreviewElementFileId')) {
 			return $fileId;
 		}
 
-		$rs = CIBlockElement::GetProperty(24, (int)$element['ID'], ['sort' => 'asc'], ['CODE' => 'MORE_PHOTO']);
-		while ($prop = $rs->Fetch()) {
-			if (!empty($prop['VALUE']) && kmSectionPreviewIsFileUsable((int)$prop['VALUE'])) {
-				return (int)$prop['VALUE'];
-			}
+	$rs = CIBlockElement::GetProperty(24, (int)$element['ID'], ['sort' => 'asc'], ['CODE' => 'MORE_PHOTO']);
+	while ($prop = $rs->Fetch()) {
+		if (!empty($prop['VALUE']) && kmSectionPreviewIsFileUsable((int)$prop['VALUE'])) {
+			return (int)$prop['VALUE'];
 		}
+	}
 
-		return 0;
+	$rs = CIBlockElement::GetProperty(24, (int)$element['ID'], ['sort' => 'asc'], ['CODE' => 'INFOGRAPHICS']);
+	while ($prop = $rs->Fetch()) {
+		if (!empty($prop['VALUE']) && kmSectionPreviewIsFileUsable((int)$prop['VALUE'])) {
+			return (int)$prop['VALUE'];
+		}
+	}
+
+	return 0;
 	}
 }
 
