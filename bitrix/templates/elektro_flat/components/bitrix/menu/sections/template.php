@@ -192,15 +192,15 @@ if ($element !== null) {
 						<span class="graph">
 							<?if(!empty($arItem["PARAMS"]["ICON"])) {?>
 								<i class="<?=$arItem['PARAMS']['ICON']?>" aria-hidden="true"></i>
-							<?} elseif(is_array($arItem["PICTURE"])) {
+							<?php } elseif (is_array($arItem["PICTURE"])) {
 								if (function_exists('kmPictureHtml')) {
 									echo kmPictureHtml($arItem['PICTURE'], ['alt' => $arItem['TEXT'], 'title' => $arItem['TEXT']]);
-								} else {?>
+								} else { ?>
 								<img src="<?=$arItem['PICTURE']['SRC']?>" width="<?=$arItem['PICTURE']['WIDTH']?>" height="<?=$arItem['PICTURE']['HEIGHT']?>" alt="<?=$arItem['TEXT']?>" title="<?=$arItem['TEXT']?>" />
-							<?}
-							<?} else {?>
+							<?php }
+							} else { ?>
 								<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="50" height="50" alt="<?=$arItem['TEXT']?>" title="<?=$arItem['TEXT']?>" />
-							<?}?>
+							<?php } ?>
 						</span>
 						<span class="text-cont">
 							<?
