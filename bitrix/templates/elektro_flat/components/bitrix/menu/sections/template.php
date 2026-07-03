@@ -192,15 +192,13 @@ if ($element !== null) {
 						<span class="graph">
 							<?if(!empty($arItem["PARAMS"]["ICON"])) {?>
 								<i class="<?=$arItem['PARAMS']['ICON']?>" aria-hidden="true"></i>
-							<?php } elseif (is_array($arItem["PICTURE"])) {
-								if (function_exists('kmPictureHtml')) {
-									echo kmPictureHtml($arItem['PICTURE'], ['alt' => $arItem['TEXT'], 'title' => $arItem['TEXT']]);
-								} else { ?>
-								<img src="<?=$arItem['PICTURE']['SRC']?>" width="<?=$arItem['PICTURE']['WIDTH']?>" height="<?=$arItem['PICTURE']['HEIGHT']?>" alt="<?=$arItem['TEXT']?>" title="<?=$arItem['TEXT']?>" />
-							<?php }
-							} else { ?>
+							<?} elseif(is_array($arItem["PICTURE"])) {
+								echo function_exists('kmPictureHtml')
+									? kmPictureHtml($arItem['PICTURE'], ['alt' => $arItem['TEXT'], 'title' => $arItem['TEXT']])
+									: '<img src="'.htmlspecialcharsbx($arItem['PICTURE']['SRC']).'" width="'.(int)$arItem['PICTURE']['WIDTH'].'" height="'.(int)$arItem['PICTURE']['HEIGHT'].'" alt="'.htmlspecialcharsbx($arItem['TEXT']).'" title="'.htmlspecialcharsbx($arItem['TEXT']).'" />';
+							} else {?>
 								<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="50" height="50" alt="<?=$arItem['TEXT']?>" title="<?=$arItem['TEXT']?>" />
-							<?php } ?>
+							<?}?>
 						</span>
 						<span class="text-cont">
 							<?
