@@ -106,6 +106,23 @@ footer,
 	.header_5 .delay_line { margin-left: 0; }
 	.header_5 .delay_line a,
 	.header_5 .cart_line a { float: none !important; display: inline-flex !important; align-items: center; justify-content: center; }
+	.header_5 .delay_line a.delay,
+	.header_5 .cart_line a.cart {
+		width: 33px !important;
+		height: 29px !important;
+		position: relative !important;
+	}
+	.header_5 .delay_line a.delay span.qnt,
+	.header_5 .cart_line a.cart span.qnt {
+		display: block !important;
+		min-width: 18px !important;
+		height: 18px !important;
+		margin: 0 !important;
+		padding: 0 4px !important;
+		line-height: 18px !important;
+		text-align: center !important;
+		position: static !important;
+	}
 	.header_5 .kabinet a.personal,
 	.header_5 .kabinet a.login_anch { margin: 0 !important; float: none !important; }
 }
@@ -127,4 +144,88 @@ body.km-mobile-search-open header .header_2 { display: block !important; }
 header .header_1 .logo { margin: 0 !important; float: none !important; }
 header .header_1 .logo a, header .header_1 .logo a span, header .header_1 .logo span[style] { font-size: 26px !important; line-height: 1.15 !important; }
 .top_panel { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-width: none !important; height: 46px !important; z-index: 1001 !important; }
+}
+
+/* Flyout каталога слева — ровно 3 колонки (template_styles: 718px + 354px/406px = 2 колонки) */
+.left-column ul.left-menu > li.parent > .catalog-section-childs,
+.left-column ul.left-menu > li.parent > .catalog-section-childs.km-flyout-open {
+	width: 958px !important;
+	max-width: 958px !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child {
+	float: none !important;
+	width: auto !important;
+	max-width: none !important;
+	margin: 0 !important;
+}
+
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(2n + 1),
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(2n + 2),
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(2n + 3),
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(3n + 2),
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(3n + 3),
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(4n + 2),
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child:nth-child(4n + 3) {
+	margin: 0 !important;
+}
+
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child a,
+.left-column ul.left-menu > li.parent > .catalog-section-childs .catalog-section-child span[data-replace-content] {
+	width: 100% !important;
+	max-width: none !important;
+	height: 58px !important;
+	box-sizing: border-box;
+	float: none !important;
+}
+
+/* «Вы смотрели» — 20 пунктов, фиксированные ячейки 68×68 с рамкой со всех сторон */
+.already_seen ul {
+	width: auto !important;
+	max-width: none !important;
+	float: none !important;
+	display: flex !important;
+	flex-wrap: nowrap !important;
+	justify-content: flex-start !important;
+	gap: 9px !important;
+	background: none !important;
+}
+
+.already_seen ul li {
+	width: 68px !important;
+	min-width: 68px !important;
+	max-width: 68px !important;
+	height: 68px !important;
+	flex: 0 0 68px !important;
+	float: none !important;
+	margin: 0 !important;
+	display: block !important;
+	border: 1px solid #dee0ee !important;
+	box-sizing: border-box !important;
+	overflow: hidden !important;
+}
+
+.already_seen ul li:hover {
+	margin: 0 !important;
+	border: 1px solid #94a3b8 !important;
+}
+
+.already_seen ul li:nth-child(n + 10),
+.already_seen ul li:nth-child(n + 13),
+.already_seen ul li:nth-child(n + 14) {
+	display: block !important;
+}
+
+.already_seen ul li:nth-child(n + 20) {
+	display: none !important;
+}
+
+.already_seen ul li a img {
+	max-width: 64px !important;
+	max-height: 64px !important;
+	width: auto !important;
+	height: auto !important;
+	object-fit: contain !important;
+	display: block !important;
 }

@@ -11,7 +11,7 @@
 		"CACHE_GROUPS" => "Y",
 		"ACTION_VARIABLE" => "action",
 		"PRODUCT_ID_VARIABLE" => "id",
-		"PAGE_ELEMENT_COUNT" => "15",
+		"PAGE_ELEMENT_COUNT" => "19",
 		"PRICE_CODE" => array(),
 		"USE_PRICE_COUNT" => "N",
 		"SHOW_PRICE_COUNT" => "1",

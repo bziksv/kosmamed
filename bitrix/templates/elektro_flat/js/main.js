@@ -404,7 +404,59 @@ function kmInitTabCatalogSliders($box) {
 	setTimeout(initCatalogCardSliders, 50);
 }
 
-/** Выпадающее подменю каталога слева — в main.js, inline-скрипт шаблона может не успеть до ошибки slick. */
+/** Flyout подкатегорий слева: fixed + max-height от пункта меню, без сдвига к top:0. */
+function kmPositionLeftCatalogFlyout($li) {
+	var $dropdown = $li.children('.catalog-section-childs');
+	if (!$dropdown.length) {
+		return;
+	}
+	var margin = 10;
+	var absMaxH = Math.min(1100, Math.max(200, $(window).height() - margin * 2));
+	var liRect = $li[0].getBoundingClientRect();
+	var top = Math.max(margin, liRect.top - 2);
+	var maxH = Math.min(absMaxH, $(window).height() - top - margin);
+
+	$dropdown.css({
+		position: 'fixed',
+		left: (liRect.right + 9) + 'px',
+		top: top + 'px',
+		maxHeight: maxH + 'px',
+		width: '958px',
+		maxWidth: '958px',
+		display: 'grid',
+		gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+		overflowX: 'hidden',
+		overflowY: 'auto',
+		'z-index': 9999
+	});
+	if ($dropdown[0]) {
+		$dropdown[0].scrollTop = 0;
+	}
+}
+
+function kmResetLeftCatalogFlyout($dropdown) {
+	$dropdown.removeClass('km-flyout-open').css({
+		display: 'none',
+		position: '',
+		left: '',
+		top: '',
+		maxHeight: '',
+		width: '',
+		maxWidth: '',
+		gridTemplateColumns: '',
+		overflowX: '',
+		overflowY: ''
+	});
+}
+
+function kmHideLeftCatalogFlyouts($except) {
+	$('.left-column ul.left-menu > li.parent > .catalog-section-childs').not($except).each(function () {
+		var $dropdown = $(this);
+		$dropdown.stop(true, true).hide();
+		kmResetLeftCatalogFlyout($dropdown);
+	});
+}
+
 function kmInitLeftCatalogFlyout() {
 	var $root = $('.left-column');
 	if (!$root.length || $root.data('km-flyout-bound')) {
@@ -413,20 +465,18 @@ function kmInitLeftCatalogFlyout() {
 	$root.data('km-flyout-bound', true);
 	$root.on('mouseenter', 'ul.left-menu > li.parent', function () {
 		var $li = $(this);
-		var pos = $li.position();
 		var $dropdown = $li.children('.catalog-section-childs');
-		var top = pos.top - 5;
-		var left = pos.left + $li.outerWidth() + 9;
-		if (pos.top + $dropdown.outerHeight() > $(window).height() + $(window).scrollTop() - 46) {
-			top = pos.top - $dropdown.outerHeight() + $li.outerHeight() + 5;
-			if (top < 0) {
-				top = $(window).scrollTop();
-			}
+		if (!$dropdown.length) {
+			return;
 		}
-		$dropdown.css({ left: left + 'px', top: top + 'px', 'z-index': 9999 });
-		$dropdown.stop(true, true).delay(200).fadeIn(150);
+		kmHideLeftCatalogFlyouts($dropdown);
+		kmPositionLeftCatalogFlyout($li);
+		$dropdown.addClass('km-flyout-open').css('display', 'grid').stop(true, true).delay(200).fadeIn(150);
 	}).on('mouseleave', 'ul.left-menu > li.parent', function () {
-		$(this).children('.catalog-section-childs').stop(true, true).delay(200).fadeOut(150);
+		var $dropdown = $(this).children('.catalog-section-childs');
+		$dropdown.stop(true, true).delay(200).fadeOut(150, function () {
+			kmResetLeftCatalogFlyout($dropdown);
+		});
 	});
 }
 

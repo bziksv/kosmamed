@@ -6,7 +6,7 @@ $frame = $this->createFrame('already_seen')->begin('');
 
 if(!empty($arResult['ITEMS'])) {
 	global $arSetting;?>
-	<div class="already_seen">
+	<div class="already_seen" id="already_seen">
 		<div class="center<?=($arSetting['SITE_BACKGROUND']['VALUE'] == 'Y' ? ' inner' : '');?>">
 			<div class="h3"><?=Loc::getMessage('CATALOG_ALREADY_SEEN')?></div>
 			<ul>
@@ -14,10 +14,10 @@ if(!empty($arResult['ITEMS'])) {
 					<li>
 						<a href="<?=$arItem['DETAIL_PAGE_URL']?>">
 							<span><?=$arItem['NAME']?></span>
-							<?if(is_array($arItem['PICTURE'])):?>
-								<img src="<?=$arItem['PICTURE']['SRC']?>" alt="<?=$arItem['NAME']?>"/>
+							<?if(is_array($arItem['PICTURE']) && !empty($arItem['PICTURE']['SRC'])):?>
+								<img class="no-lazy" loading="eager" src="<?=htmlspecialcharsbx($arItem['PICTURE']['SRC'])?>" width="<?= (int)($arItem['PICTURE']['WIDTH'] ?? 65) ?>" height="<?= (int)($arItem['PICTURE']['HEIGHT'] ?? 65) ?>" alt="<?=htmlspecialcharsbx($arItem['NAME'])?>"/>
 							<?else:?>
-								<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="68px" height="68px" alt="<?=$arItem['NAME']?>"/>
+								<img class="no-lazy" loading="eager" src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="68" height="68" alt="<?=htmlspecialcharsbx($arItem['NAME'])?>"/>
 							<?endif;?>
 						</a>
 					</li>

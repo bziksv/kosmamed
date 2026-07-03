@@ -50,6 +50,9 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_secti
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catalog_card_photos.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catalog_card_photos.php');
 }
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php');
+}
 function isWrapAttr($current, $target)
 {
     if($current < $target)
