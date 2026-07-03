@@ -139,10 +139,12 @@ if (!function_exists('kmSectionPreviewResize')) {
 			return null;
 		}
 
-		return [
+		$picture = [
 			'SRC' => $resized['src'],
 			'WIDTH' => (int)$resized['width'],
 			'HEIGHT' => (int)$resized['height'],
 		];
+
+		return function_exists('kmAttachWebp') ? kmAttachWebp($picture) : $picture;
 	}
 }

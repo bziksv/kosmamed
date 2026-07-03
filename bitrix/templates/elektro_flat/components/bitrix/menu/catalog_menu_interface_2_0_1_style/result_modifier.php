@@ -70,6 +70,9 @@ foreach($arResult as $key => $arItem) {
 				);
 			}
 			if (!empty($preview["SRC"])) {
+				if (function_exists('kmAttachWebp')) {
+					$preview = kmAttachWebp($preview);
+				}
 				$arResult[$key]["PICTURE"] = $preview;
 			}
 		}
