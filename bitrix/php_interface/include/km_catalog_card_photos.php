@@ -542,3 +542,65 @@ function kmBasketItemPicture($productId, $width = 65, $height = 65)
 
 	return null;
 }
+
+/**
+ * Превью в блоке «Товары в заказе» (sale.order.ajax) — MORE_PHOTO / MoySklad, не только DETAIL_PICTURE.
+ */
+function kmApplyOrderBasketPictures(array &$grid, $width = 110, $height = 110)
+{
+	if (empty($grid['ROWS']) || !is_array($grid['ROWS']) || !function_exists('kmBasketItemPicture')) {
+		return;
+	}
+
+	foreach ($grid['ROWS'] as &$row) {
+		if (empty($row['data']) || !is_array($row['data'])) {
+			continue;
+		}
+
+		$data = &$row['data'];
+		if (!empty($data['PREVIEW_PICTURE_SRC']) || !empty($data['DETAIL_PICTURE_SRC'])) {
+			continue;
+		}
+
+		$productId = (int)($data['PRODUCT_ID'] ?? 0);
+		if ($productId <= 0) {
+			continue;
+		}
+
+		$pict = kmBasketItemPicture($productId, (int)$width, (int)$height);
+		if (!is_array($pict) || empty($pict['src'])) {
+			continue;
+		}
+
+		$src = (string)$pict['src'];
+		$data['PREVIEW_PICTURE'] = 1;
+		$data['PREVIEW_PICTURE_SRC'] = $src;
+		$data['PREVIEW_PICTURE_SRC_2X'] = $src;
+		$data['PREVIEW_PICTURE_SRC_ORIGINAL'] = $src;
+		$data['DETAIL_PICTURE'] = 1;
+		$data['DETAIL_PICTURE_SRC'] = $src;
+		$data['DETAIL_PICTURE_SRC_2X'] = $src;
+		$data['DETAIL_PICTURE_SRC_ORIGINAL'] = $src;
+
+		if (!empty($row['columns']) && is_array($row['columns'])) {
+			$col = array(
+				'SRC' => $src,
+				'WIDTH' => (int)$pict['width'],
+				'HEIGHT' => (int)$pict['height'],
+			);
+			$row['columns']['PREVIEW_PICTURE'] = $col;
+			$row['columns']['DETAIL_PICTURE'] = $col;
+		}
+	}
+	unset($row);
+}
+
+/** sale.order.ajax: AJAX refreshOrderAjax не вызывает result_modifier — патчим здесь. */
+function kmOnSaleComponentOrderResultPrepared($order, &$arUserResult, $request, &$arParams, &$arResult)
+{
+	if (empty($arResult['GRID']) || !function_exists('kmApplyOrderBasketPictures')) {
+		return;
+	}
+
+	kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+}

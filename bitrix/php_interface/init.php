@@ -53,6 +53,7 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catal
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php');
 }
+AddEventHandler('sale', 'OnSaleComponentOrderResultPrepared', 'kmOnSaleComponentOrderResultPrepared');
 function isWrapAttr($current, $target)
 {
     if($current < $target)

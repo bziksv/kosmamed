@@ -2,6 +2,10 @@
 
 global $arSetting;
 
+if (function_exists('kmApplyOrderBasketPictures') && !empty($arResult['GRID'])) {
+	kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+}
+
 $component = $this->__component;
 $component::scaleImages($arResult['JS_DATA'], $arParams['SERVICES_IMAGES_SCALING']);
 

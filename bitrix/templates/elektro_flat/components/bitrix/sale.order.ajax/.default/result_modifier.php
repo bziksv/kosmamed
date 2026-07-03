@@ -12,5 +12,9 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 $arParams['SERVICES_IMAGES_SCALING'] = (string)($arParams['SERVICES_IMAGES_SCALING'] ?? 'adaptive');
 
+if (function_exists('kmApplyOrderBasketPictures') && !empty($arResult['GRID'])) {
+	kmApplyOrderBasketPictures($arResult['GRID'], 110, 110);
+}
+
 $component = $this->__component;
 $component::scaleImages($arResult['JS_DATA'], $arParams['SERVICES_IMAGES_SCALING']);
