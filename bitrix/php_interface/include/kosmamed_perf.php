@@ -1310,9 +1310,27 @@ if (!function_exists('kmInjectHomeDeferredLoader')) {
 	}
 }
 
+if (!function_exists('kmSkipBufferContentModifications')) {
+	/** Admin AJAX (sale_order_ajax etc.) returns JSON — must not inject HTML attributes. */
+	function kmSkipBufferContentModifications(string $content): bool
+	{
+		if (defined('ADMIN_AJAX_MODE') && ADMIN_AJAX_MODE) {
+			return true;
+		}
+
+		$trim = ltrim($content);
+
+		return $trim !== '' && ($trim[0] === '{' || $trim[0] === '[');
+	}
+}
+
 if (!function_exists('kmOnEndBufferContent')) {
 	function kmOnEndBufferContent(string &$content): void
 	{
+		if (kmSkipBufferContentModifications($content)) {
+			return;
+		}
+
 		kmInjectCriticalHomeCss($content);
 		kmInjectLcpPreload($content);
 		kmInjectLazyImages($content);
@@ -1334,6 +1352,10 @@ if (!function_exists('kmOnEndBufferContentPost')) {
 	/** Runs after arturgolubev.lazyimage (sort 200 > default 100). */
 	function kmOnEndBufferContentPost(string &$content): void
 	{
+		if (kmSkipBufferContentModifications($content)) {
+			return;
+		}
+
 		kmFixCatalogSliderImages($content);
 		kmFixLcpImages($content);
 		kmFixBrokenImgTags($content);
