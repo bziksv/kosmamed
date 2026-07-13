@@ -49,7 +49,7 @@ class Ajax extends Controller
                 new Authentication(),
                 new Csrf()
             ]];
-        }, self::ACTION_CONFIG);
+        }, self::ACTION_CONFIG);
     }
 
     public static function saveAuthAction($authType = 'token', $authData = '', $profileId = 0)

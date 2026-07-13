@@ -113,7 +113,7 @@ class Api extends Controller
                 new Authentication(),
                 new Csrf()
             ]];
-        }, self::ACTION_CONFIG);
+        }, self::ACTION_CONFIG);
     }
 
     public function getMethodMappingAction()
