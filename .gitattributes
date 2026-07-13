@@ -1,0 +1,5 @@
+# Единые переводы строк — иначе на проде CRLF ломает git diff/pull
+*.php text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.sh text eol=lf

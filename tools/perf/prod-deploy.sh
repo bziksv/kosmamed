@@ -12,14 +12,9 @@ cd "$SITE_DIR"
 
 cp -a "$SITE_DIR/bitrix/.settings.php" /root/.settings.php.bak
 
-# kosmamed: на проде бывают локальные правки footer/counter — иначе pull падает
+# Единственный источник правды — origin/main. Локальные правки tracked-файлов на проде сбрасываем.
 git fetch origin
-git checkout origin/main -- \
-  "$SITE_DIR/bitrix/templates/elektro_flat/footer.php" \
-  "$SITE_DIR/include/counter_2.php" \
-  2>/dev/null || true
-
-git pull origin main
+git reset --hard origin/main
 
 cp -a /root/.settings.php.bak "$SITE_DIR/bitrix/.settings.php"
 chown "$OWNER" "$SITE_DIR/bitrix/.settings.php"

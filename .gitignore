@@ -41,6 +41,13 @@ access/*
 *.tar.gz
 *.bak
 *.bak.*
+bitrix/modules/rbs.moysklad/logs/
+bitrix/modules/rbs.moyskladstocks/logs/
+
+# --- runtime на проде (не деплоить, не сравнивать с git) ---
+bitrix/catalog_export/yandex_*.php
+bitrix/js/ipol.sdek/list.json
+yandex_orders_conv.csv
 
 # --- ОС / редакторы ---
 .DS_Store
