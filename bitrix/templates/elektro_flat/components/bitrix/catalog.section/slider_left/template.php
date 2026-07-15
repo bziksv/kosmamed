@@ -11,21 +11,48 @@ $inMinPrice = in_array("MIN_PRICE", $arSetting["PRODUCT_TABLE_VIEW"]["VALUE"]);
 //JS//?>
 <script type="text/javascript">
 	//<![CDATA[
-	$(function() {
-		if (typeof $.fn.anythingSlider !== "function") {
-			return;
+	(function() {
+		function kmInitLeftSlider() {
+			if (typeof window.jQuery === "undefined" || typeof jQuery.fn.anythingSlider !== "function") {
+				return false;
+			}
+			var $sl = jQuery(".leftSlider");
+			if (!$sl.length || $sl.data("AnythingSlider")) {
+				return !!$sl.data("AnythingSlider");
+			}
+			$sl.anythingSlider({
+				"theme": "left-slider",
+				"resizeContents": false,
+				"easing": "easeInOutExpo",
+				"buildArrows": false,
+				"buildStartStop": false,
+				"hashTags": false,
+				"autoPlay": true,
+				"autoPlayLocked": true
+			});
+			return true;
 		}
-		$(".leftSlider").anythingSlider({
-			"theme": "left-slider",
-			"resizeContents": false,
-			"easing": "easeInOutExpo",
-			"buildArrows": false,					
-			"buildStartStop": false,
-			"hashTags": false,
-			"autoPlay": true,
-			"autoPlayLocked": true
-		});				
-	});
+
+		function kmTryInitLeftSlider() {
+			if (kmInitLeftSlider()) {
+				return;
+			}
+			var n = 0;
+			var t = setInterval(function() {
+				n++;
+				if (kmInitLeftSlider() || n > 40) {
+					clearInterval(t);
+				}
+			}, 50);
+		}
+
+		if (window.jQuery) {
+			jQuery(kmTryInitLeftSlider);
+		} else {
+			document.addEventListener("DOMContentLoaded", kmTryInitLeftSlider);
+		}
+		window.addEventListener("load", kmTryInitLeftSlider);
+	})();
 	//]]>
 </script>
 

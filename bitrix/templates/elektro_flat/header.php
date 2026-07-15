@@ -31,8 +31,11 @@ Loc::loadMessages(__FILE__);?>
 	$kmIsCatalog = CSite::InDir(SITE_DIR . "catalog/");
 	$kmIsProduct = CSite::InDir(SITE_DIR . "product/");
 	$kmIsCatalogLike = $kmIsCatalog || $kmIsProduct;
-	// slider_left (left sidebar) uses anythingSlider on catalog + product pages
-	$kmNeedsSlider = $kmIsHome || $kmIsCatalogLike;
+	// slider_left в сайдбаре на всех не-главных; главный anythingSlider — на главной
+	$kmNeedsSlider = $kmIsHome || $kmIsCatalogLike || CSite::InDir(SITE_DIR . "personal/")
+		|| CSite::InDir(SITE_DIR . "news/") || CSite::InDir(SITE_DIR . "about/")
+		|| CSite::InDir(SITE_DIR . "delivery/") || CSite::InDir(SITE_DIR . "payments/")
+		|| CSite::InDir(SITE_DIR . "contacts/");
 	$kmNeedsFancybox = $kmIsCatalogLike;
 	$kmNeedsCountdown = $kmIsHome || $kmIsCatalogLike;
 	$kmNeedsSlick = $kmIsCatalogLike || $kmIsHome;
@@ -138,9 +141,17 @@ body, body.km-body-bg, body.agll, body.agll_loaded { background-image: url('<?=h
 <?php endif; ?>
 @media (min-width: 1013px) { .body { margin-top: 0 !important; } }
 @media (max-width: 1012px) { .body { margin-top: 58px !important; } }
-@media (min-width: 788px) and (max-width: 1012px) { .body { margin-top: 120px !important; } }
+@media (min-width: 788px) and (max-width: 1012px) {
+	.body { margin-top: 139px !important; }
+	header, header.fixed { top: var(--km-admin-offset, 0px) !important; min-height: 82px !important; height: 82px !important; padding-top: 0 !important; padding-bottom: 0 !important; box-sizing: border-box !important; overflow: visible !important; }
+	header .center, header .center.inner { display: table !important; height: 82px !important; min-height: 82px !important; box-sizing: border-box !important; }
+	header .header_1, header .header_3, header .header_4, header .header_5 { display: table-cell !important; vertical-align: middle !important; }
+	header .header_2 { display: block !important; position: absolute !important; left: 50% !important; top: 100% !important; width: 526px !important; max-width: calc(100vw - 40px) !important; height: 56px !important; margin: 0 0 0 -241px !important; padding: 0 !important; z-index: 1002 !important; background: transparent !important; }
+	header .header_2 #altop_search { width: 100% !important; max-width: none !important; margin-top: 5px !important; }
+	.top_panel { top: calc(82px + var(--km-admin-offset, 0px)) !important; }
+}
 @media (max-width: 787px) { .body { margin-top: 0 !important; } }
-@media (min-width: 788px) {
+@media (min-width: 1013px) {
 header, header.fixed { min-height: 64px !important; height: 64px !important; padding-top: 0 !important; padding-bottom: 0 !important; box-sizing: border-box !important; }
 header .center, header .center.inner { display: table !important; height: 64px !important; min-height: 64px !important; box-sizing: border-box !important; }
 header.fixed.fixed_f { height: 58px !important; min-height: 58px !important; }
