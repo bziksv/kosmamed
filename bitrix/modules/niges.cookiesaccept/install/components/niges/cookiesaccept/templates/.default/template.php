@@ -11,7 +11,9 @@ if (method_exists($this, 'setFrameMode')) {
 	$this->setFrameMode(true);
 }
 
-$this->addExternalCss($this->GetFolder().'/style.css');
+// Asset API too late for OnEndBufferContent / Composite — link must be in the injected HTML.
+$ncaCss = $this->GetFolder().'/style.css';
+$this->addExternalCss($ncaCss);
 
 $cookieName = htmlspecialcharsbx($arResult['COOKIE_NAME']);
 $textVer = (int)$arResult['TEXTVER'];
@@ -51,7 +53,9 @@ $styleVars = sprintf(
 	$zIndex,
 	$topOffset
 );
+$ncaCssHref = htmlspecialcharsbx($ncaCss).'?v=110';
 ?>
+<link rel="stylesheet" href="<?=$ncaCssHref?>" />
 <div
 	id="nca-cookiesaccept-line"
 	class="<?=htmlspecialcharsbx(implode(' ', $classes))?>"
@@ -73,14 +77,14 @@ $styleVars = sprintf(
 </div>
 <script>
 (function () {
-	// Баннер в OnEpilog после закрытия документа — DOMContentLoaded уже мог пройти.
+	// Баннер в OnEndBufferContent / Composite — CSS через <link> в разметке, не через Asset.
 	function ncaInitCookieBanner() {
 		if (window !== window.top) {
 			return;
 		}
 
 		var root = document.getElementById('nca-cookiesaccept-line');
-		if (!root) {
+		if (!root || root.getAttribute('data-nca-ready') === '1') {
 			return;
 		}
 
@@ -123,6 +127,7 @@ $styleVars = sprintf(
 		}
 
 		root.hidden = false;
+		root.setAttribute('data-nca-ready', '1');
 
 		var btn = document.getElementById('nca-cookiesaccept-line-accept-btn');
 		if (btn) {
@@ -133,10 +138,10 @@ $styleVars = sprintf(
 		}
 	}
 
+	// На случай поздней вставки / уже прошедшего DOMContentLoaded
+	ncaInitCookieBanner();
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', ncaInitCookieBanner);
-	} else {
-		ncaInitCookieBanner();
 	}
 })();
 </script>
