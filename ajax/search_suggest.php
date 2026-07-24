@@ -15,9 +15,9 @@ header("X-Robots-Tag: noindex");
 
 const KS_IBLOCK_ID      = 24;
 const KS_PRICE_NAMES    = array("Цена - КосмаМед Сайт", "Цена - Медмаркет Сайт");
-const KS_MAX_PRODUCTS   = 10;   // сколько показать в выпадашке
-const KS_FETCH_PRODUCTS = 60;   // сколько кандидатов взять до сортировки
-const KS_MAX_CATEGORIES = 8;
+const KS_MAX_PRODUCTS   = 16;  // в выпадашке (для фильтра по категориям)
+const KS_FETCH_PRODUCTS = 80;  // кандидаты до сортировки
+const KS_MAX_CATEGORIES = 10;
 const KS_MIN_LEN        = 2;
 const KS_DICT_TTL       = 86400; // сутки
 
@@ -40,6 +40,113 @@ function ks_words($string) {
 /** GetNext() уже html-escapes поля — декодируем перед повторным выводом */
 function ks_plain($value) {
 	return htmlspecialcharsback((string)$value);
+}
+
+/** Подсветка совпадений запроса в названии (как <b> у Bitrix/polimer) */
+function ks_highlight_name($name, $query) {
+	$name = (string)$name;
+	$query = trim((string)$query);
+	$safe = htmlspecialcharsbx($name);
+	if ($query === "") {
+		return $safe;
+	}
+	$tokens = preg_split('/[\s,]+/u', mb_strtolower($query, "UTF-8"), -1, PREG_SPLIT_NO_EMPTY);
+	$tokens = array_values(array_unique(array_filter($tokens, static function ($t) {
+		return mb_strlen($t, "UTF-8") >= 2;
+	})));
+	usort($tokens, static function ($a, $b) {
+		return mb_strlen($b, "UTF-8") - mb_strlen($a, "UTF-8");
+	});
+	foreach ($tokens as $token) {
+		$quoted = preg_quote($token, "/");
+		$flex = '(?:ы|и|а|я|е|у|ов|ев|ей|ам|ями|ах|ом|ем)?';
+		$safe = preg_replace("/(".$quoted.$flex.")/iu", "<b>$1</b>", $safe);
+	}
+	return $safe;
+}
+
+/**
+ * Ослабленные наборы слов: убираем хвост/начало, потом одиночные длинные токены.
+ * Как polimerBuildRelaxedSearchQueries.
+ */
+function ks_relaxed_word_sets(array $words) {
+	$words = array_values(array_filter($words, static function ($w) {
+		return mb_strlen((string)$w, "UTF-8") >= 2;
+	}));
+	if (count($words) < 2) {
+		return array();
+	}
+	$sets = array();
+	for ($len = count($words) - 1; $len >= 1; $len--) {
+		$sets[] = array_slice($words, 0, $len);
+	}
+	for ($start = 1; $start < count($words); $start++) {
+		$sets[] = array_slice($words, $start);
+	}
+	$byLen = $words;
+	usort($byLen, static function ($a, $b) {
+		return mb_strlen($b, "UTF-8") - mb_strlen($a, "UTF-8");
+	});
+	foreach ($byLen as $w) {
+		$sets[] = array($w);
+	}
+	$out = array();
+	$seen = array();
+	$orig = implode(" ", $words);
+	foreach ($sets as $set) {
+		$key = implode(" ", $set);
+		if ($key === "" || $key === $orig || isset($seen[$key])) {
+			continue;
+		}
+		$seen[$key] = true;
+		$out[] = $set;
+	}
+	return $out;
+}
+
+/** Категории из найденных товаров (как polimerBuildSearchSectionsFromProducts) */
+function ks_sections_from_products(array $products) {
+	$counts = array();
+	foreach ($products as $p) {
+		$sid = (int)($p["SECTION_ID"] ?? 0);
+		if ($sid > 0) {
+			$counts[$sid] = ($counts[$sid] ?? 0) + 1;
+		}
+	}
+	if (empty($counts)) {
+		return array();
+	}
+	$res = array();
+	$rs = CIBlockSection::GetList(
+		array("NAME" => "ASC"),
+		array("IBLOCK_ID" => KS_IBLOCK_ID, "ID" => array_keys($counts), "GLOBAL_ACTIVE" => "Y"),
+		false,
+		array("ID", "NAME", "CODE", "PICTURE")
+	);
+	while ($s = $rs->GetNext()) {
+		$id = (int)$s["ID"];
+		$img = "";
+		if ($s["PICTURE"] > 0) {
+			$f = CFile::ResizeImageGet($s["PICTURE"], array("width" => 48, "height" => 48), BX_RESIZE_IMAGE_EXACT, true);
+			$img = $f["src"];
+		}
+		$res[] = array(
+			"ID"      => $id,
+			"NAME"    => ks_plain($s["NAME"]),
+			"URL"     => "/catalog/".$s["CODE"]."/",
+			"CNT"     => (int)($counts[$id] ?? 0),
+			"CNT_AVL" => (int)($counts[$id] ?? 0),
+			"IMG"     => $img,
+			"FROM_PRODUCTS" => true,
+		);
+	}
+	usort($res, static function ($a, $b) {
+		return ($b["CNT"] <=> $a["CNT"]) ?: strcmp($a["NAME"], $b["NAME"]);
+	});
+	if (count($res) > KS_MAX_CATEGORIES) {
+		$res = array_slice($res, 0, KS_MAX_CATEGORIES);
+	}
+	return $res;
 }
 
 // Левенштейн с поддержкой UTF-8 (стандартный levenshtein() работает по байтам)
@@ -434,7 +541,7 @@ function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 		array("SORT" => "ASC", "SHOW_COUNTER" => "DESC"),
 		$filter, false,
 		array("nTopCount" => KS_FETCH_PRODUCTS),
-		array("ID", "NAME", "DETAIL_PAGE_URL", "PREVIEW_PICTURE", "DETAIL_PICTURE", "PROPERTY_CML2_ARTICLE")
+		array("ID", "NAME", "DETAIL_PAGE_URL", "PREVIEW_PICTURE", "DETAIL_PICTURE", "IBLOCK_SECTION_ID", "PROPERTY_CML2_ARTICLE")
 	);
 	while ($e = $rs->GetNext()) {
 		$id = (int)$e["ID"];
@@ -445,11 +552,12 @@ function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 			$img = $f["src"];
 		}
 		$raw[$id] = array(
-			"ID"      => $id,
-			"NAME"    => ks_plain($e["NAME"]),
-			"URL"     => $e["DETAIL_PAGE_URL"],
-			"IMG"     => $img,
-			"ARTICLE" => ks_plain($e["PROPERTY_CML2_ARTICLE_VALUE"]),
+			"ID"         => $id,
+			"NAME"       => ks_plain($e["NAME"]),
+			"URL"        => $e["DETAIL_PAGE_URL"],
+			"IMG"        => $img,
+			"ARTICLE"    => ks_plain($e["PROPERTY_CML2_ARTICLE_VALUE"]),
+			"SECTION_ID" => (int)$e["IBLOCK_SECTION_ID"],
 		);
 		$ids[] = $id;
 	}
@@ -488,6 +596,7 @@ function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 			"URL"            => $row["URL"],
 			"IMG"            => $row["IMG"],
 			"ARTICLE"        => $row["ARTICLE"],
+			"SECTION_ID"     => (int)$row["SECTION_ID"],
 			"PRICE"          => $price,
 			"CAN_BUY"        => $cat["CAN_BUY"] && $price > 0,
 			"CHECK_QUANTITY" => $cat["CHECK_QUANTITY"],
@@ -543,19 +652,23 @@ $queryWords = ks_words($q);
 if (empty($queryWords)) { echo ""; die(); }
 
 $rankQuery = implode(" ", $queryWords);
+$effectiveQ = $q;
+$suggestNote = "";
+$suggestRelaxed = false;
+
 $sections = ks_find_sections($queryWords);
 $products = ks_find_products($queryWords, $priceTypeId, $rankQuery);
 
-$suggestNote = "";
 if (empty($sections) && empty($products)) {
 	$dict = ks_dictionary();
 	$layout = ks_fix_layout_words($queryWords, $dict);
 	if ($layout["changed"]) {
 		$rankQuery = implode(" ", $layout["words"]);
+		$effectiveQ = $rankQuery;
 		$sections = ks_find_sections($layout["words"]);
 		$products = ks_find_products($layout["words"], $priceTypeId, $rankQuery);
 		if (!empty($sections) || !empty($products)) {
-			$suggestNote = "Исправлена раскладка: <b>".htmlspecialcharsbx(implode(" ", $layout["words"]))."</b>";
+			$suggestNote = "Исправлено: показаны результаты по запросу «".htmlspecialcharsbx($effectiveQ)."»";
 		}
 	}
 }
@@ -563,41 +676,90 @@ if (empty($sections) && empty($products)) {
 	$corr = ks_correct_words($queryWords, $dict ?? ks_dictionary());
 	if ($corr["changed"]) {
 		$rankQuery = implode(" ", $corr["words"]);
+		$effectiveQ = $rankQuery;
 		$sections = ks_find_sections($corr["words"]);
 		$products = ks_find_products($corr["words"], $priceTypeId, $rankQuery);
 		if (!empty($sections) || !empty($products)) {
-			$suggestNote = "Возможно, вы искали: <b>".htmlspecialcharsbx(implode(" ", $corr["words"]))."</b>";
+			$suggestNote = "Исправлено: показаны результаты по запросу «".htmlspecialcharsbx($effectiveQ)."»";
+		}
+	}
+}
+if (empty($sections) && empty($products)) {
+	foreach (ks_relaxed_word_sets($queryWords) as $relaxedWords) {
+		$rankQuery = implode(" ", $relaxedWords);
+		$sections = ks_find_sections($relaxedWords);
+		$products = ks_find_products($relaxedWords, $priceTypeId, $rankQuery);
+		if (!empty($sections) || !empty($products)) {
+			$effectiveQ = $rankQuery;
+			$suggestRelaxed = true;
+			$suggestNote = "Точных совпадений по «".htmlspecialcharsbx($q)."» нет. Показаны ближайшие результаты по «".htmlspecialcharsbx($effectiveQ)."»";
+			break;
 		}
 	}
 }
 
+// Категории из найденных товаров (как на polimer) — приоритетнее «голых» совпадений по имени раздела
+$sectionsFromProducts = ks_sections_from_products($products);
+if (!empty($sectionsFromProducts)) {
+	$sections = $sectionsFromProducts;
+}
+
 $total = count($sections) + count($products);
 $qEsc = htmlspecialcharsbx($q);
+$effectiveEsc = htmlspecialcharsbx($effectiveQ);
+$allUrl = "/catalog/?q=".rawurlencode($effectiveQ);
 
 /* ---------- рендер ---------- */
 ob_start();
 if ($total === 0) { ?>
 	<div class="ks-suggest__empty">По запросу «<?=$qEsc?>» ничего не найдено</div>
 <?php } else { ?>
+	<div class="ks-suggest__root" data-query="<?=$qEsc?>" data-query-effective="<?=$effectiveEsc?>">
 	<?php if ($suggestNote !== ""): ?>
-		<div class="ks-suggest__note"><?=$suggestNote?></div>
+		<div class="ks-suggest__note<?=$suggestRelaxed ? " ks-suggest__note--relaxed" : ""?>"><?=$suggestNote?></div>
 	<?php endif; ?>
-	<div class="ks-suggest__cols">
+	<div class="ks-suggest__cols<?=(empty($sections) || empty($products)) ? " ks-suggest__cols--single" : ""?>">
 		<div class="ks-suggest__col ks-suggest__col--cats">
-			<div class="ks-suggest__title">Категории</div>
+			<div class="ks-suggest__title">
+				Категории
+				<?php if (!empty($sectionsFromProducts)): ?>
+					<span class="ks-suggest__hint">можно выбрать несколько</span>
+				<?php endif; ?>
+			</div>
 			<?php if (empty($sections)): ?>
 				<div class="ks-suggest__none">Нет подходящих категорий</div>
-			<?php else: foreach ($sections as $s): ?>
-				<a class="ks-cat" href="<?=htmlspecialcharsbx($s["URL"])?>">
-					<span class="ks-cat__name"><?=htmlspecialcharsbx($s["NAME"])?></span>
-					<span class="ks-cat__cnt" title="В наличии <?=$s["CNT_AVL"]?> из <?=$s["CNT"]?>">
-						<span class="ks-cat__cnt-in"><?=$s["CNT_AVL"]?></span><span class="ks-cat__cnt-sep">/</span><span class="ks-cat__cnt-all"><?=$s["CNT"]?></span>
-					</span>
-				</a>
+			<?php else: foreach ($sections as $s):
+				$sid = (int)$s["ID"];
+				$sName = htmlspecialcharsbx($s["NAME"]);
+			?>
+				<div class="ks-cat" data-section-id="<?=$sid?>">
+					<button type="button" class="ks-cat__filter"
+						data-section-id="<?=$sid?>"
+						data-section-name="<?=$sName?>"
+						title="Показать товары из «<?=$sName?>»">
+						<span class="ks-cat__check" aria-hidden="true"><i class="fa fa-check"></i></span>
+						<?php if (!empty($s["IMG"])): ?>
+							<span class="ks-cat__img"><img src="<?=htmlspecialcharsbx($s["IMG"])?>" alt="" width="40" height="40" loading="lazy" /></span>
+						<?php endif; ?>
+						<span class="ks-cat__name"><?=$sName?></span>
+						<span class="ks-cat__cnt" title="<?=(int)$s["CNT"]?> в выдаче">
+							<?=(int)$s["CNT"]?> шт.
+						</span>
+					</button>
+					<a class="ks-cat__go" href="<?=htmlspecialcharsbx($s["URL"])?>" title="Перейти в раздел">
+						<i class="fa fa-external-link" aria-hidden="true"></i>
+					</a>
+				</div>
 			<?php endforeach; endif; ?>
 		</div>
 		<div class="ks-suggest__col ks-suggest__col--items">
-			<div class="ks-suggest__title">Товары</div>
+			<div class="ks-suggest__products-head">
+				<div class="ks-suggest__title">
+					Товары
+					<span class="ks-suggest__count" data-total="<?=count($products)?>"><?=count($products)?></span>
+				</div>
+				<div class="ks-suggest__filter-bar" hidden></div>
+			</div>
 			<?php if (empty($products)): ?>
 				<div class="ks-suggest__none">Нет подходящих товаров</div>
 			<?php else:
@@ -605,9 +767,9 @@ if ($total === 0) { ?>
 				foreach ($products as $p):
 				$status = $p["STOCK_STATUS"] ?? ks_stock_status($p);
 				if ($status === "order" && $prevStatus !== "order"): ?>
-				<div class="ks-suggest__sep">Под заказ</div>
+				<div class="ks-suggest__sep" data-stock-sep="order">Под заказ</div>
 				<?php elseif ($status === "unavailable" && $prevStatus !== "unavailable"): ?>
-				<div class="ks-suggest__sep">Нет в наличии</div>
+				<div class="ks-suggest__sep" data-stock-sep="unavailable">Нет в наличии</div>
 				<?php endif;
 				$prevStatus = $status;
 				$stock = ks_stock_label($p);
@@ -621,8 +783,9 @@ if ($total === 0) { ?>
 					));
 					$props = strtr(base64_encode(serialize($propsArr)), "+/=", "-_,");
 				}
+				$nameHtml = ks_highlight_name($p["NAME"], $effectiveQ);
 			?>
-				<div class="ks-item ks-item--<?=htmlspecialcharsbx($status)?>">
+				<div class="ks-item ks-item--<?=htmlspecialcharsbx($status)?>" data-section-id="<?=(int)$p["SECTION_ID"]?>" data-stock-status="<?=htmlspecialcharsbx($status)?>" tabindex="-1">
 					<a class="ks-item__link" href="<?=htmlspecialcharsbx($p["URL"])?>">
 						<span class="ks-item__img">
 							<?php if ($p["IMG"]): ?>
@@ -632,7 +795,7 @@ if ($total === 0) { ?>
 							<?php endif; ?>
 						</span>
 						<span class="ks-item__info">
-							<span class="ks-item__name"><?=htmlspecialcharsbx($p["NAME"])?></span>
+							<span class="ks-item__name"><?=$nameHtml?></span>
 							<?php if (!empty($p["ARTICLE"])): ?>
 								<span class="ks-item__art">Артикул: <?=htmlspecialcharsbx($p["ARTICLE"])?></span>
 							<?php endif; ?>
@@ -672,9 +835,13 @@ if ($total === 0) { ?>
 					</div>
 				</div>
 			<?php endforeach; endif; ?>
+			<div class="ks-suggest__filter-empty" hidden>В этой категории нет товаров по текущему запросу</div>
 		</div>
 	</div>
-	<a class="ks-suggest__all" href="/catalog/?q=<?=urlencode($q)?>">Показать все результаты по запросу «<?=$qEsc?>»</a>
+	<a class="ks-suggest__all" href="<?=htmlspecialcharsbx($allUrl)?>" data-url-all="<?=htmlspecialcharsbx($allUrl)?>">
+		Показать все результаты по запросу «<?=$effectiveEsc?>»
+	</a>
+	</div>
 <?php }
 echo ob_get_clean();
 die();
