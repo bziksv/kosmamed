@@ -963,10 +963,10 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 }
 
 /*
- * Главная (.tabs-main), только Safari-баг: grid+flex+aspect-ratio → у img
- * width/height:100% растягивает пиксели и игнорит object-fit.
- * Каталог (.catalog-item-table-view) не трогаем.
- * Плакаты — contain как в каталоге Safari (пропорции + поля), не cover/stretch.
+ * Главная (.tabs-main): фиксируем кадр без ломки slick.
+ * НЕ ставить width:100% на .slick-track / .slick-slide — ломает галерею
+ * (инфографика+фото → «Размеры» обрезаны/зумированы).
+ * Каталог не трогаем.
  */
 .tabs-main .catalog-item-card .item-image {
 	position: relative !important;
@@ -984,16 +984,26 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	height: 100% !important;
 	padding: 0 !important;
 	margin: 0 !important;
+	overflow: hidden !important;
 }
+/* Высота цепочки slick — да; ширину оставляет slick (inline px) */
 .tabs-main .catalog-item-card .item-image .magic_slide_ss,
-.tabs-main .catalog-item-card .item-image .magic_slide_ss .slick-list,
-.tabs-main .catalog-item-card .item-image .magic_slide_ss .slick-track,
+.tabs-main .catalog-item-card .item-image .magic_slide_ss .slick-list {
+	height: 100% !important;
+	max-height: 100% !important;
+}
+.tabs-main .catalog-item-card .item-image .magic_slide_ss .slick-track {
+	height: 100% !important;
+	max-height: 100% !important;
+}
 .tabs-main .catalog-item-card .item-image .magic_slide_s,
 .tabs-main .catalog-item-card .item-image .slick-slide,
 .tabs-main .catalog-item-card .item-image .slick-slide > div {
 	height: 100% !important;
 	max-height: 100% !important;
-	width: 100% !important;
+	position: relative !important;
+	overflow: hidden !important;
+	box-sizing: border-box !important;
 }
 .tabs-main .catalog-item-card .item-image img,
 .tabs-main .catalog-item-card .item-image .magic_slide_s img,
@@ -1001,15 +1011,14 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	position: absolute !important;
 	inset: 0 !important;
 	width: 100% !important;
-	max-width: none !important;
+	max-width: 100% !important;
 	min-width: 0 !important;
 	height: 100% !important;
-	max-height: none !important;
+	max-height: 100% !important;
 	object-fit: contain !important;
 	object-position: center center !important;
 	transform: none !important;
 }
-/* Плакаты на главной: тот же contain, что видно в каталоге Safari — без растяга */
 .tabs-main .catalog-item-card .item-image a.poster-card img,
 .tabs-main .catalog-item-card .item-image a.poster-card .magic_slide_s img,
 .tabs-main .catalog-item-card .item-image a.poster-card .item_img {
