@@ -17840,7 +17840,18 @@ body {
     line-height: 1.3;
 }
 .ks-item__stock--yes { color: #15803d; }
-.ks-item__stock--no { color: #b45309; }
+.ks-item__stock--order { color: #b45309; }
+.ks-item__stock--no { color: #94a3b8; }
+.ks-suggest__sep {
+    margin: 10px 8px 6px;
+    padding: 4px 0 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+}
 .ks-item__side {
     flex: 0 0 auto;
     display: flex;

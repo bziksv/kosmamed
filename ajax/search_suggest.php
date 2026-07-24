@@ -15,7 +15,8 @@ header("X-Robots-Tag: noindex");
 
 const KS_IBLOCK_ID      = 24;
 const KS_PRICE_NAMES    = array("Цена - КосмаМед Сайт", "Цена - Медмаркет Сайт");
-const KS_MAX_PRODUCTS   = 8;
+const KS_MAX_PRODUCTS   = 10;   // сколько показать в выпадашке
+const KS_FETCH_PRODUCTS = 60;   // сколько кандидатов взять до сортировки
 const KS_MAX_CATEGORIES = 8;
 const KS_MIN_LEN        = 2;
 const KS_DICT_TTL       = 86400; // сутки
@@ -293,21 +294,130 @@ function ks_product_catalog_row($productId) {
 	return $row;
 }
 
+/**
+ * Релевантность названия к запросу (меньше = лучше).
+ * 0 — точное совпадение, 1 — целое слово, 2 — начало слова,
+ * 3 — подстрока в имени, 4 — в имени нет (артикул / шум).
+ */
+function ks_score_name_relevance($name, $query) {
+	$nameLower = mb_strtolower(trim((string)$name), "UTF-8");
+	$queryLower = mb_strtolower(trim((string)$query), "UTF-8");
+	if ($queryLower === "" || $nameLower === "") {
+		return 4;
+	}
+	if ($nameLower === $queryLower) {
+		return 0;
+	}
+
+	$tokens = preg_split('/[\s,]+/u', $queryLower, -1, PREG_SPLIT_NO_EMPTY);
+	$tokens = array_values(array_filter($tokens, static function ($token) {
+		return mb_strlen($token, "UTF-8") >= 2;
+	}));
+	if (empty($tokens)) {
+		return 4;
+	}
+
+	$worst = 0;
+	$anyInName = false;
+	foreach ($tokens as $token) {
+		$tokenScore = 4;
+		if (mb_strpos($nameLower, $token) === false) {
+			$worst = max($worst, $tokenScore);
+			continue;
+		}
+		$anyInName = true;
+		$quoted = preg_quote($token, "/");
+		// целое слово или слово + короткая русская флексия (ланцет → ланцеты)
+		$flex = '(?:ы|и|а|я|е|у|ов|ев|ей|ам|ями|ах|ом|ем)?';
+		if (preg_match('/(?:^|[^\p{L}\p{N}])'.$quoted.$flex.'(?:[^\p{L}\p{N}]|$)/u', $nameLower)) {
+			$tokenScore = 1;
+		} elseif (preg_match('/(?:^|[^\p{L}\p{N}])'.$quoted.'/u', $nameLower)) {
+			$tokenScore = 2;
+		} else {
+			$tokenScore = 3;
+		}
+		$worst = max($worst, $tokenScore);
+	}
+
+	return $anyInName ? $worst : 4;
+}
+
+/** available | order | unavailable — как на polimer / кнопке «Под заказ» в каталоге */
+function ks_stock_status(array $p) {
+	$price = (float)($p["PRICE"] ?? 0);
+	$canBuy = !empty($p["CAN_BUY"]);
+	if ($canBuy && $price > 0) {
+		return "available";
+	}
+	if ($price > 0) {
+		return "order";
+	}
+	return "unavailable";
+}
+
 function ks_stock_label(array $p) {
-	if (!$p["CAN_BUY"]) {
+	$status = $p["STOCK_STATUS"] ?? ks_stock_status($p);
+	if ($status === "order") {
+		return array("class" => "ks-item__stock--order", "text" => "Под заказ");
+	}
+	if ($status === "unavailable" || empty($p["CAN_BUY"])) {
 		return array("class" => "ks-item__stock--no", "text" => "Нет в наличии");
 	}
-	if ($p["CHECK_QUANTITY"]) {
+	if (!empty($p["CHECK_QUANTITY"])) {
 		$qty = (int)$p["QUANTITY"];
 		if ($qty <= 0) {
-			return array("class" => "ks-item__stock--no", "text" => "Нет в наличии");
+			return array("class" => "ks-item__stock--order", "text" => "Под заказ");
 		}
 		return array("class" => "ks-item__stock--yes", "text" => "В наличии: ".$qty." шт.");
 	}
 	return array("class" => "ks-item__stock--yes", "text" => "В наличии");
 }
 
-function ks_find_products(array $words, $priceTypeId) {
+/**
+ * Сначала в наличии (релевантность → цена ↑), затем под заказ, затем без цены.
+ */
+function ks_sort_products_by_availability_and_price(array $products, $query) {
+	$available = array();
+	$order = array();
+	$unavailable = array();
+
+	foreach ($products as $p) {
+		$status = $p["STOCK_STATUS"] ?? ks_stock_status($p);
+		if ($status === "available") {
+			$available[] = $p;
+		} elseif ($status === "order") {
+			$order[] = $p;
+		} else {
+			$unavailable[] = $p;
+		}
+	}
+
+	$query = trim((string)$query);
+	$cmp = static function (array $a, array $b) use ($query) {
+		if ($query !== "") {
+			$rel = ks_score_name_relevance($a["NAME"] ?? "", $query)
+				<=> ks_score_name_relevance($b["NAME"] ?? "", $query);
+			if ($rel !== 0) {
+				return $rel;
+			}
+		}
+		$priceA = isset($a["PRICE"]) && (float)$a["PRICE"] > 0 ? (float)$a["PRICE"] : PHP_FLOAT_MAX;
+		$priceB = isset($b["PRICE"]) && (float)$b["PRICE"] > 0 ? (float)$b["PRICE"] : PHP_FLOAT_MAX;
+		$priceCmp = $priceA <=> $priceB;
+		if ($priceCmp !== 0) {
+			return $priceCmp;
+		}
+		return strcmp((string)($a["NAME"] ?? ""), (string)($b["NAME"] ?? ""));
+	};
+
+	usort($available, $cmp);
+	usort($order, $cmp);
+	usort($unavailable, $cmp);
+
+	return array_merge($available, $order, $unavailable);
+}
+
+function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 	$filter = array(
 		"IBLOCK_ID"            => KS_IBLOCK_ID,
 		"ACTIVE"               => "Y",
@@ -317,36 +427,67 @@ function ks_find_products(array $words, $priceTypeId) {
 	foreach ($words as $w) {
 		$filter[] = array("LOGIC" => "OR", "%NAME" => $w, "%PROPERTY_CML2_ARTICLE" => $w);
 	}
-	$res = array();
+
+	$raw = array();
+	$ids = array();
 	$rs = CIBlockElement::GetList(
 		array("SORT" => "ASC", "SHOW_COUNTER" => "DESC"),
 		$filter, false,
-		array("nTopCount" => KS_MAX_PRODUCTS),
+		array("nTopCount" => KS_FETCH_PRODUCTS),
 		array("ID", "NAME", "DETAIL_PAGE_URL", "PREVIEW_PICTURE", "DETAIL_PICTURE", "PROPERTY_CML2_ARTICLE")
 	);
 	while ($e = $rs->GetNext()) {
+		$id = (int)$e["ID"];
 		$pictId = $e["PREVIEW_PICTURE"] ?: $e["DETAIL_PICTURE"];
 		$img = "";
 		if ($pictId > 0) {
 			$f = CFile::ResizeImageGet($pictId, array("width" => 70, "height" => 70), BX_RESIZE_IMAGE_PROPORTIONAL, true);
 			$img = $f["src"];
 		}
-		$price = 0;
-		if ($priceTypeId > 0) {
-			$rp = CPrice::GetList(array(), array("PRODUCT_ID" => $e["ID"], "CATALOG_GROUP_ID" => $priceTypeId));
-			if ($p = $rp->Fetch()) $price = (float)$p["PRICE"];
+		$raw[$id] = array(
+			"ID"      => $id,
+			"NAME"    => ks_plain($e["NAME"]),
+			"URL"     => $e["DETAIL_PAGE_URL"],
+			"IMG"     => $img,
+			"ARTICLE" => ks_plain($e["PROPERTY_CML2_ARTICLE_VALUE"]),
+		);
+		$ids[] = $id;
+	}
+
+	if (empty($ids)) {
+		return array();
+	}
+
+	$prices = array();
+	if ($priceTypeId > 0 && CModule::IncludeModule("catalog")) {
+		$rp = CPrice::GetList(
+			array(),
+			array("PRODUCT_ID" => $ids, "CATALOG_GROUP_ID" => $priceTypeId)
+		);
+		while ($p = $rp->Fetch()) {
+			$pid = (int)$p["PRODUCT_ID"];
+			$price = (float)$p["PRICE"];
+			// 888888888 — служебная заглушка «цены нет» (как в шаблонах каталога)
+			if ($price >= 888888888) {
+				$price = 0;
+			}
+			if (!isset($prices[$pid]) || ($price > 0 && ($prices[$pid] <= 0 || $price < $prices[$pid]))) {
+				$prices[$pid] = $price;
+			}
 		}
-		// 888888888 — служебная заглушка «цены нет» (как в шаблонах каталога)
-		if ($price >= 888888888) {
-			$price = 0;
-		}
-		$cat = ks_product_catalog_row((int)$e["ID"]);
-		$res[] = array(
-			"ID"             => (int)$e["ID"],
-			"NAME"           => ks_plain($e["NAME"]),
-			"URL"            => $e["DETAIL_PAGE_URL"],
-			"IMG"            => $img,
-			"ARTICLE"        => ks_plain($e["PROPERTY_CML2_ARTICLE_VALUE"]),
+	}
+
+	$res = array();
+	foreach ($ids as $id) {
+		$row = $raw[$id];
+		$price = isset($prices[$id]) ? (float)$prices[$id] : 0;
+		$cat = ks_product_catalog_row($id);
+		$item = array(
+			"ID"             => $id,
+			"NAME"           => $row["NAME"],
+			"URL"            => $row["URL"],
+			"IMG"            => $row["IMG"],
+			"ARTICLE"        => $row["ARTICLE"],
 			"PRICE"          => $price,
 			"CAN_BUY"        => $cat["CAN_BUY"] && $price > 0,
 			"CHECK_QUANTITY" => $cat["CHECK_QUANTITY"],
@@ -354,8 +495,25 @@ function ks_find_products(array $words, $priceTypeId) {
 			"MIN_QUANTITY"   => $cat["MIN_QUANTITY"],
 			"HAS_OFFERS"     => $cat["HAS_OFFERS"],
 		);
+		$item["STOCK_STATUS"] = ks_stock_status($item);
+		$res[] = $item;
 	}
-	return $res;
+
+	$rankQuery = $queryForRank !== "" ? $queryForRank : implode(" ", $words);
+	$res = ks_sort_products_by_availability_and_price($res, $rankQuery);
+
+	// В выпадашке — только с ценой: сначала наличие, потом под заказ (без заглушек)
+	$withPrice = array();
+	foreach ($res as $item) {
+		if (($item["STOCK_STATUS"] ?? "") === "unavailable") {
+			continue;
+		}
+		$withPrice[] = $item;
+		if (count($withPrice) >= KS_MAX_PRODUCTS) {
+			break;
+		}
+	}
+	return $withPrice;
 }
 
 function ks_price_type_id() {
@@ -384,16 +542,18 @@ $priceTypeId = $hasCatalog ? ks_price_type_id() : 0;
 $queryWords = ks_words($q);
 if (empty($queryWords)) { echo ""; die(); }
 
+$rankQuery = implode(" ", $queryWords);
 $sections = ks_find_sections($queryWords);
-$products = ks_find_products($queryWords, $priceTypeId);
+$products = ks_find_products($queryWords, $priceTypeId, $rankQuery);
 
 $suggestNote = "";
 if (empty($sections) && empty($products)) {
 	$dict = ks_dictionary();
 	$layout = ks_fix_layout_words($queryWords, $dict);
 	if ($layout["changed"]) {
+		$rankQuery = implode(" ", $layout["words"]);
 		$sections = ks_find_sections($layout["words"]);
-		$products = ks_find_products($layout["words"], $priceTypeId);
+		$products = ks_find_products($layout["words"], $priceTypeId, $rankQuery);
 		if (!empty($sections) || !empty($products)) {
 			$suggestNote = "Исправлена раскладка: <b>".htmlspecialcharsbx(implode(" ", $layout["words"]))."</b>";
 		}
@@ -402,8 +562,9 @@ if (empty($sections) && empty($products)) {
 if (empty($sections) && empty($products)) {
 	$corr = ks_correct_words($queryWords, $dict ?? ks_dictionary());
 	if ($corr["changed"]) {
+		$rankQuery = implode(" ", $corr["words"]);
 		$sections = ks_find_sections($corr["words"]);
-		$products = ks_find_products($corr["words"], $priceTypeId);
+		$products = ks_find_products($corr["words"], $priceTypeId, $rankQuery);
 		if (!empty($sections) || !empty($products)) {
 			$suggestNote = "Возможно, вы искали: <b>".htmlspecialcharsbx(implode(" ", $corr["words"]))."</b>";
 		}
@@ -439,7 +600,16 @@ if ($total === 0) { ?>
 			<div class="ks-suggest__title">Товары</div>
 			<?php if (empty($products)): ?>
 				<div class="ks-suggest__none">Нет подходящих товаров</div>
-			<?php else: foreach ($products as $p):
+			<?php else:
+				$prevStatus = "";
+				foreach ($products as $p):
+				$status = $p["STOCK_STATUS"] ?? ks_stock_status($p);
+				if ($status === "order" && $prevStatus !== "order"): ?>
+				<div class="ks-suggest__sep">Под заказ</div>
+				<?php elseif ($status === "unavailable" && $prevStatus !== "unavailable"): ?>
+				<div class="ks-suggest__sep">Нет в наличии</div>
+				<?php endif;
+				$prevStatus = $status;
 				$stock = ks_stock_label($p);
 				$canAdd = $p["CAN_BUY"] && !$p["HAS_OFFERS"] && $p["PRICE"] > 0;
 				$props = "";
@@ -452,7 +622,7 @@ if ($total === 0) { ?>
 					$props = strtr(base64_encode(serialize($propsArr)), "+/=", "-_,");
 				}
 			?>
-				<div class="ks-item">
+				<div class="ks-item ks-item--<?=htmlspecialcharsbx($status)?>">
 					<a class="ks-item__link" href="<?=htmlspecialcharsbx($p["URL"])?>">
 						<span class="ks-item__img">
 							<?php if ($p["IMG"]): ?>
@@ -496,6 +666,8 @@ if ($total === 0) { ?>
 							</form>
 						<?php elseif ($p["HAS_OFFERS"]): ?>
 							<a class="ks-item__choose" href="<?=htmlspecialcharsbx($p["URL"])?>">Выбрать</a>
+						<?php elseif ($status === "order"): ?>
+							<a class="ks-item__choose" href="<?=htmlspecialcharsbx($p["URL"])?>">Под заказ</a>
 						<?php endif; ?>
 					</div>
 				</div>
