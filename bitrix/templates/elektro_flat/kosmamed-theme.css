@@ -963,11 +963,10 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 }
 
 /*
- * Главная (.tabs-main):
- * — не трогаем position/absolute у img (ломает обычные фото и slick);
- * — не ставим width:100% на .slick-track/.slick-slide (инфографика+фото → зум «Размеры»);
- * — только min-width:0 + contain, чтобы перебить global min-width:100% у .infographics.
- * Каталог не трогаем.
+ * Главная (.tabs-main): те же object-fit, что в каталоге.
+ * Раньше contain !important перебивал .poster-card { cover } — в Safari
+ * плакаты в ленте выглядели с полями, в каталоге — нормально.
+ * min-width:0 — только чтобы сбить global min-width:100% у .infographics.
  */
 .tabs-main .catalog-item-card .item-image {
 	overflow: hidden !important;
@@ -976,10 +975,11 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 .tabs-main .catalog-item-card .item-image .magic_slide_s img,
 .tabs-main .catalog-item-card .item-image .item_img {
 	min-width: 0 !important;
-	max-width: 100% !important;
-	object-fit: contain !important;
-	object-position: center center !important;
-	transform: none !important;
+}
+.tabs-main .catalog-item-card .item-image a.poster-card img,
+.tabs-main .catalog-item-card .item-image a.poster-card .magic_slide_s img,
+.tabs-main .catalog-item-card .item-image a.poster-card .item_img {
+	object-fit: cover !important;
 }
 .tabs-main .catalog-item-card .items_block_desc {
 	flex: 1 1 auto !important;
