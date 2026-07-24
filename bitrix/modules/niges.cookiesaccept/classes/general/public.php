@@ -1,19 +1,24 @@
 <?php
 class CNigesCookiesAcceptPublic
 {
-	/** @var string */
-	private static $bannerHtml = '';
-
 	/**
-	 * Render cookie notice and park HTML for injection before </body>.
-	 * OnEpilog runs after template footer already closed the document, so a raw
-	 * echo would land after </html> and stay hidden (DOMContentLoaded already fired).
+	 * Inject cookie banner before </body> during OnEndBufferContent.
+	 * Must run as a registered buffer handler (not from OnEpilog): otherwise
+	 * Composite saves HTML without the banner, and warm homepage/catalog miss it.
+	 *
+	 * @param string $content
 	 */
-	public static function OnEpilog()
+	public static function onEndBufferContent(&$content)
 	{
-		global $APPLICATION;
+		if (!is_string($content) || $content === '') {
+			return;
+		}
 
 		if (!CModule::IncludeModule(cookiesaccept_MODULE_ID)) {
+			return;
+		}
+
+		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
 			return;
 		}
 
@@ -31,6 +36,21 @@ class CNigesCookiesAcceptPublic
 			return;
 		}
 
+		// already injected
+		if (strpos($content, 'id="nca-cookiesaccept-line"') !== false) {
+			return;
+		}
+
+		// not an HTML page
+		if (stripos($content, '</body>') === false) {
+			return;
+		}
+
+		global $APPLICATION;
+		if (!is_object($APPLICATION)) {
+			return;
+		}
+
 		ob_start();
 		$APPLICATION->IncludeComponent(
 			'niges:cookiesaccept',
@@ -39,29 +59,10 @@ class CNigesCookiesAcceptPublic
 			false,
 			array('HIDE_ICONS' => 'Y')
 		);
-		self::$bannerHtml = (string)ob_get_clean();
-		if (self::$bannerHtml === '') {
+		$html = (string)ob_get_clean();
+		if ($html === '') {
 			return;
 		}
-
-		static $handlerAdded = false;
-		if (!$handlerAdded) {
-			$handlerAdded = true;
-			AddEventHandler('main', 'OnEndBufferContent', array(__CLASS__, 'onEndBufferContent'));
-		}
-	}
-
-	/**
-	 * @param string $content
-	 */
-	public static function onEndBufferContent(&$content)
-	{
-		if (self::$bannerHtml === '' || !is_string($content) || $content === '') {
-			return;
-		}
-
-		$html = self::$bannerHtml;
-		self::$bannerHtml = '';
 
 		$pos = strripos($content, '</body>');
 		if ($pos === false) {
@@ -70,5 +71,14 @@ class CNigesCookiesAcceptPublic
 		}
 
 		$content = substr($content, 0, $pos) . $html . substr($content, $pos);
+	}
+
+	/**
+	 * @deprecated kept for old event registrations; forwards to buffer handler is N/A
+	 */
+	public static function OnEpilog()
+	{
+		// Intentionally empty: banner must be injected in OnEndBufferContent
+		// so Bitrix Composite stores it in html_pages.
 	}
 }

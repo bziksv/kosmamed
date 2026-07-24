@@ -29,13 +29,23 @@ class niges_cookiesaccept extends CModule
 		if (!IsModuleInstalled($this->MODULE_ID)) {
 			RegisterModule($this->MODULE_ID);
 		}
-		RegisterModuleDependences('main', 'OnEpilog', $this->MODULE_ID, 'CNigesCookiesAcceptPublic', 'OnEpilog');
+		UnRegisterModuleDependences('main', 'OnEpilog', $this->MODULE_ID, 'CNigesCookiesAcceptPublic', 'OnEpilog');
+		// SORT 50 — до cssinliner/lazyimage/composite-сохранения, чтобы баннер попал в html_pages
+		RegisterModuleDependences(
+			'main',
+			'OnEndBufferContent',
+			$this->MODULE_ID,
+			'CNigesCookiesAcceptPublic',
+			'onEndBufferContent',
+			50
+		);
 		return true;
 	}
 
 	function UnInstallDB($arParams = array())
 	{
 		UnRegisterModuleDependences('main', 'OnEpilog', $this->MODULE_ID, 'CNigesCookiesAcceptPublic', 'OnEpilog');
+		UnRegisterModuleDependences('main', 'OnEndBufferContent', $this->MODULE_ID, 'CNigesCookiesAcceptPublic', 'onEndBufferContent');
 		UnRegisterModule($this->MODULE_ID);
 		return true;
 	}
