@@ -822,25 +822,23 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	display: flex !important;
 	align-items: stretch;
 	justify-content: stretch;
-	/* Фиксированная высота: aspect-ratio + height:auto в Safari раздувает плакаты */
-	aspect-ratio: auto !important;
-	height: 301px !important;
-	min-height: 301px !important;
-	max-height: 301px !important;
+	/* Единая высота блока фото — цена/корзина в ряду на одном уровне */
+	aspect-ratio: 588 / 784;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
 	padding: 0 !important;
-	overflow: hidden !important;
+	overflow: hidden;
 	flex-shrink: 0;
 	box-sizing: border-box;
 }
 
-/* Плакаты/инфографика — тот же бокс, без роста по intrinsic height картинки */
-.catalog-item-card .item-image:has(a.infographics),
-.catalog-item-card .item-image:has(a.poster-card) {
-	aspect-ratio: auto !important;
-	height: 301px !important;
-	min-height: 301px !important;
-	max-height: 301px !important;
-	overflow: hidden !important;
+/* legacy selector kept for specificity over template_styles */
+.catalog-item-card .item-image:has(a.infographics) {
+	aspect-ratio: 588 / 784;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
 }
 
 .catalog-item-card .item-image-cont {
@@ -957,16 +955,29 @@ ul.left-menu > li.parentMore > ul.submenuMore li a:hover {
 	transform: none !important;
 }
 
-/* Медплакаты — целиком в фиксированном боксе (не cover: иначе Safari/портрет криво) */
+/* Медплакаты (700×700 и альбомные) — заполняют блок по границам, как инфографика */
 .catalog-item-card .item-image a.poster-card img,
 .catalog-item-card .item-image a.poster-card .magic_slide_s img,
 .catalog-item-card .item-image a.poster-card .item_img {
-	width: 100% !important;
-	max-width: 100% !important;
+	object-fit: cover !important;
+}
+
+/* Главная лента (Рекомендуем/…): Safari не даём плакатам вылезти из aspect-ratio бокса */
+.tabs-main .catalog-item-card .item-image:has(a.poster-card),
+.tabs-main .catalog-item-card .item-image:has(a.infographics) {
+	overflow: hidden !important;
+}
+.tabs-main .catalog-item-card .item-image a.poster-card img,
+.tabs-main .catalog-item-card .item-image a.poster-card .magic_slide_s img,
+.tabs-main .catalog-item-card .item-image a.poster-card .item_img,
+.tabs-main .catalog-item-card .item-image a.infographics img,
+.tabs-main .catalog-item-card .item-image a.infographics .magic_slide_s img,
+.tabs-main .catalog-item-card .item-image a.infographics .item_img {
 	min-width: 0 !important;
+	width: 100% !important;
 	height: 100% !important;
 	max-height: 100% !important;
-	object-fit: contain !important;
+	object-fit: cover !important;
 	object-position: center center !important;
 }
 
