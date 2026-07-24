@@ -336,6 +336,10 @@ function ks_find_products(array $words, $priceTypeId) {
 			$rp = CPrice::GetList(array(), array("PRODUCT_ID" => $e["ID"], "CATALOG_GROUP_ID" => $priceTypeId));
 			if ($p = $rp->Fetch()) $price = (float)$p["PRICE"];
 		}
+		// 888888888 — служебная заглушка «цены нет» (как в шаблонах каталога)
+		if ($price >= 888888888) {
+			$price = 0;
+		}
 		$cat = ks_product_catalog_row((int)$e["ID"]);
 		$res[] = array(
 			"ID"             => (int)$e["ID"],
@@ -344,7 +348,7 @@ function ks_find_products(array $words, $priceTypeId) {
 			"IMG"            => $img,
 			"ARTICLE"        => ks_plain($e["PROPERTY_CML2_ARTICLE_VALUE"]),
 			"PRICE"          => $price,
-			"CAN_BUY"        => $cat["CAN_BUY"],
+			"CAN_BUY"        => $cat["CAN_BUY"] && $price > 0,
 			"CHECK_QUANTITY" => $cat["CHECK_QUANTITY"],
 			"QUANTITY"       => $cat["QUANTITY"],
 			"MIN_QUANTITY"   => $cat["MIN_QUANTITY"],

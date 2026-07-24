@@ -91,11 +91,29 @@ if( (count($fTitle)<2 && $arElement["NAME"]) && (count($fTitleA)<2) && (count($f
 				<?if(!$arElement['PROPERTIES']) continue;?>
 				<?
 
-				if($arElement["MIN_PRICE"]["VALUE_VAT"]==888888888 || $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["VALUE_VAT"]==888888888) {
+				$kmStubPrice = 888888888;
+				$kmMinPrice = isset($arElement["MIN_PRICE"]) && is_array($arElement["MIN_PRICE"]) ? $arElement["MIN_PRICE"] : array();
+				$kmOfferMin = isset($arElement["TOTAL_OFFERS"]["MIN_PRICE"]) && is_array($arElement["TOTAL_OFFERS"]["MIN_PRICE"]) ? $arElement["TOTAL_OFFERS"]["MIN_PRICE"] : array();
+				$kmIsStubPrice = false;
+				foreach (array($kmMinPrice, $kmOfferMin) as $kmPriceRow) {
+					foreach (array("BASE_PRICE", "VALUE", "VALUE_VAT", "DISCOUNT_VALUE", "RATIO_PRICE") as $kmPriceKey) {
+						if (isset($kmPriceRow[$kmPriceKey]) && (float)$kmPriceRow[$kmPriceKey] == $kmStubPrice) {
+							$kmIsStubPrice = true;
+							break 2;
+						}
+					}
+				}
+				if ($kmIsStubPrice) {
 				    $arElement["CAN_BUY"]=false;
 				    $arElement["TOTAL_OFFERS"]["QUANTITY"]=0;
 				    $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["DISCOUNT_VALUE"]=0;
+				    $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["VALUE"]=0;
+				    $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["VALUE_VAT"]=0;
+				    $arElement["TOTAL_OFFERS"]["MIN_PRICE"]["BASE_PRICE"]=0;
 				    $arElement["MIN_PRICE"]["DISCOUNT_VALUE"]=0;
+				    $arElement["MIN_PRICE"]["VALUE"]=0;
+				    $arElement["MIN_PRICE"]["VALUE_VAT"]=0;
+				    $arElement["MIN_PRICE"]["BASE_PRICE"]=0;
 				    $sticker=false;
 				}
 
