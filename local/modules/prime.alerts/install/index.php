@@ -33,8 +33,16 @@ class prime_alerts extends CModule
 
 	public function DoInstall()
 	{
+		global $APPLICATION;
+
 		$this->InstallDB();
 		$this->InstallEvents();
+
+		$APPLICATION->IncludeAdminFile(
+			Loc::getMessage('PRIME_ALERTS_MODULE_NAME'),
+			$_SERVER['DOCUMENT_ROOT'] . '/local/modules/' . $this->MODULE_ID . '/install/step.php'
+		);
+
 		return true;
 	}
 
@@ -47,7 +55,9 @@ class prime_alerts extends CModule
 
 	public function InstallDB()
 	{
-		ModuleManager::registerModule($this->MODULE_ID);
+		if (!ModuleManager::isModuleInstalled($this->MODULE_ID)) {
+			ModuleManager::registerModule($this->MODULE_ID);
+		}
 		return true;
 	}
 
@@ -60,6 +70,8 @@ class prime_alerts extends CModule
 
 	public function InstallEvents()
 	{
+		$this->UnInstallEvents();
+
 		$em = EventManager::getInstance();
 		$em->registerEventHandler('main', 'OnBeforeUserRegister', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserRegister');
 		$em->registerEventHandler('main', 'OnBeforeUserAdd', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserAdd');
