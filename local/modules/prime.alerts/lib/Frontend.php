@@ -8,7 +8,7 @@ class Frontend
 {
 	public static function onEndBufferContent(&$content): void
 	{
-		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
+		if (PHP_SAPI === 'cli' || (defined('ADMIN_SECTION') && ADMIN_SECTION === true)) {
 			return;
 		}
 

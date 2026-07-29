@@ -50,6 +50,13 @@ class prime_alerts extends CModule
 		if (!ModuleManager::isModuleInstalled($this->MODULE_ID)) {
 			ModuleManager::registerModule($this->MODULE_ID);
 		}
+
+		// ModuleManager::getInstalledModules() кеширует ORM на 86400с —
+		// без сброса админка может показывать «Не установлен» после install.
+		if (class_exists('\Bitrix\Main\ModuleTable')) {
+			\Bitrix\Main\ModuleTable::getEntity()->cleanCache();
+		}
+
 		return true;
 	}
 
@@ -57,6 +64,11 @@ class prime_alerts extends CModule
 	{
 		Option::delete($this->MODULE_ID);
 		ModuleManager::unRegisterModule($this->MODULE_ID);
+
+		if (class_exists('\Bitrix\Main\ModuleTable')) {
+			\Bitrix\Main\ModuleTable::getEntity()->cleanCache();
+		}
+
 		return true;
 	}
 
