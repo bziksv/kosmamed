@@ -2,14 +2,22 @@
 
 namespace Prime\Alerts;
 
-use Bitrix\Main\Page\Asset;
 use Bitrix\Main\Web\Json;
 
 class Frontend
 {
-	public static function onProlog(): void
+	public static function onEndBufferContent(&$content): void
 	{
 		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
+			return;
+		}
+
+		if (!is_string($content) || $content === '') {
+			return;
+		}
+
+		// Avoid double inject
+		if (strpos($content, 'PRIME_ALERTS') !== false) {
 			return;
 		}
 
@@ -37,12 +45,16 @@ class Frontend
 			'noticeCheckout' => EmailPolicy::getNoticeHtml('checkout'),
 		];
 
-		$asset = Asset::getInstance();
-		$asset->addCss('/local/modules/prime.alerts/assets/style.css');
-		$asset->addString(
-			'<script>window.PRIME_ALERTS=' . Json::encode($config) . ';</script>',
-			true
-		);
-		$asset->addJs('/local/modules/prime.alerts/assets/policy.js');
+		$cssHref = '/local/modules/prime.alerts/assets/style.css?v=1.1.2';
+		$jsHref = '/local/modules/prime.alerts/assets/policy.js?v=1.1.2';
+		$inject = "\n<link rel=\"stylesheet\" href=\"" . htmlspecialcharsbx($cssHref) . "\">\n"
+			. '<script>window.PRIME_ALERTS=' . Json::encode($config) . ';</script>' . "\n"
+			. '<script src="' . htmlspecialcharsbx($jsHref) . '"></script>' . "\n";
+
+		if (stripos($content, '</body>') !== false) {
+			$content = preg_replace('/<\/body>/i', $inject . '</body>', $content, 1);
+		} else {
+			$content .= $inject;
+		}
 	}
 }
