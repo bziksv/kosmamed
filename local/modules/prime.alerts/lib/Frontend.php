@@ -7,7 +7,7 @@ use Bitrix\Main\Web\Json;
 
 class Frontend
 {
-	public static function onEpilog(): void
+	public static function onProlog(): void
 	{
 		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
 			return;
