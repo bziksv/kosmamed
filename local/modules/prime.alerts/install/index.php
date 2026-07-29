@@ -33,16 +33,8 @@ class prime_alerts extends CModule
 
 	public function DoInstall()
 	{
-		global $APPLICATION;
-
 		$this->InstallDB();
 		$this->InstallEvents();
-
-		$APPLICATION->IncludeAdminFile(
-			Loc::getMessage('PRIME_ALERTS_MODULE_NAME'),
-			$_SERVER['DOCUMENT_ROOT'] . '/local/modules/' . $this->MODULE_ID . '/install/step.php'
-		);
-
 		return true;
 	}
 
