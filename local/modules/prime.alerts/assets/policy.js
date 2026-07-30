@@ -1,17 +1,29 @@
 /**
- * prime.alerts — live notice under email fields (register / checkout / 1-click)
- * Config: window.PRIME_ALERTS = { providers, noticeSignup, noticeCheckout, policyRegister, policyOrder }
+ * prime.alerts — live notice under email fields
+ * Default: registration + checkout (SOA), not 1-click / lead forms
+ *   (1-click uses technical_boc — no account from form email).
+ * Config.noticeEverywhere=true — any email field except we still wait for complete address.
  */
 (function () {
 	var cfg = window.PRIME_ALERTS;
 	if (!cfg || cfg.enabled === false) return;
 
 	var providers = cfg.providers || [];
+	var everywhere = cfg.noticeEverywhere === true;
+	var timers = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
+	var DEBOUNCE_MS = 650;
 
 	function domainOf(email) {
 		email = String(email || '').trim().toLowerCase();
 		var at = email.lastIndexOf('@');
 		return at > 0 ? email.slice(at + 1) : '';
+	}
+
+	/** Enough of an address to judge zone (local@domain.tld), not mid-typing. */
+	function looksComplete(email) {
+		email = String(email || '').trim();
+		if (!email) return false;
+		return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
 	}
 
 	function isAllowed(email) {
@@ -33,22 +45,104 @@
 		) || inp.parentNode;
 	}
 
-	function contextFor(inp) {
-		if (!inp) return 'signup';
+	function isLeadForm(inp, form, idText) {
+		// «Заказать товар» = altop:forms (under_order), не регистрация и не SOA
+		if (form && /^under_order_/i.test(form.id || '')) return true;
+		if (/under_order|altop\/forms\/script\.php/i.test(idText || '')) return true;
+		if (form && /altop\/forms\/script\.php/i.test(form.action || '')) return true;
+		return false;
+	}
+
+	function isBuyOneClick(inp, form, idText) {
+		if (isLeadForm(inp, form, idText)) return true;
+		if (inp && inp.closest('[id*="boc_"], [id*="BOC"]')) {
+			var pop = inp.closest('[id*="boc_"], form[id*="boc_"]');
+			if (pop) return true;
+		}
+		if (form && /^boc_/i.test(form.id || '')) return true;
+		if (form && /boc/i.test(form.id || '')) return true;
+		if (/buy\.one\.click|\/boc_|1cb|one.?click/i.test(idText || '')) return true;
+		if (form && /buy\.one\.click/i.test(form.action || '')) return true;
+		return false;
+	}
+
+	function formBlob(inp) {
 		var form = inp.form || inp.closest('form');
-		var id = ((form && form.id) || '') + ' ' + ((form && form.name) || '');
-		if (/ORDER|soa|bx-soa/i.test(id) || document.getElementById('bx-soa-order')) {
-			if (inp.closest('#bx-soa-order, #bx-soa-properties, form[name="ORDER_FORM"]')) {
+		if (!form) {
+			var popup = inp.closest('.popup-window, .bx-modal, .modal, [id*="boc_"], [id*="BOC"]');
+			return {
+				form: null,
+				text: ((popup && popup.id) || '') + ' ' + ((popup && popup.className) || '')
+			};
+		}
+		var parts = [
+			form.id || '',
+			form.name || '',
+			form.action || '',
+			form.className || '',
+			form.getAttribute('data-action') || ''
+		];
+		var actionInput = form.querySelector('input[name="ACTION"], input[name="action"], input[name="register"], input[name="REGISTER"]');
+		if (actionInput) {
+			parts.push(actionInput.name || '', actionInput.value || '');
+		}
+		return { form: form, text: parts.join(' ') };
+	}
+
+	/**
+	 * @returns {'signup'|'checkout'|null}
+	 */
+	function contextFor(inp) {
+		if (!inp) return null;
+
+		var blob = formBlob(inp);
+		var form = blob.form;
+		var id = blob.text;
+
+		// «Заказать товар» / 1 клик — учётка с формы не создаётся
+		if (isBuyOneClick(inp, form, id)) {
+			return everywhere ? 'signup' : null;
+		}
+
+		if (inp.closest('#bx-soa-order, #bx-soa-properties, #bx-soa-main-notifications')) {
+			return 'checkout';
+		}
+		if (document.getElementById('bx-soa-order') && inp.closest('form[name="ORDER_FORM"], #bx-soa-order')) {
+			return 'checkout';
+		}
+
+		// Не матчить «under_order» по подстроке ORDER
+		if (/\bORDER_FORM\b|bx-soa|sale\.order\.ajax|\/order\/|checkout/i.test(id)) {
+			return 'checkout';
+		}
+		if (form && form.querySelector && form.querySelector('input[name="ORDER_PROP_EMAIL"], input[name^="ORDER_PROP_"]')) {
+			if (inp.name && /^ORDER_PROP_/i.test(inp.name)) {
 				return 'checkout';
 			}
 		}
-		if (/boc|1cb|one.?click/i.test(id) || (form && /boc/i.test(form.id || ''))) {
-			return 'checkout';
+
+		if (/regist|signup|AUTH_FORM|bx-auth|personal\/register|USER_REGISTER/i.test(id)) {
+			return 'signup';
 		}
-		if (inp.name === 'EMAIL' && form && /boc|script\.php/i.test(form.action || '')) {
-			return 'checkout';
+		if (form) {
+			if (form.querySelector('input[name="REGISTER[LOGIN]"], input[name="REGISTER[EMAIL]"], input[name="UF_EMAIL"]')) {
+				return 'signup';
+			}
+			if (form.querySelector('input[name="register_submit_button"], input[name="register"], button[name="register"]')) {
+				return 'signup';
+			}
+			var emailName = (inp.name || '').toLowerCase();
+			if ((emailName === 'email' || emailName === 'user_email' || emailName === 'register[email]')
+				&& form.querySelector('input[name="PASSWORD"], input[name="REGISTER[PASSWORD]"], input[type="password"]')
+				&& form.querySelector('input[name="LOGIN"], input[name="REGISTER[LOGIN]"], input[name="USER_LOGIN"]')) {
+				return 'signup';
+			}
 		}
-		return 'signup';
+
+		if (everywhere) {
+			return 'signup';
+		}
+		return null;
 	}
 
 	function noticeHtml(ctx) {
@@ -93,30 +187,77 @@
 
 	function policyEnabledFor(ctx) {
 		if (ctx === 'checkout') return cfg.policyOrder !== false;
-		return cfg.policyRegister !== false;
+		if (ctx === 'signup') return cfg.policyRegister !== false;
+		return false;
 	}
 
-	function refreshInput(inp) {
+	function hideBox(box) {
+		if (box) box.style.display = 'none';
+	}
+
+	function showNotice(inp, ctx, box) {
+		if (!box.getAttribute('data-filled')) {
+			box.innerHTML = noticeHtml(ctx);
+			box.setAttribute('data-filled', '1');
+			box.setAttribute('data-ctx', ctx);
+		} else if (box.getAttribute('data-ctx') !== ctx) {
+			box.innerHTML = noticeHtml(ctx);
+			box.setAttribute('data-ctx', ctx);
+		}
+		box.style.display = '';
+	}
+
+	/**
+	 * @param {HTMLInputElement} inp
+	 * @param {{force?: boolean}} opts force=true on blur — show if looks complete
+	 */
+	function refreshInput(inp, opts) {
+		opts = opts || {};
 		if (!isEmailInput(inp)) return;
 		var ctx = contextFor(inp);
-		if (!policyEnabledFor(ctx)) return;
 		var box = ensureBox(inp);
-		if (!box) return;
-		var email = String(inp.value || '').trim();
-		var bad = email && !isAllowed(email);
-		if (bad) {
-			if (!box.getAttribute('data-filled')) {
-				box.innerHTML = noticeHtml(ctx);
-				box.setAttribute('data-filled', '1');
-				box.setAttribute('data-ctx', ctx);
-			} else if (box.getAttribute('data-ctx') !== ctx) {
-				box.innerHTML = noticeHtml(ctx);
-				box.setAttribute('data-ctx', ctx);
-			}
-			box.style.display = '';
-		} else {
-			box.style.display = 'none';
+		if (!ctx || !policyEnabledFor(ctx)) {
+			hideBox(box);
+			return;
 		}
+		if (!box) return;
+
+		var email = String(inp.value || '').trim();
+		if (!email) {
+			hideBox(box);
+			return;
+		}
+
+		// While typing — wait for a finished-looking address
+		if (!looksComplete(email)) {
+			hideBox(box);
+			return;
+		}
+
+		if (!isAllowed(email)) {
+			showNotice(inp, ctx, box);
+		} else {
+			hideBox(box);
+		}
+	}
+
+	function scheduleRefresh(inp) {
+		if (!timers) {
+			refreshInput(inp);
+			return;
+		}
+		var prev = timers.get(inp);
+		if (prev) clearTimeout(prev);
+		// hide immediately if incomplete so notice doesn't linger mid-edit
+		var email = String(inp.value || '').trim();
+		if (!looksComplete(email)) {
+			var box = ensureBox(inp);
+			hideBox(box);
+		}
+		timers.set(inp, setTimeout(function () {
+			timers.delete(inp);
+			refreshInput(inp);
+		}, DEBOUNCE_MS));
 	}
 
 	function scan(root) {
@@ -129,10 +270,13 @@
 
 	function bind() {
 		document.addEventListener('input', function (e) {
-			if (e.target && e.target.tagName === 'INPUT') refreshInput(e.target);
+			if (e.target && e.target.tagName === 'INPUT') scheduleRefresh(e.target);
 		}, true);
 		document.addEventListener('change', function (e) {
 			if (e.target && e.target.tagName === 'INPUT') refreshInput(e.target);
+		}, true);
+		document.addEventListener('blur', function (e) {
+			if (e.target && e.target.tagName === 'INPUT') refreshInput(e.target, { force: true });
 		}, true);
 		scan();
 	}
@@ -147,5 +291,5 @@
 		BX.addCustomEvent('onAjaxSuccess', function () { scan(); });
 		BX.addCustomEvent('onFrameDataReceived', function () { scan(); });
 	}
-	setInterval(function () { scan(); }, 1000);
+	setInterval(function () { scan(); }, 1500);
 })();

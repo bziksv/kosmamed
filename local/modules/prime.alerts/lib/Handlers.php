@@ -45,6 +45,11 @@ class Handlers
 			return;
 		}
 
+		// «Заказать товар» / buy.one.click — учётка с введённого e-mail не создаётся
+		if (self::isBuyOneClickRequest($order)) {
+			return;
+		}
+
 		$isNew = $event->getParameter('IS_NEW');
 		$orderId = (int)$order->getId();
 		$looksNew = ($isNew === true) || $orderId <= 0 || (method_exists($order, 'isNew') && $order->isNew());
@@ -90,6 +95,35 @@ class Handlers
 		}
 
 		return '';
+	}
+
+	protected static function isBuyOneClickRequest(Order $order): bool
+	{
+		$hay = strtolower(
+			(string)($_SERVER['REQUEST_URI'] ?? '') . ' ' .
+			(string)($_SERVER['SCRIPT_NAME'] ?? '') . ' ' .
+			(string)($_SERVER['PHP_SELF'] ?? '')
+		);
+		if (strpos($hay, 'buy.one.click') !== false
+			|| strpos($hay, '/boc_') !== false
+			|| strpos($hay, 'altop/forms') !== false
+			|| strpos($hay, 'under_order') !== false
+		) {
+			return true;
+		}
+
+		$userId = (int)$order->getUserId();
+		if ($userId > 0) {
+			$rs = \CUser::GetByID($userId);
+			if ($user = $rs->Fetch()) {
+				$login = strtolower((string)($user['LOGIN'] ?? ''));
+				if ($login === 'technical_boc' || strpos($login, 'technical_') === 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	protected static function validateUserEmail(&$arFields, string $context)
