@@ -1,0 +1,516 @@
+<RequireAll>
+    Require all granted
+
+    Require not ip 49.13.193.0/24
+    Require not ip 5.139.230.0/24
+    Require not ip 5.139.253.0/24
+    Require not ip 31.181.248.0/24
+    Require not ip 37.18.38.0/24
+    Require not ip 37.77.111.0/24
+    Require not ip 45.140.18.0/24
+    Require not ip 62.183.46.0/24
+    Require not ip 77.110.108.0/24
+    Require not ip 83.239.97.0/24
+    Require not ip 85.172.109.0/24
+    Require not ip 85.174.205.0/24
+    Require not ip 85.175.197.0/24
+    Require not ip 85.175.217.0/24
+    Require not ip 91.233.43.0/24
+    Require not ip 95.153.163.0/24
+    Require not ip 95.153.177.0/24
+    Require not ip 95.153.178.0/24
+    Require not ip 95.153.180.0/24
+    Require not ip 95.25.184.0/24
+    Require not ip 178.176.211.0/24
+    Require not ip 185.10.173.0/24
+    Require not ip 188.162.140.0/24
+    Require not ip 188.162.143.0/24
+    Require not ip 188.170.169.0/24
+    Require not ip 217.78.231.0/24
+</RequireAll>
+
+Options -Indexes 
+ErrorDocument 404 /404.php
+
+<IfModule mod_php5.c>
+    php_flag session.use_trans_sid off
+  #php_value display_errors 1
+  #php_value mbstring.internal_encoding UTF-8
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+
+    # Старый домен medmarket.su (+ www) → kosmamed.ru
+    RewriteCond %{HTTP_HOST} ^(?:www\.)?medmarket\.su$ [NC]
+    RewriteRule ^ https://kosmamed.ru%{REQUEST_URI} [R=301,L]
+
+    # www.kosmamed.ru → kosmamed.ru
+    RewriteCond %{HTTP_HOST} ^www\.kosmamed\.ru$ [NC]
+    RewriteRule ^ https://kosmamed.ru%{REQUEST_URI} [R=301,L]
+
+############могут быть проблемы с ajax не забудь что тут писал!!!!
+    RewriteCond %{THE_REQUEST} /(.*)index.php.*$
+    RewriteCond %{THE_REQUEST} !bitrix/admin/
+    RewriteRule .* /%1 [R=301,L]
+############
+
+RewriteCond %{HTTP_HOST} ^www\.(.*) [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+  
+RewriteEngine On
+RewriteCond %{HTTPS} =off
+RewriteCond %{REQUEST_URI} !^/bitrix/admin/1c_exchange.php
+RewriteCond %{REQUEST_URI} !^/hand1CtoSite.php
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+  
+#добавить / если его нет Исключение для файлов .jpg и .png
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.jpg$ [NC]
+RewriteCond %{REQUEST_URI} !\.png$ [NC]
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*[^/])$ $1/ [L,R=301]
+
+#убрать //
+    RewriteCond %{REQUEST_URI} ^(.*)/{2,}(.*)$
+    RewriteRule (.*) %1/%2 [R=301,L]
+    
+#Убрать -r
+    RewriteRule ^(.*)\-r\/$ /$1 [L,R=301]
+  
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_FILENAME} [\xC2-\xDF][\x80-\xBF] [OR]
+    RewriteCond %{REQUEST_FILENAME} \xE0[\xA0-\xBF][\x80-\xBF] [OR]
+    RewriteCond %{REQUEST_FILENAME} [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2} [OR]
+    RewriteCond %{REQUEST_FILENAME} \xED[\x80-\x9F][\x80-\xBF] [OR]
+    RewriteCond %{REQUEST_FILENAME} \xF0[\x90-\xBF][\x80-\xBF]{2} [OR]
+    RewriteCond %{REQUEST_FILENAME} [\xF1-\xF3][\x80-\xBF]{3} [OR]
+    RewriteCond %{REQUEST_FILENAME} \xF4[\x80-\x8F][\x80-\xBF]{2}
+    RewriteCond %{REQUEST_FILENAME} !/bitrix/virtual_file_system.php$
+    RewriteRule ^(.*)$ /bitrix/virtual_file_system.php [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !/bitrix/urlrewrite.php$
+    RewriteRule ^(.*)$ /bitrix/urlrewrite.php [L]
+    RewriteRule .* - [E=REMOTE_USER:%{HTTP:Authorization}]
+    Redirect 301 /catalog/anatomicheskie-modeli/ /
+
+########## Редирект Конькова Екатерина 07/10/2025
+Redirect 301 /catalog/acti_lance_lantsety_polsha/ /catalog/acti_lance_lantsety_polsha_3/
+Redirect 301 /catalog/acti_lance_lantsety_polsha_1/ /catalog/acti_lance_lantsety_polsha_3/
+Redirect 301 /catalog/acti_lance_lantsety_polsha_2/ /catalog/acti_lance_lantsety_polsha_3/
+Redirect 301 /catalog/acti_lance_lantsety_polsha_4/ /catalog/acti_lance_lantsety_polsha_3/
+Redirect 301 /catalog/prolance_lantsety_polsha_2/ /catalog/lantsety/
+Redirect 301 /catalog/odnorazovye_lantsety/ /catalog/lantsety/
+Redirect 301 /catalog/akusherstvo_i_ginekologiya_mozhaysk/ /catalog/akusherstvo_i_ginekologiya_mozhaysk_1/
+Redirect 301 /catalog/akusherstvo_i_ginekologiya_mozhaysk_2/ /catalog/akusherstvo_i_ginekologiya_mozhaysk_1/
+Redirect 301 /catalog/akusherstvo_i_ginekologiya_pto_medtekhnika_rossiya_1/ /catalog/akusherstvo_i_ginekologiya_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/diagnosticheskie_fonariki_2/ /catalog/diagnosticheskie_fonariki_1/
+Redirect 301 /catalog/diagnosticheskie_fonariki/  /catalog/diagnosticheskie_fonariki_1/
+Redirect 301 /catalog/elektroretinografy/ /catalog/elektroretinografy_1/
+Redirect 301 /catalog/fibroopticheskie_nabory_otoskopov_beta_400_heine_germaniya_1/ /catalog/fibroopticheskie_nabory_otoskopov_beta_400_heine_germaniya/
+Redirect 301 /catalog/fibroopticheskie_otoskopy_beta_200_heine_germaniya_1/ /catalog/fibroopticheskie_otoskopy_beta_200_heine_germaniya/
+Redirect 301 /catalog/fibroopticheskie_otoskopy_k_180_heine_germaniya_1/ /catalog/fibroopticheskie_otoskopy_k_180_heine_germaniya/
+Redirect 301 /catalog/fiksiruyushchie_binty_i_plastyri/ /catalog/fiksiruyushchie_binty_i_plastyri_1/
+Redirect 301 /catalog/fiksiruyushchie_binty_i_plastyri_3m_littmann_1/ /catalog/fiksiruyushchie_binty_i_plastyri_3m_littmann/
+Redirect 301 /catalog/fototerapiya/ /catalog/fototerapiya_1/
+Redirect 301 /catalog/gazoanalizatory/?clear_cache=Y /catalog/gazoanalizatory_3/
+Redirect 301 /catalog/geli/ /catalog/geli_2/
+Redirect 301 /catalog/geli_1/ /catalog/geli_2/
+Redirect 301 /catalog/geli_dlya_uzi/ /catalog/geli_dlya_uzi_1/
+Redirect 301 /catalog/geli_dlya_uzi_2/ /catalog/geli_dlya_uzi_1/
+Redirect 301 /catalog/ginekologicheskie_nabory_1/ /catalog/ginekologicheskie_nabory/
+Redirect 301 /catalog/gisterofibroskopy_pentax_yaponiya_2/ /catalog/gisterofibroskopy_pentax_yaponiya_1/
+Redirect 301 /catalog/gisteroskopy_2/ /catalog/gisteroskopy/
+Redirect 301 /catalog/gisteroskopy_rossiya_1/ /catalog/gisteroskopy_rossiya/
+Redirect 301 /catalog/heine_delta_20_t_tsifrovye_dermatoskopy_germaniya_1/ /catalog/heine_delta_20_t_tsifrovye_dermatoskopy_germaniya/
+Redirect 301 /catalog/hydrocoll_gidrokolloidnye_povyazki_germaniya/ /catalog/hydrocoll_gidrokolloidnye_povyazki_germaniya_1/
+Redirect 301 /catalog/hydrotac_gubchatye_povyazki_s_gidrogelevym_pokrytiem_germaniya/ /catalog/hydrotac_gubchatye_povyazki_s_gidrogelevym_pokrytiem_germaniya_1/
+Redirect 301 /catalog/igloderzhateli_klemmoderzhateli_1/ /catalog/igloderzhateli_klemmoderzhateli/
+Redirect 301 /catalog/igly-khirurgicheskie/ /catalog/igly_khirurgicheskie_1/
+Redirect 301 /catalog/igly_babochki_1/ /catalog/igly_babochki/
+Redirect 301 /catalog/infuzionnye_sistemy_2/ /catalog/infuzionnye_sistemy_1/
+Redirect 301 /catalog/istochniki_pitaniya_heine_germaniya/ /catalog/istochniki_pitaniya_laringoskopov_heine/
+Redirect 301 /catalog/istochniki_pitaniya_heine_germaniya_1/ /catalog/istochniki_pitaniya_laringoskopov_heine/
+Redirect 301 /catalog/istochniki_sveta_eleps_rossiya/ /catalog/istochniki_sveta_eleps_rossiya_1/
+Redirect 301 /catalog/istochniki_sveta_evroklinik_italiya/ /catalog/istochniki_sveta_evroklinik_italiya_1/
+Redirect 301 /catalog/izdeliya_iz_vaty_2/ /catalog/izdeliya_iz_vaty_1/
+Redirect 301 /catalog/izdeliya_iz_vaty/ /catalog/izdeliya_iz_vaty_1/
+Redirect 301 /catalog/kanyuli_pto_medtekhnika_rossiya_1/ /catalog/kanyuli_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/kanyuli_smennye_k_troakaram_xcel_1/ /catalog/kanyuli_smennye_k_troakaram_xcel/
+Redirect 301 /catalog/kanyuli_surgicon_pakistan_1/ /catalog/kanyuli_surgicon_pakistan/
+Redirect 301 /catalog/kardiologicheskie_stetofonendoskopy_harvey_dlx_welch_allyn_ssha_1/ /catalog/kardiologicheskie_stetofonendoskopy_harvey_dlx_welch_allyn_ssha_2/
+Redirect 301 /catalog/kardiologicheskie_stetofonendoskopy_harvey_dlx_welch_allyn_ssha/ /catalog/kardiologicheskie_stetofonendoskopy_harvey_dlx_welch_allyn_ssha_2/
+Redirect 301 /catalog/kardiologicheskie_stetofonendoskopy_harvey_elite_welch_allyn_ssha_1/ /catalog/kardiologicheskie_stetofonendoskopy_harvey_elite_welch_allyn_ssha_2/
+Redirect 301 /catalog/kardiologicheskie_stetofonendoskopy_harvey_elite_welch_allyn_ssha/ /catalog/kardiologicheskie_stetofonendoskopy_harvey_elite_welch_allyn_ssha_2/
+Redirect 301 /catalog/katetery_perifericheskie_intravenoznye_1/ /catalog/katetery_perifericheskie_intravenoznye/
+Redirect 301 /catalog/khirurgicheskie_instrumenty_dlya_akusherstva_i_ginekologii_1/ /catalog/khirurgicheskie_instrumenty_dlya_akusherstva_i_ginekologii/
+Redirect 301 /catalog/khirurgicheskie_instrumenty_dlya_otorinolaringologii_1/ /catalog/khirurgicheskie_instrumenty_dlya_otorinolaringologii/
+Redirect 301 /catalog/khirurgicheskie_instrumenty_dlya_proktologii/ /catalog/khirurgicheskie_instrumenty_dlya_proktologii_1/
+Redirect 301 /catalog/khirurgicheskie_veterinarnye_nabory/ /catalog/khirurgicheskie_veterinarnye_nabory_1/
+Redirect 301 /catalog/kislorodnye_kontsentratory/ /catalog/kislorodnye_kontsentratory_1/
+Redirect 301 /catalog/kolposkopy/ /catalog/kolposkopy_2/
+Redirect 301 /catalog/kolposkopy_3/ /catalog/kolposkopy_2/
+Redirect 301 /catalog/kompressionaya_terapiya_i_immobilizatsiya/ /catalog/kompressionnaya_terapiya_i_immobilizatsiya/
+Redirect 301 /catalog/konteynery_dlya_dezinfektsii_4/ /catalog/konteynery_dlya_dezinfektsii_2/
+Redirect 301 /catalog/konteynery_dlya_dezinfektsii_3/ /catalog/konteynery_dlya_dezinfektsii_2/
+Redirect 301 /catalog/konteynery_dlya_sbora_ostrogo_instrumentariya_3/ /catalog/konteynery_dlya_sbora_ostrogo_instrumentariya_1/
+Redirect 301 /catalog/konteynery_dlya_sbora_ostrogo_instrumentariya_2/ /catalog/konteynery_dlya_sbora_ostrogo_instrumentariya_1/
+Redirect 301 /catalog/koronkosnimateli_1/ /catalog/koronkosnimateli_2/
+Redirect 301 /catalog/koronkosnimateli/ /catalog/koronkosnimateli_2/
+Redirect 301 /catalog/kosmetologicheskie_instrumenty/ /catalog/kosmetologicheskie_instrumenty_1/
+Redirect 301 /catalog/kosmetologicheskie_kombayny_po_ukhodu_za_litsom_tecnology_italiya_1/ /catalog/kosmetologicheskie_kombayny_po_ukhodu_za_litsom_tecnology_italiya/
+Redirect 301 /catalog/kresla_ginekologicheskie/ /catalog/kresla_ginekologicheskie_2/
+Redirect 301 /catalog/kresla_tualety_2/ /catalog/kresla_tualety/
+Redirect 301 /catalog/kresla_tualety_1/ /catalog/kresla_tualety/
+Redirect 301 /catalog/krioapparaty/ /catalog/krioapparaty_2/
+Redirect 301 /catalog/krioapparaty_1/ /catalog/krioapparaty_2/
+Redirect 301 /catalog/kryuchki_i_nakonechniki_1/ /catalog/kryuchki_i_nakonechniki/
+Redirect 301 /catalog/lampy_lupy/ /catalog/lampy_lupy_5/
+Redirect 301 /catalog/lantsety_3/ /catalog/lantsety/
+Redirect 301 /catalog/lantsety_2/ /catalog/lantsety/
+Redirect 301 /catalog/laringoskopy_1/ /catalog/laringoskopy_3/
+Redirect 301 /catalog/laringoskopy_2/ /catalog/laringoskopy_3/
+Redirect 301 /catalog/lazernoe_oborudovanie_3/ /catalog/lazernoe_oborudovanie_dlya_kosmetologii/
+Redirect 301 /catalog/lazernoe_oborudovanie/ /catalog/lazernoe_oborudovanie_dlya_kosmetologii/
+Redirect 301 /catalog/lekala_dlya_kupirovaniya_ushey_u_sobak_1/ /catalog/lekala_dlya_kupirovaniya_ushey_u_sobak/
+Redirect 301 /catalog/ligatory_dlya_lecheniya_gemorroya_rossiya_1/ /catalog/ligatory_dlya_lecheniya_gemorroya_rossiya/
+Redirect 301 /catalog/lor_kombayny_evroklinik_italiya/ /catalog/lor_kombayny_evroklinik_italiya_1/
+Redirect 301 /catalog/lor_mikroskopy_1/ /catalog/lor_mikroskopy_2/
+Redirect 301 /catalog/lor_mikroskopy/ /catalog/lor_mikroskopy_2/
+Redirect 301 /catalog/lor_nabory_odnorazovye_1/ /catalog/lor_nabory_odnorazovye/
+Redirect 301 /catalog/lor_nabory_odnorazovye_2/ /catalog/lor_nabory_odnorazovye/
+Redirect 301 /catalog/lor_zerkala_odnorazovye_1/ /catalog/lor_zerkala_odnorazovye/
+Redirect 301 /catalog/lotki_meditsinskie_1/ /catalog/lotki/
+Redirect 301 /catalog/lotki_meditsinskie/ /catalog/lotki/
+Redirect 301 /catalog/lupy_binokulyarnye/ /catalog/lupy_binokulyarnye_5/
+Redirect 301 /catalog/lupy_binokulyarnye_6/ /catalog/lupy_binokulyarnye_5/
+Redirect 301 /catalog/maski_meditsinskie_odnorazovye_trekhsloynye_2/ /catalog/maski_meditsinskie_odnorazovye_trekhsloynye/
+Redirect 301 /catalog/maski_meditsinskie_odnorazovye_trekhsloynye_1/ /catalog/maski_meditsinskie_odnorazovye_trekhsloynye/
+Redirect 301 /catalog/meditsinskie_svetilniki_emaled_rossiya/ /catalog/meditsinskie_svetilniki_emaled_rossiya_2/
+Redirect 301 /catalog/meditsinskie_svetilniki_emaled_rossiya_1/ /catalog/meditsinskie_svetilniki_emaled_rossiya_2/
+Redirect 301 /catalog/meditsinskie_svetilniki_kawe_germaniya/ /catalog/meditsinskie_svetilniki_kawe_germaniya_1/
+Redirect 301 /catalog/meditsinskie_svetilniki_provita_germaniya/ /catalog/meditsinskie_svetilniki_provita_germaniya_1/
+Redirect 301 /catalog/meshki_dykhatelnye_reanimatsionnye_tipa_ambu_4/ /catalog/meshki_dykhatelnye_reanimatsionnye_tipa_ambu_5/
+Redirect 301 /catalog/mikrokhirurgiya_kls_martin_germaniya_1/ /catalog/mikrokhirurgiya_kls_martin_germaniya/
+Redirect 301 /catalog/nabory_dlya_oftalmologii_1/ /catalog/nabory_dlya_oftalmologii/
+Redirect 301 /catalog/nakonechniki_pto_medtekhnika_rossiya_1/ /catalog/oftalmologiya_pto_medtekhnika_kazan/
+Redirect 301 /catalog/napolnye_vesy_seca_germaniya/ /catalog/napolnye_vesy_seca_germaniya_1/
+Redirect 301 /catalog/nazo_faringo_laringoskopy_pentax_yaponiya_1/ /catalog/nazo_faringo_laringoskopy_pentax_yaponiya/
+Redirect 301 /catalog/negatoskopy_1/ /catalog/negatoskopy/
+Redirect 301 /catalog/nepryamye_oftalmoskopy_heine_1/ /catalog/nepryamye_oftalmoskopy_heine/
+Redirect 301 /catalog/neyrokhirurgiya_kls_martin_germaniya_1/ /catalog/neyrokhirurgiya_kls_martin_germaniya/
+Redirect 301 /catalog/neyrokhirurgiya_mozhaysk_1/ /catalog/neyrokhirurgiya_mozhaysk/
+Redirect 301 /catalog/neyrokhirurgiya_sammar_pakistan_1/ /catalog/neyrokhirurgiya_sammar_pakistan/
+Redirect 301 /catalog/neyrokhirurgiya_surgicon_pakistan_1/ /catalog/neyrokhirurgiya_surgicon_pakistan/
+Redirect 301 /catalog/neyrokhirurgiya_surgiwell_pakistan_1/ /catalog/neyrokhirurgiya_surgiwell_pakistan/
+Redirect 301 /catalog/neyrokhirurgiya_tumbotino_1/ /catalog/neyrokhirurgiya_tumbotino/
+Redirect 301 /catalog/neyrokhirurgiya_vorsma_1/ /catalog/neyrokhirurgiya_vorsma/
+Redirect 301 /catalog/nozhnitsy_dlya_snyatiya_shvov_pto_medtekhnika_rossiya_1/ /catalog/nozhnitsy_dlya_snyatiya_shvov_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/oborudovanie_dlya_videoendoskopii_1/ /catalog/videoendoskopicheskie_sistemy/
+Redirect 301 /catalog/obshchaya_khirurgiya_aesculap_eskulap_b_braun_germaniya/ /catalog/obshchaya_khirurgiya_aesculap_eskulap_b_braun_germaniya_1/
+Redirect 301 /catalog/obshchaya_khirurgiya_kls_martin_germaniya_1/ /catalog/obshchaya_khirurgiya_kls_martin_germaniya/
+Redirect 301 /catalog/obshchaya_khirurgiya_mozhaysk_1/ /catalog/obshchaya_khirurgiya_mozhaysk/
+Redirect 301 /catalog/obshchaya_khirurgiya_pto_medtekhnika_rossiya_1/ /catalog/obshchaya_khirurgiya_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/obshchaya_khirurgiya_sammar_pakistan_1/ /catalog/obshchaya_khirurgiya_sammar_pakistan/
+Redirect 301 /catalog/obshchaya_khirurgiya_surgicon_pakistan_1/ /catalog/obshchaya_khirurgiya_surgicon_pakistan/
+Redirect 301 /catalog/odnorazovye_ginekologicheskie_zerkala_1/ /catalog/odnorazovye_ginekologicheskie_zerkala/
+Redirect 301 /catalog/odnorazovye_instrumenty_dlya_oftalmologii_1/?clear_cache=Y /catalog/odnorazovye_instrumenty_dlya_oftalmologii/
+Redirect 301 /catalog/odnorazovye_tuby_heine_unispec_germaniya_3/ /catalog/odnorazovye_tuby_heine_unispec_germaniya_1/
+Redirect 301 /catalog/odnorazovye_tuby_heine_unispec_germaniya_2/ /catalog/odnorazovye_tuby_heine_unispec_germaniya_1/
+Redirect 301 /catalog/oftalmologicheskie_mikroskopy/ /catalog/oftalmologicheskie_mikroskopy_2/
+Redirect 301 /catalog/oftalmologicheskie_mikroskopy_1/ /catalog/oftalmologicheskie_mikroskopy_2/
+Redirect 301 /catalog/oftalmologiya_kls_martin_germaniya_3/ /catalog/oftalmologiya_kls_martin_germaniya/
+Redirect 301 /catalog/oftalmologiya_kls_martin_germaniya_2/ /catalog/oftalmologiya_kls_martin_germaniya/
+Redirect 301 /catalog/oftalmologiya_kls_martin_germaniya_1/ /catalog/oftalmologiya_kls_martin_germaniya/
+Redirect 301 /catalog/oftalmologiya_mozhaysk_1/ /catalog/oftalmologiya_mozhaysk/
+Redirect 301 /catalog/oftalmologiya_mozhaysk_2/ /catalog/oftalmologiya_mozhaysk/
+Redirect 301 /catalog/oftalmologiya_pto_medtekhnika_kazan_2/ /catalog/oftalmologiya_pto_medtekhnika_kazan/
+Redirect 301 /catalog/oftalmologiya_pto_medtekhnika_kazan_1/ /catalog/oftalmologiya_pto_medtekhnika_kazan/
+Redirect 301 /catalog/oftalmologiya_sammar_pakistan_3/ /catalog/oftalmologiya_sammar_pakistan/
+Redirect 301 /catalog/oftalmologiya_sammar_pakistan_2/ /catalog/oftalmologiya_sammar_pakistan/
+Redirect 301 /catalog/oftalmologiya_sammar_pakistan_1/ /catalog/oftalmologiya_sammar_pakistan/
+Redirect 301 /catalog/oftalmologiya_surgicon_pakistan_1/ /catalog/oftalmologiya_surgicon_pakistan/
+Redirect 301 /catalog/oftalmologiya_surgicon_pakistan_2/ /catalog/oftalmologiya_surgicon_pakistan/
+Redirect 301 /catalog/oftalmologiya_surgiwell_pakistan_1/ /catalog/oftalmologiya_surgiwell_pakistan/
+Redirect 301 /catalog/oftalmologiya_surgiwell_pakistan_2/ /catalog/oftalmologiya_surgiwell_pakistan/
+Redirect 301 /catalog/oftalmologiya_surgiwell_pakistan_3/ /catalog/oftalmologiya_surgiwell_pakistan/
+Redirect 301 /catalog/oftalmologiya_tumbotino_2/ /catalog/oftalmologiya_tumbotino/
+Redirect 301 /catalog/oftalmologiya_tumbotino_1/ /catalog/oftalmologiya_tumbotino/
+Redirect 301 /catalog/oftalmologiya_vorsma_2/ /catalog/oftalmologiya_vorsma/
+Redirect 301 /catalog/oftalmologiya_vorsma_1/ /catalog/oftalmologiya_vorsma/
+Redirect 301 /catalog/oftalmoskopy_welch_allyn_1/ /catalog/oftalmoskopy_welch_allyn/
+Redirect 301 /catalog/operatsionnye_svetilniki_1/ /catalog/operatsionnye_svetilniki/
+Redirect 301 /catalog/opornye_bandazhi/ /catalog/opornye_bandazhi_1/
+Redirect 301 /catalog/ortopantomografy_1/ /catalog/ortopantomografy/
+Redirect 301 /catalog/osteodensitometry_1/ /catalog/osteodensitometry/
+Redirect 301 /catalog/osteodensitometry_2/ /catalog/osteodensitometry/
+Redirect 301 /catalog/osvetitelnaya_golovka_dlya_anoskopov_proktoskopov_heine/ /catalog/osvetitelnaya_golovka_dlya_anoskopov_proktoskopov_heine_4/
+Redirect 301 /catalog/osvetitelnaya_golovka_dlya_anoskopov_proktoskopov_heine_2/ /catalog/osvetitelnaya_golovka_dlya_anoskopov_proktoskopov_heine_4/
+Redirect 301 /catalog/osvetitelnye_golovki_dlya_anoskopov_proktoskopov_heine/ /catalog/osvetitelnaya_golovka_dlya_anoskopov_proktoskopov_heine_4/
+Redirect 301 /catalog/osvetitelnye_golovki_dlya_anoskopov_proktoskopov_heine_1/ /catalog/osvetitelnaya_golovka_dlya_anoskopov_proktoskopov_heine_4/
+Redirect 301 /catalog/otorinolaringologiya_kls_martin_germaniya_1/ /catalog/otorinolaringologiya_kls_martin_germaniya/
+Redirect 301 /catalog/otorinolaringologiya_mozhaysk_1/ /catalog/otorinolaringologiya_mozhaysk/
+Redirect 301 /catalog/otorinolaringologiya_pto_medtekhnika_rossiya_1/ /catalog/otorinolaringologiya_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/otorinolaringologiya_sammar_pakistan_1/ /catalog/otorinolaringologiya_sammar_pakistan/
+Redirect 301 /catalog/otorinolaringologiya_surgicon_pakistan_1/ /catalog/otorinolaringologiya_surgicon_pakistan/
+Redirect 301 /catalog/otorinolaringologiya_surgiwell_pakistan/ /catalog/otorinolaringologiya_surgiwell_pakistan_1/
+Redirect 301 /catalog/otorinolaringologiya_tumbotino_1/ /catalog/otorinolaringologiya_tumbotino/
+Redirect 301 /catalog/otorinolaringologiya_vorsma_1/ /catalog/otorinolaringologiya_vorsma/
+Redirect 301 /catalog/otoskop_sopro_comeg_germaniya_2/ /catalog/otoskop_sopro_comeg_germaniya/
+Redirect 301 /catalog/otoskop_sopro_comeg_germaniya_1/ /catalog/otoskop_sopro_comeg_germaniya/
+Redirect 301 /catalog/otoskop_veterinarnyy_1/ /catalog/otoskopy_veterinarnye/
+Redirect 301 /catalog/otoskopy/ /catalog/otoskopy_2/
+Redirect 301 /catalog/otoskopy_1/ /catalog/otoskopy_2/
+Redirect 301 /catalog/otoskopy_eleps_rossiya_1/ /catalog/otoskopy_eleps_rossiya/
+Redirect 301 /catalog/otoskopy_riester_germaniya/ /catalog/otoskopy_riester_germaniya_2/
+Redirect 301 /catalog/palochki_tampony_1/ /catalog/palochki_tampony/
+Redirect 301 /catalog/peha_haft_samofiksiruyushchiysya_bint_germaniya_1/ /catalog/peha_haft_samofiksiruyushchiysya_bint_germaniya/
+Redirect 301 /catalog/perchatki_khirurgicheskie_1/ /catalog/perchatki_khirurgicheskie/
+Redirect 301 /catalog/pessarii_germaniya_1/ /catalog/pessarii_germaniya/
+Redirect 301 /catalog/pikfloumetry/ /catalog/pikfloumetry_2/
+Redirect 301 /catalog/pintsety_1/ /catalog/pintsety_6/
+Redirect 301 /catalog/pintsety/ /catalog/pintsety_6/
+Redirect 301 /catalog/pintsety_dlya_raduzhnoy_obolochki_pto_medtekhnika_rossiya_1/ /catalog/pintsety_dlya_raduzhnoy_obolochki_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/pintsety_khirurgicheskie_surgicon_pakistan_1/ /catalog/pintsety_khirurgicheskie_surgicon_pakistan/
+Redirect 301 /catalog/plantografy_1/ /catalog/plantografy_2/
+Redirect 301 /catalog/plastiny_dlya_rassasyvaniya_rubtsov/ /catalog/plastiny_dlya_rassasyvaniya_rubtsov_1/
+Redirect 301 /catalog/podemniki_dlya_vanny/ /catalog/podemniki_dlya_vanny_1/
+Redirect 301 /catalog/poliglikolid_ko_laktid_pgla_pletenyy_shovnyy_material_pto_medtekhnika_rossiya/ /catalog/poliglikolid_ko_laktid_pgla_pletenyy_shovnyy_material_pto_medtekhnika_rossiya_1/
+Redirect 301 /catalog/povyazki_3m_ssha/ /catalog/povyazki_3m_ssha_1/
+Redirect 301 /catalog/proktologicheskie_nabory_heine_germaniya/ /catalog/proktologicheskie_nabory_heine_germaniya_1/
+Redirect 301 /catalog/proktologicheskie_nabory_rossiya_1/ /catalog/rektoskopy_sigmoidoskopy/
+Redirect 301 /catalog/proktologicheskie_nabory_rossiya/ /catalog/rektoskopy_sigmoidoskopy/
+Redirect 301 /catalog/proktoskopy/ /catalog/proktoskopy_1/
+Redirect 301 /catalog/proyavochnye_mashiny_2/ /catalog/proyavochnye_mashiny/
+Redirect 301 /catalog/radiokhirurgicheskie_apparaty_surgitron_ssha_1/ /catalog/radiokhirurgicheskie_apparaty_surgitron_ssha/
+Redirect 301 /catalog/radioviziografy_1/ /catalog/radioviziografy/
+Redirect 301 /catalog/raskhodnye_materialy_dlya_anesteziologii/ /catalog/raskhodnye_materialy_dlya_anesteziologii_2/
+Redirect 301 /catalog/raskhodnye_materialy_dlya_kabineta_ginekologa_1/ /catalog/raskhodnye_materialy_dlya_kabineta_ginekologa_2/
+Redirect 301 /catalog/raskhodnye_materialy_dlya_khirurgii/ /catalog/raskhodnye_materialy_dlya_khirurgii_1/
+Redirect 301 /catalog/raskhodnye_materialy_dlya_stomatologii/ /catalog/raskhodnye_materialy_dlya_stomatologii_3/
+Redirect 301 /catalog/raskhodnye_materialy_dlya_urologii/ /catalog/raskhodnye_materialy_dlya_urologii_1/
+Redirect 301 /catalog/rektoskopy_proktoskopy_heine_germaniya_1/ /catalog/rektoskopy_proktoskopy_heine_germaniya/
+Redirect 301 /catalog/rentgenovskaya_plenka_dlya_stomatologii/ /catalog/rentgenovskaya_plenka_dlya_stomatologii_2/
+Redirect 301 /catalog/rentgenovskaya_plenka_dlya_stomatologii_1/ /catalog/rentgenovskaya_plenka_dlya_stomatologii_2/
+Redirect 301 /catalog/rentgenovskiy_densitometr/?clear_cache=Y /catalog/rentgenovskiy_densitometr_1/
+Redirect 301 /catalog/respiratory_i_maski_2/ /catalog/respiratory_i_maski_3/
+Redirect 301 /catalog/respiratory_i_maski_1/ /catalog/respiratory_i_maski_3/
+Redirect 301 /catalog/retinoskopy_heine_1/ /catalog/retinoskopy_heine/
+Redirect 301 /catalog/retinoskopy_welch_allyn_1/ /catalog/retinoskopy_welch_allyn/
+Redirect 301 /catalog/retraktory_oftalmologicheskie_kls_martin_germaniya_1/ /catalog/retraktory_oftalmologicheskie_kls_martin_germaniya/
+Redirect 301 /catalog/rezektoskopy_2/ /catalog/rezektoskopy_3/
+Redirect 301 /catalog/rezektoskopy_1/ /catalog/rezektoskopy_3/
+Redirect 301 /catalog/rezektoskopy/ /catalog/rezektoskopy_3/
+Redirect 301 /catalog/rinoskopy_3/ /catalog/rinoskopy_dlya_lor_vrachey/
+Redirect 301 /catalog/rinoskopy_2/ /catalog/rinoskopy_dlya_lor_vrachey/
+Redirect 301 /catalog/rinoskopy/ /catalog/rinoskopy_dlya_lor_vrachey/
+Redirect 301 /catalog/rotorasshiriteli_i_yazykoderzhateli/ /catalog/rotorasshiriteli_i_yazykoderzhateli_1/
+Redirect 301 /catalog/rukoyatki_dlya_otoskopov_oftalmoskopov_welch_allyn_2/ /catalog/rukoyatki_dlya_otoskopov_oftalmoskopov_welch_allyn_3/
+Redirect 301 /catalog/rukoyatki_dlya_otoskopov_oftalmoskopov_welch_allyn_1/ /catalog/rukoyatki_dlya_otoskopov_oftalmoskopov_welch_allyn_3/
+Redirect 301 /catalog/rukoyatki_dlya_otoskopov_oftalmoskopov_welch_allyn/ /catalog/rukoyatki_dlya_otoskopov_oftalmoskopov_welch_allyn_3/
+Redirect 301 /catalog/salfetki_i_prostyni_2/ /catalog/salfetki_i_prostyni_3/
+Redirect 301 /catalog/salfetki_marlevye_sterilnye_1/ /catalog/salfetki_marlevye_sterilnye/
+Redirect 301 /catalog/serdzhisel_surgicel_gemostaticheskiy_material_ethicon_johnson_johnson_1/ /catalog/serdzhisel_surgicel_gemostaticheskiy_material_ethicon_johnson_johnson/
+Redirect 301 /catalog/shapochki_meditsinskie_1/ /catalog/shapochki_meditsinskie_2/
+Redirect 301 /catalog/shapochki_meditsinskie/ /catalog/shapochki_meditsinskie_2/
+Redirect 301 /catalog/shchiptsy_biopsiynye_rossiya_1/ /catalog/shchiptsy_biopsiynye_rossiya/
+Redirect 301 /catalog/shovnyy_material_9/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnye_materialy/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnye_materialy_1/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material_1/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material_10/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material_11/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material_4/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material_7/ /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shovnyy_material_2/  /catalog/shovnyy_material_3/
+Redirect 301 /catalog/shpateli_pto_medtekhnika_rossiya_1/ /catalog/shpateli_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/shpritsevye_i_infuzionnye_nasosy_5/ /catalog/shpritsevye_i_infuzionnye_nasosy_6/
+Redirect 301 /catalog/shpritsy_odnorazovye_2/ /catalog/shpritsy_odnorazovye_1/
+Redirect 301 /catalog/shpritsy_zhane_odnorazovye_1/ /catalog/shpritsy_zhane_odnorazovye/
+Redirect 301 /catalog/sinteticheskie_petli_dlya_lecheniya_nederzhaniya_mochi_pri_napryazhenii_u_zhenshchin_ethicon_gynecar/ /catalog/sinteticheskie_petli_dlya_lecheniya_nederzhaniya_mochi_pri_napryazhenii_u_zhenshchin_ethicon_gynecar_1/
+Redirect 301 /catalog/sinus_katetery_1/ /catalog/sinus_katetery/
+Redirect 301 /catalog/sosudistaya_khirurgiya_surgiwell_pakistan_1/ /catalog/sosudistaya_khirurgiya_surgiwell_pakistan/
+Redirect 301 /catalog/sredstva_ukhoda_za_prolezhnyami/ /catalog/sredstva_ukhoda_za_prolezhnyami_1/
+Redirect 301 /catalog/sterilizatory/ /catalog/sterilizatory_avtoklavy_meditsinskie/
+Redirect 301 /catalog/sterilizatory_vozdushnye_spu_1/ /catalog/sterilizatory_vozdushnye_spu/
+Redirect 301 /catalog/sterilizatsiya_i_dezinfektsiya_3/ /catalog/sterilizatsiya_i_dezinfektsiya_2/
+Redirect 301 /catalog/stetofonendoskopy_bebi_prestizh_kawe_neonatalnye_germaniya_1/?clear_cache=Y /catalog/stetofonendoskopy_bebi_prestizh_kawe_neonatalnye_germaniya/
+Redirect 301 /catalog/stetofonendoskopy_kinder_prestizh_kawe_detskiy_germaniya/ /catalog/stetofonendoskopy_kinder_prestizh_kawe_detskie_germaniya/
+Redirect 301 /catalog/stetofonendoskopy_prestizh_kawe_germaniya_1/ /catalog/stetofonendoskopy_prestizh_kawe_germaniya/
+Redirect 301 /catalog/stetoskopy_i_fonendoskopy_6/ /catalog/stetoskopy_i_fonendoskopy_5/
+Redirect 301 /catalog/stomatologicheskie_mikroskopy_1/ /catalog/stomatologicheskie_mikroskopy_2/
+Redirect 301 /catalog/stomatologicheskie_mikroskopy/ /catalog/stomatologicheskie_mikroskopy_2/
+Redirect 301 /catalog/stomatologiya_kls_martin_germaniya_1/ /catalog/stomatologiya_kls_martin_germaniya/
+Redirect 301 /catalog/stomatologiya_mmiz_rossiya_1/ /catalog/stomatologiya_mmiz_rossiya/
+Redirect 301 /catalog/stomatologiya_pto_medtekhnika_rossiya_1/ /catalog/stomatologiya_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/stomatologiya_sammar_pakistan_1/ /catalog/stomatologiya_sammar_pakistan/
+Redirect 301 /catalog/stomatologiya_surgicon_pakistan_1/ /catalog/stomatologiya_surgicon_pakistan/
+Redirect 301 /catalog/stomatologiya_surgiwell_pakistan_1/ /catalog/stomatologiya_surgiwell_pakistan/
+Redirect 301 /catalog/stroboskopy_dantschke_germaniya_1/ /catalog/stroboskopy_dantschke_germaniya/
+Redirect 301 /catalog/svetilniki_meditsinskie_2/ /catalog/svetilniki_meditsinskie_1/
+Redirect 301 /catalog/svetilniki_meditsinskie/ /catalog/svetilniki_meditsinskie_1/
+Redirect 301 /catalog/timpanometry_1/ /catalog/timpanometry/
+Redirect 301 /catalog/tolkateli_pto_medtekhnika_rossiya_1/ /catalog/tolkateli_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/tomografy_1/ /catalog/tomografy/
+Redirect 301 /catalog/transportnye_portativnye_apparaty_ivl/ /catalog/transportnye_portativnye_apparaty_ivl_1/
+Redirect 301 /catalog/trubki_dlya_rinoskopii_artroskopii_eleps_rossiya_2/ /catalog/trubki_dlya_rinoskopii_artroskopii_eleps_rossiya/
+Redirect 301 /catalog/tsentrifugi/ /catalog/tsentrifugi_dlya_plazmoliftinga/
+Redirect 301 /catalog/tsifrovoy_avtomaticheskiy_tonometr_connex_probp_3400_welch_allyn_ssha_1/ /catalog/tsifrovoy_avtomaticheskiy_tonometr_connex_probp_3400_welch_allyn_ssha/
+Redirect 301 /catalog/udalenie_novoobrazovaniy_rubtsov_rastyazhek/ /catalog/udalenie_novoobrazovaniy_rubtsov_rastyazhek_1/
+Redirect 301 /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_1/ /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_2/
+Redirect 301 /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_3/ /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_2/
+Redirect 301 /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_4/ /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_2/
+Redirect 301 /catalog/urologiya_mozhaysk_1/ /catalog/urologiya_mozhaysk/
+Redirect 301 /catalog/urologiya_tumbotino_1/ /catalog/urologiya_tumbotino/
+Redirect 301 /catalog/urologiya_vorsma_1/ /catalog/urologiya_vorsma/
+Redirect 301 /catalog/uzi_skanery_2/ /catalog/uzi_skanery_1/
+Redirect 301 /catalog/vaginoskopy_1/ /catalog/vaginoskopy/
+Redirect 301 /catalog/vekopodemniki_pto_medtekhnika_rossiya_1/ /catalog/vekopodemniki_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/vekopodyemniki_1/ /catalog/vekopodyemniki/
+Redirect 301 /catalog/vekorasshiritel_nazalnyy_1/ /catalog/vekorasshiritel_nazalnyy/
+Redirect 301 /catalog/vekorasshiritel_nazalnyy_aspiratsionnyy_po_libermanu_1/ /catalog/vekorasshiritel_nazalnyy_aspiratsionnyy_po_libermanu/
+Redirect 301 /catalog/vekorasshiritel_nazalnyy_provolochnyy_1/ /catalog/vekorasshiritel_nazalnyy_provolochnyy/
+Redirect 301 /catalog/vekorasshiritel_reechnyy_s_oporami_na_nadbrovnye_dugi_1/ /catalog/vekorasshiritel_reechnyy_s_oporami_na_nadbrovnye_dugi/
+Redirect 301 /catalog/vekorasshiritel_reechnyy_s_oporami_na_nadb/ /catalog/vekorasshiritel_reechnyy_s_oporami_na_nadbrovnye_dugi/
+Redirect 301 /catalog/vekorasshiritel_temporalnyy_1/ /catalog/vekorasshiritel_temporalnyy/
+Redirect 301 /catalog/vekorasshiritel_temporalnyy_aspiratsionnyy_po_libermanu_1/ /catalog/vekorasshiritel_temporalnyy_aspiratsionnyy_po_libermanu/
+Redirect 301 /catalog/vekorasshiritel_temporalnyy_s_zakrytymi_oporami_1/ /catalog/vekorasshiritel_temporalnyy_s_zakrytymi_oporami/
+Redirect 301 /catalog/vekorasshiriteli_1/ /catalog/vekorasshiriteli_2/
+Redirect 301 /catalog/vekorasshiriteli/ /catalog/vekorasshiriteli_2/
+Redirect 301 /catalog/vesy_kolonnogo_tipa_seca_germaniya/ /catalog/vesy_kolonnogo_tipa_seca_germaniya_1/
+Redirect 301 /catalog/vesy_laboratornye_1/ /catalog/vesy_laboratornye/
+Redirect 301 /catalog/veterinarnye_stomatologicheskie_ustanovki_1/ /catalog/veterinarnye_stomatologicheskie_ustanovki/
+Redirect 301 /catalog/videorektoskopy_1/ /catalog/videorektoskopy/
+Redirect 301 /catalog/vitalnye_funktsii/ /catalog/vitalnye_funktsii_1/
+Redirect 301 /catalog/voronki_pto_medtekhnika_rossiya_1/ /catalog/voronki_pto_medtekhnika_rossiya/
+Redirect 301 /catalog/voronki_ushnye_heine_germaniya_1/ /catalog/voronki_ushnye_heine_germaniya/
+Redirect 301 /catalog/voronki_ushnye_k_otoskopam_kawe_germaniya_1/ /catalog/voronki_ushnye_k_otoskopam_kawe_germaniya/
+Redirect 301 /catalog/voronki_ushnye_k_otoskopam_welch_allyn_ssha_1/ /catalog/voronki_ushnye_k_otoskopam_welch_allyn_ssha/
+Redirect 301 /catalog/voronki_ushnye_odnorazovye/ /catalog/voronki_ushnye_odnorazovye_1/
+Redirect 301 /catalog/voronki_ushnye_riester_germaniya_1/ /catalog/voronki_ushnye_riester_germaniya/
+Redirect 301 /catalog/vpityvayushchie_pelenki/ /catalog/vpityvayushchie_pelenki_1/
+Redirect 301 /catalog/zaryadnye_ustroystva_otoskopov_oftalmoskopov_heine_germaniya_1/ /catalog/zaryadnye_ustroystva_otoskopov_oftalmoskopov_heine_germaniya/
+Redirect 301 /catalog/zazhimy_klipsy_klemmy_skobki_1/ /catalog/zazhimy_klipsy_klemmy_skobki/
+Redirect 301 /catalog/zerkala_ginekologicheskie_odnorazovye_poshagovaya_fiksatsiya_1/ /catalog/zerkala_ginekologicheskie_odnorazovye_poshagovaya_fiksatsiya/
+Redirect 301 /catalog/zerkala_ginekologicheskie_odnorazovye_poshagovaya_fiksatsiya_2/ /catalog/zerkala_ginekologicheskie_odnorazovye_poshagovaya_fiksatsiya/
+Redirect 301 /catalog/zerkala_ginekologicheskie_odnorazovye_vintovaya_fiksatsiya/ /catalog/zerkala_ginekologicheskie_odnorazovye_vintovaya_fiksatsiya_1/
+Redirect 301 /catalog/zerkala_ginekologicheskie_odnorazovye_vintovaya_fiksatsiya_2/ /catalog/zerkala_ginekologicheskie_odnorazovye_vintovaya_fiksatsiya_1/
+Redirect 301 /catalog/zerkala_otorinolaringologicheskie_mmiz_rossiya_1/ /catalog/zerkala_otorinolaringologicheskie_mmiz_rossiya/
+Redirect 301 /catalog/zerkala_rektalnye_1/ /catalog/zerkala_rektalnye/
+Redirect 301 /catalog/zond_kvikerta_dlya_intubatsii_sleznykh_kanaltsev_1/ /catalog/zond_kvikerta_dlya_intubatsii_sleznykh_kanaltsev/
+Redirect 301 /catalog/zondy_4/ /catalog/zondy_5/
+Redirect 301 /catalog/zondy_3/ /catalog/zondy_5/
+
+########## Редирект Конькова Екатерина 21/11/2025
+Redirect 301 /catalog/analizatory_sostava_tela_2/ /catalog/analizatory_sostava_tela_1/
+Redirect 301 /catalog/anoskopy_mnogorazovye_heine_germaniya/ /catalog/anoskopy_mnogorazovye_heine_germaniya_1/
+Redirect 301 /catalog/anoskopy_odnorazovye_heine_germaniya/ /catalog/anoskopy_odnorazovye_heine_germaniya_1/
+Redirect 301 /catalog/anoskopy_odnorazovye_rossiya_1/ /catalog/anoskopy_odnorazovye_rossiya/
+Redirect 301 /catalog/apparatnye_stoyki_endoskopicheskie_rossiya_1/ /catalog/apparatnye_stoyki_endoskopicheskie_rossiya/
+Redirect 301 /catalog/apparaty_ivl_braziliya_1/ /catalog/apparaty_ivl_braziliya/
+Redirect 301 /catalog/apparaty_radiovolnovye_khirurgicheskie_rfs/ /catalog/apparaty_radiovolnovye_khirurgicheskie_rfs_1/
+Redirect 301 /catalog/baki_dlya_meditsinskikh_otkhodov_3/ /catalog/baki_dlya_meditsinskikh_otkhodov_2/
+Redirect 301 /catalog/baki_dlya_meditsinskikh_otkhodov_4/ /catalog/baki_dlya_meditsinskikh_otkhodov_2/
+Redirect 301 /catalog/baki_dlya_meditsinskikh_otkhodov_5/ /catalog/baki_dlya_meditsinskikh_otkhodov_2/
+Redirect 301 /catalog/beskontaktnye_termometry/ /catalog/beskontaktnye_termometry_2/
+Redirect 301 /catalog/binokulyarnye_lupy_heine_c_2_3_germaniya_1/ /catalog/binokulyarnye_lupy_heine_c_2_3_germaniya/
+Redirect 301 /catalog/binokulyarnye_lupy_heine_hrr_germaniya_1/ /catalog/binokulyarnye_lupy_heine_hrr_germaniya/
+Redirect 301 /catalog/binokulyarnye_lupy_riester_germaniya_1/ /catalog/binokulyarnye_lupy_riester_germaniya/
+Redirect 301 /catalog/binokulyarnye_nepryamye_oftalmoskopy_bio_welch_allyn_1/ /catalog/binokulyarnye_nepryamye_oftalmoskopy_bio_welch_allyn/
+Redirect 301 /catalog/binty_fiksiruyushchie_frilast_rossiya_1/ /catalog/binty_fiksiruyushchie_frilast_rossiya/
+Redirect 301 /catalog/binty_gipsovye_i_sinteticheskie/ /catalog/binty_gipsovye_i_sinteticheskie_1/
+Redirect 301 /catalog/biopsiynye_pistolety_1/ /catalog/biopsiynye_pistolety/
+Redirect 301 /catalog/bronkhoskopy_1/ /catalog/bronkhoskopy/
+Redirect 301 /catalog/bumaga_dlya_ekg_1/ /catalog/bumaga_dlya_ekg/
+Redirect 301 /catalog/bumaga_dlya_videoprinterov/ /catalog/bumaga_dlya_videoprinterov_1/
+Redirect 301 /catalog/datchiki_k_uzi_skaneram_chison_kitay/ /catalog/datchiki_k_uzi_skaneram_chison_kitay_2/
+Redirect 301 /catalog/datchiki_k_uzi_skaneram_chison_kitay_1/ /catalog/datchiki_k_uzi_skaneram_chison_kitay_2/
+Redirect 301 /catalog/defibrillyatory_5/ /catalog/defibrillyatory_6/
+Redirect 301 /catalog/dermatomy/ /catalog/dermatomy_1/
+Redirect 301 /catalog/dermatoskopy_2/ /catalog/dermatoskopy_1/
+Redirect 301 /catalog/dermatoskopy/ /catalog/dermatoskopy_1/
+Redirect 301 /catalog/dezinfektsiya_1/ /catalog/dezinfektsiya/
+Redirect 301 /catalog/diagnosticheskie_lor_nabory_riester/ /catalog/diagnosticheskie_lor_nabory_riester_1/
+Redirect 301 /catalog/dopolnitelnye_prinadlezhnosti_k_endoskopam_1/ /catalog/dopolnitelnye_prinadlezhnosti_k_endoskopam/
+Redirect 301 /catalog/dykhatelnye_apparaty_1/ /catalog/dykhatelnye_apparaty/
+Redirect 301 /catalog/elektrody_dlya_ekg/ /catalog/elektrody_dlya_snyatiya_ekg/
+Redirect 301 /catalog/elektronnye_termometry_4/ /catalog/elektronnye_termometry_5/
+Redirect 301 /catalog/elektrooftalmostimulyatory_1/ /catalog/elektrooftalmostimulyatory/
+Redirect 301 /catalog/endodonticheskie_nakonechniki/ /catalog/endodonticheskie_nakonechniki_1/
+Redirect 301 /catalog/endoskopy_2/ /catalog/endoskopy/
+Redirect 301 /catalog/endoskopy_1/ /catalog/endoskopy_dlya_otorinolaringologii_1/
+Redirect 301 /catalog/endoskopy_dlya_gastrologii_4/ /catalog/endoskopy_dlya_gastrologii_1/
+Redirect 301 /catalog/endoskopy_dlya_ginekologii_4/ /catalog/endoskopy_dlya_ginekologii_1/
+Redirect 301 /catalog/endoskopy_dlya_laparoskopii/ /catalog/endoskopy_dlya_laparoskopii_1/
+Redirect 301 /catalog/endoskopy_dlya_proktologii_4/ /catalog/endoskopy_dlya_proktologii_1/
+Redirect 301 /catalog/endoskopy_dlya_urologii_4/ /catalog/endoskopy_dlya_urologii_1/
+Redirect 301 /catalog/endoskopy_dlya_urologii_2/ /catalog/endoskopy_dlya_urologii_1/
+Redirect 301 /catalog/gazoanalizatory/ /catalog/gazoanalizatory_3/
+Redirect 301 /catalog/instrumentalnaya_golovka_dlya_tub_heine_unispec_1/ /catalog/instrumentalnye_golovki_dlya_tub_heine_unispec_germaniya_1/
+Redirect 301 /catalog/instrumentalnaya_golovka_dlya_tub_heine_unispec/ /catalog/instrumentalnye_golovki_dlya_tub_heine_unispec_germaniya_1/
+Redirect 301 /catalog/instrumentalnye_golovki_dlya_tub_heine_unispec_germaniya/ /catalog/instrumentalnye_golovki_dlya_tub_heine_unispec_germaniya_1/
+Redirect 301 /catalog/invalidnye_sidenya_dlya_vanny_i_tualeta_1/ /catalog/invalidnye_sidenya_dlya_vanny_i_tualeta/
+Redirect 301 /catalog/laboratornye_mikroskopy/ /catalog/laboratornye_mikroskopy_3/
+Redirect 301 /catalog/lantsety_dlya_glyukometrov/ /catalog/lantsety_dlya_glyukometrov_1/
+Redirect 301 /catalog/meditsina_katastrof_1/ /catalog/meditsina_katastrof/
+Redirect 301 /catalog/nosovye_tampony_1/ /catalog/nosovye_tampony/
+Redirect 301 /catalog/odnorazovye_instrumenty_dlya_oftalmologii_1/ /catalog/odnorazovye_instrumenty_dlya_oftalmologii/
+Redirect 301 /catalog/odnorazovye_tuby_heine_unispec_germaniya/ /catalog/odnorazovye_tuby_heine_unispec_germaniya_1/
+Redirect 301 /catalog/otoskopy_endoskopicheskie_1/ /catalog/otoskopy_endoskopicheskie/
+Redirect 301 /catalog/perchatki_meditsinskie_5/ /catalog/perchatki_meditsinskie_6/
+Redirect 301 /catalog/pokrovnaya_sistema/ /catalog/pokrovnaya_sistema_1/
+Redirect 301 /catalog/prikrovatnye_monitory_patsienta_1/ /catalog/prikrovatnye_monitory_patsienta_2/
+Redirect 301 /catalog/prolance_lantsety_polsha_3/ /catalog/prolance_lantsety_polsha_4/
+Redirect 301 /catalog/prolance_lantsety_polsha_5/ /catalog/prolance_lantsety_polsha_4/
+Redirect 301 /catalog/prolance_lantsety_polsha/ /catalog/prolance_lantsety_polsha_4/
+Redirect 301 /catalog/raskhodnye_materialy_3/ /catalog/raskhodnye_materialy_2/
+Redirect 301 /catalog/raskhodnye_materialy_dlya_kosmetologii/ /catalog/raskhodnye_materialy_dlya_kosmetologii_1/
+Redirect 301 /catalog/raskhodnye_materialy/ /catalog/raskhodnye_materialy_2/
+Redirect 301 /catalog/rentgenovskiy_densitometr/ /catalog/rentgenovskiy_densitometr_1/
+Redirect 301 /catalog/rostomery_detskie_1/ /catalog/rostomery_detskie/
+Redirect 301 /catalog/rukoyatki_heine_germaniya_1/ /catalog/rukoyatki_heine_germaniya/
+Redirect 301 /catalog/rukoyatki_i_zaryadnye_ustroystva_heine_germaniya_1/ /catalog/rukoyatki_i_zaryadnye_ustroystva_heine_germaniya/
+Redirect 301 /catalog/rukoyatki_i_zaryadnye_ustroystva_heine_germaniya_2/ /catalog/rukoyatki_i_zaryadnye_ustroystva_heine_germaniya/
+Redirect 301 /catalog/shchiptsy_biopsiynye_1/ /catalog/shchiptsy_biopsiynye/
+Redirect 301 /catalog/shtativy_dlya_probirok_i_predmetnykh_stekol_1/ /catalog/shtativy_dlya_probirok_i_predmetnykh_stekol/
+Redirect 301 /catalog/sterilizatsiya_i_dezinfektsiya_4/ /catalog/sterilizatsiya_i_dezinfektsiya/
+Redirect 301 /catalog/stetofonendoskopy_bebi_prestizh_kawe_neonatalnye_germaniya_1/ /catalog/stetofonendoskopy_bebi_prestizh_kawe_neonatalnye_germaniya/
+Redirect 301 /catalog/termostaty_dlya_plazmoliftinga/ /catalog/termostaty_dlya_plazmoliftinga_1/
+Redirect 301 /catalog/trubki_dlya_rinoskopii_artroskopii_eleps_rossiya_1/ /catalog/trubki_dlya_rinoskopii_artroskopii_eleps_rossiya/
+Redirect 301 /catalog/tuby_s_bokovym_obzorom_1/ /catalog/tuby_s_bokovym_obzorom/
+Redirect 301 /catalog/tuby_s_pryamym_obzorom_1/ /catalog/tuby_s_pryamym_obzorom/
+Redirect 301 /catalog/ukladki_i_nabory_meditsinskie_8/ /catalog/ukladki_i_nabory_meditsinskie_7/
+Redirect 301 /catalog/ukladki_i_nabory_meditsinskie/ /catalog/ukladki_i_nabory_meditsinskie_7/
+Redirect 301 /catalog/ukladki_i_nabory_meditsinskie_1/ /catalog/ukladki_i_nabory_meditsinskie_7/
+Redirect 301 /catalog/universalnye_apparaty_kosmetologicheskie_kombayny/ /catalog/universalnye_apparaty_kosmetologicheskie_kombayny_2/
+Redirect 301 /catalog/vesy_dlya_grudnykh_detey_seca_germaniya_1/ /catalog/vesy_dlya_grudnykh_detey_seca_germaniya/
+Redirect 301 /catalog/videoendoskopicheskie_sistemy_1/ /catalog/videoendoskopicheskie_sistemy/
+Redirect 301 /catalog/vitalnye_funktsii_1/ /catalog/vitalnye_funktsii_2/
+Redirect 301 /catalog/voronki_ushnye_odnorazovye_2/ /catalog/voronki_ushnye_odnorazovye_1/
+Redirect 301 /catalog/zerkala_ginekologicheskie_mnogorazovye/ /catalog/zerkala_ginekologicheskie_mnogorazovye_1/
+Redirect 301 /catalog/zondy_5/ /catalog/zondy_2/
+
+</IfModule>
+
+<IfModule mod_dir.c>
+    DirectoryIndex index.php index.html
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType image/webp "access plus 3 day"
+    ExpiresByType image/jpeg "access plus 3 day"
+    ExpiresByType image/gif "access plus 3 day"
+    ExpiresByType image/png "access plus 3 day"
+    ExpiresByType text/css "access plus 3 day"
+    ExpiresByType application/javascript "access plus 3 day"
+</IfModule>
+
