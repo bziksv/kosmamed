@@ -79,8 +79,23 @@ class prime_alerts extends CModule
 		$em = EventManager::getInstance();
 		$em->registerEventHandler('main', 'OnBeforeUserRegister', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserRegister');
 		$em->registerEventHandler('main', 'OnBeforeUserAdd', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserAdd');
+		$em->registerEventHandler('main', 'OnBeforeUserUpdate', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserUpdate');
 		$em->registerEventHandler('main', 'OnEndBufferContent', $this->MODULE_ID, '\\Prime\\Alerts\\Frontend', 'onEndBufferContent');
 		$em->registerEventHandler('sale', 'OnSaleOrderBeforeSaved', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onSaleOrderBeforeSaved');
+		$em->registerEventHandler(
+			'sale',
+			'\\Bitrix\\Sale\\Internals\\UserPropsValueTable::OnBeforeUpdate',
+			$this->MODULE_ID,
+			'\\Prime\\Alerts\\Handlers',
+			'onBeforeUserPropsValueUpdate'
+		);
+		$em->registerEventHandler(
+			'sale',
+			'\\Bitrix\\Sale\\Internals\\UserPropsValueTable::OnBeforeAdd',
+			$this->MODULE_ID,
+			'\\Prime\\Alerts\\Handlers',
+			'onBeforeUserPropsValueAdd'
+		);
 		return true;
 	}
 
@@ -89,12 +104,27 @@ class prime_alerts extends CModule
 		$em = EventManager::getInstance();
 		$em->unRegisterEventHandler('main', 'OnBeforeUserRegister', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserRegister');
 		$em->unRegisterEventHandler('main', 'OnBeforeUserAdd', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserAdd');
+		$em->unRegisterEventHandler('main', 'OnBeforeUserUpdate', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onBeforeUserUpdate');
 		$em->unRegisterEventHandler('main', 'OnAfterUserRegister', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onAfterUserRegister');
 		$em->unRegisterEventHandler('main', 'OnEpilog', $this->MODULE_ID, '\\Prime\\Alerts\\Frontend', 'onEpilog');
 		$em->unRegisterEventHandler('main', 'OnProlog', $this->MODULE_ID, '\\Prime\\Alerts\\Frontend', 'onProlog');
 		$em->unRegisterEventHandler('main', 'OnEndBufferContent', $this->MODULE_ID, '\\Prime\\Alerts\\Frontend', 'onEndBufferContent');
 		$em->unRegisterEventHandler('sale', 'OnSaleOrderBeforeSaved', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onSaleOrderBeforeSaved');
 		$em->unRegisterEventHandler('sale', 'OnSaleOrderSaved', $this->MODULE_ID, '\\Prime\\Alerts\\Handlers', 'onSaleOrderSaved');
+		$em->unRegisterEventHandler(
+			'sale',
+			'\\Bitrix\\Sale\\Internals\\UserPropsValueTable::OnBeforeUpdate',
+			$this->MODULE_ID,
+			'\\Prime\\Alerts\\Handlers',
+			'onBeforeUserPropsValueUpdate'
+		);
+		$em->unRegisterEventHandler(
+			'sale',
+			'\\Bitrix\\Sale\\Internals\\UserPropsValueTable::OnBeforeAdd',
+			$this->MODULE_ID,
+			'\\Prime\\Alerts\\Handlers',
+			'onBeforeUserPropsValueAdd'
+		);
 		return true;
 	}
 }

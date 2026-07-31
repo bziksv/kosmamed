@@ -2,6 +2,9 @@
 
 namespace Prime\Alerts;
 
+use Bitrix\Main\Entity\EntityError;
+use Bitrix\Main\Entity\Event as EntityEvent;
+use Bitrix\Main\Entity\EventResult as EntityEventResult;
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
 use Bitrix\Sale\Order;
@@ -28,6 +31,40 @@ class Handlers
 		$email = (string)($arFields['EMAIL'] ?? '');
 		if ($email === '') {
 			return true;
+		}
+
+		return self::validateUserEmail($arFields, 'signup');
+	}
+
+	/** Смена e-mail в «Персональные данные» / main.profile */
+	public static function onBeforeUserUpdate(&$arFields)
+	{
+		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
+			return true;
+		}
+
+		if (!array_key_exists('EMAIL', $arFields)) {
+			return true;
+		}
+
+		$email = trim((string)$arFields['EMAIL']);
+		if ($email === '') {
+			return true;
+		}
+
+		$userId = (int)($arFields['ID'] ?? 0);
+		if ($userId > 0) {
+			$rs = \CUser::GetByID($userId);
+			if ($user = $rs->Fetch()) {
+				$login = strtolower((string)($user['LOGIN'] ?? ''));
+				if ($login === 'technical_boc' || strpos($login, 'technical_') === 0) {
+					return true;
+				}
+				// e-mail не меняли — не трогаем
+				if (strtolower(trim((string)($user['EMAIL'] ?? ''))) === strtolower($email)) {
+					return true;
+				}
+			}
 		}
 
 		return self::validateUserEmail($arFields, 'signup');
@@ -70,6 +107,85 @@ class Handlers
 			EventResult::ERROR,
 			new ResultError(EmailPolicy::getErrorText('checkout'), 'PRIME_ALERTS_EMAIL_POLICY')
 		);
+	}
+
+	/** E-mail в профиле покупателя (sale.personal.profile.detail) */
+	public static function onBeforeUserPropsValueUpdate(EntityEvent $event)
+	{
+		return self::validateUserPropsValueEvent($event);
+	}
+
+	public static function onBeforeUserPropsValueAdd(EntityEvent $event)
+	{
+		return self::validateUserPropsValueEvent($event);
+	}
+
+	protected static function validateUserPropsValueEvent(EntityEvent $event): EntityEventResult
+	{
+		$result = new EntityEventResult();
+
+		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
+			return $result;
+		}
+
+		if (!Config::isEnabled() || !Config::isYes('policy_enabled', 'Y') || !Config::isYes('policy_order', 'Y')) {
+			return $result;
+		}
+
+		$fields = $event->getParameter('fields');
+		if (!is_array($fields) || !array_key_exists('VALUE', $fields)) {
+			return $result;
+		}
+
+		$email = trim((string)$fields['VALUE']);
+		if ($email === '' || strpos($email, '@') === false) {
+			return $result;
+		}
+
+		$orderPropsId = (int)($fields['ORDER_PROPS_ID'] ?? 0);
+		if ($orderPropsId <= 0) {
+			$id = $event->getParameter('id');
+			if (is_array($id)) {
+				$id = (int)($id['ID'] ?? reset($id));
+			} else {
+				$id = (int)$id;
+			}
+			if ($id > 0 && class_exists('\Bitrix\Sale\Internals\UserPropsValueTable')) {
+				$row = \Bitrix\Sale\Internals\UserPropsValueTable::getById($id)->fetch();
+				$orderPropsId = (int)($row['ORDER_PROPS_ID'] ?? 0);
+			}
+		}
+
+		if ($orderPropsId <= 0 || !self::isEmailOrderProp($orderPropsId)) {
+			return $result;
+		}
+
+		if (EmailPolicy::isAllowed($email)) {
+			return $result;
+		}
+
+		$result->addError(new EntityError(EmailPolicy::getErrorText('checkout')));
+
+		return $result;
+	}
+
+	protected static function isEmailOrderProp(int $orderPropsId): bool
+	{
+		if ($orderPropsId <= 0 || !class_exists('\Bitrix\Sale\Internals\OrderPropsTable')) {
+			return false;
+		}
+
+		$prop = \Bitrix\Sale\Internals\OrderPropsTable::getById($orderPropsId)->fetch();
+		if (!$prop) {
+			return false;
+		}
+
+		$code = strtoupper((string)($prop['CODE'] ?? ''));
+		if ($code === 'EMAIL') {
+			return true;
+		}
+
+		return (($prop['IS_EMAIL'] ?? 'N') === 'Y');
 	}
 
 	protected static function orderEmail(Order $order): string

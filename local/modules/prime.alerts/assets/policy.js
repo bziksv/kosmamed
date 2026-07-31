@@ -120,8 +120,12 @@
 				return 'checkout';
 			}
 		}
+		// Профиль покупателя в ЛК
+		if (/profile|profiles/i.test(location.pathname) && inp.name && /^ORDER_PROP_/i.test(inp.name || '')) {
+			return 'checkout';
+		}
 
-		if (/regist|signup|AUTH_FORM|bx-auth|personal\/register|USER_REGISTER/i.test(id)) {
+		if (/regist|signup|AUTH_FORM|bx-auth|personal\/register|USER_REGISTER|main\.profile|private/i.test(id)) {
 			return 'signup';
 		}
 		if (form) {
@@ -130,6 +134,15 @@
 			}
 			if (form.querySelector('input[name="register_submit_button"], input[name="register"], button[name="register"]')) {
 				return 'signup';
+			}
+			// Личный кабинет / персональные данные / профиль заказа
+			if (form.querySelector('input[name="EMAIL"]') && (
+				/personal|profile|private/i.test(location.pathname)
+				|| form.querySelector('input[name="save"], button[name="save"], input[name="apply"]')
+			)) {
+				if (!isBuyOneClick(inp, form, id) && !isLeadForm(inp, form, id)) {
+					return 'signup';
+				}
 			}
 			var emailName = (inp.name || '').toLowerCase();
 			if ((emailName === 'email' || emailName === 'user_email' || emailName === 'register[email]')
