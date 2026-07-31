@@ -2,6 +2,7 @@
 $MESS ['PROFILE_DATA_SAVED'] = "Изменения сохранены";
 $MESS ['NAME'] = "Имя";
 $MESS ['LAST_NAME'] = "Фамилия";
+$MESS ['EMAIL'] = "E-Mail";
 $MESS ['SECOND_NAME'] = "Отчество";
 $MESS ['PERSONAL_PHOTO'] = "Изображение профиля";
 $MESS ['NEW_PASSWORD_CONFIRM'] = "Подтверждение пароля";

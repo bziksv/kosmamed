@@ -4,66 +4,84 @@
 <?if($arResult['DATA_SAVED'] == 'Y')
 	echo ShowNote(GetMessage('PROFILE_DATA_SAVED'));?>
 
-<div class="workarea personal">
+<div class="content-form profile-form" id="profile-form">
 	<form method="post" name="form1" action="<?=$arResult["FORM_TARGET"]?>" enctype="multipart/form-data">
 		<?=$arResult["BX_SESSION_CHECK"]?>
 		<input type="hidden" name="lang" value="<?=LANG?>" />
-		<input type="hidden" name="ID" value=<?=$arResult["ID"]?> />
-		<input type="hidden" name="LOGIN" value=<?=$arResult["arUser"]["LOGIN"]?> />
-		<input type="hidden" name="EMAIL" value=<?=$arResult["arUser"]["EMAIL"]?> />
+		<input type="hidden" name="ID" value="<?=$arResult["ID"]?>" />
+		<input type="hidden" name="LOGIN" value="<?=htmlspecialcharsbx($arResult["arUser"]["LOGIN"])?>" />
 
-		<h2><?=GetMessage("LEGEND_PROFILE")?></h2>
-		<div class="personal-info">
-			<div class="personal-info_in">
-				<?=GetMessage('NAME')?><br>
-				<input type="text" name="NAME" maxlength="50" class="input_text_style" value="<?=$arResult["arUser"]["NAME"]?>" />
-				<br><br>
-				
-				<?=GetMessage('LAST_NAME')?><br>
-				<input type="text" name="LAST_NAME" maxlength="50" class="input_text_style" value="<?=$arResult["arUser"]["LAST_NAME"]?>" />
-				<br><br>
+		<div class="fields">
+			<section class="profile-form__section">
+				<h2 class="profile-form__section-title"><?=GetMessage("LEGEND_PROFILE")?></h2>
 
-				<?=GetMessage('PERSONAL_PHOTO')?><br>
-				<?if(empty($arResult["arUser"]["PERSONAL_PHOTO"])):?>
-					<input type="file" name="PERSONAL_PHOTO" size="20" class="typefile" />
-				<?else:?>
-					<table border="0" cellpadding="0" cellspacing="0">
-						<tr>
-							<td valign="middle" style="padding:0px 10px 0px 0px;">
-								<img src="<?=$arResult["arUser"]["PERSONAL_IMG"]["SRC"]?>" width="<?=$arResult["arUser"]["PERSONAL_IMG"]["WIDTH"]?>" height="<?=$arResult["arUser"]["PERSONAL_IMG"]["HEIGHT"]?>" />
-							</td>
-							<td valign="middle">
-								<input type="file" name="PERSONAL_PHOTO" size="20" class="typefile" />
-							</td>
-						</tr>
-					</table>
-				<?endif;?>
+				<div class="field">
+					<label class="field-title" for="profile-name"><?=GetMessage('NAME')?></label>
+					<div class="form-input">
+						<input type="text" id="profile-name" name="NAME" maxlength="50" value="<?=htmlspecialcharsbx($arResult["arUser"]["NAME"])?>" autocomplete="given-name" />
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="field-title" for="profile-last-name"><?=GetMessage('LAST_NAME')?></label>
+					<div class="form-input">
+						<input type="text" id="profile-last-name" name="LAST_NAME" maxlength="50" value="<?=htmlspecialcharsbx($arResult["arUser"]["LAST_NAME"])?>" autocomplete="family-name" />
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="field-title" for="profile-email"><?=GetMessage('EMAIL')?><?if(!empty($arResult["EMAIL_REQUIRED"])):?><span class="starrequired">*</span><?endif?></label>
+					<div class="form-input">
+						<input type="email" id="profile-email" name="EMAIL" maxlength="255" value="<?=htmlspecialcharsbx($arResult["arUser"]["EMAIL"])?>" autocomplete="email" />
+					</div>
+				</div>
+
+				<div class="field field--photo">
+					<label class="field-title" for="profile-photo"><?=GetMessage('PERSONAL_PHOTO')?></label>
+					<div class="form-input profile-form__photo">
+						<?if(!empty($arResult["arUser"]["PERSONAL_PHOTO"])):?>
+							<span class="profile-form__photo-preview">
+								<img src="<?=$arResult["arUser"]["PERSONAL_IMG"]["SRC"]?>" width="<?=$arResult["arUser"]["PERSONAL_IMG"]["WIDTH"]?>" height="<?=$arResult["arUser"]["PERSONAL_IMG"]["HEIGHT"]?>" alt="" />
+							</span>
+						<?endif;?>
+						<input type="file" id="profile-photo" name="PERSONAL_PHOTO" size="20" accept="image/*" class="profile-form__file" />
+					</div>
+				</div>
+			</section>
+
+			<section class="profile-form__section">
+				<h2 class="profile-form__section-title"><?=GetMessage("MAIN_PSWD")?></h2>
+
+				<div class="field">
+					<label class="field-title" for="profile-new-password"><?=GetMessage('NEW_PASSWORD_REQ')?></label>
+					<div class="form-input">
+						<input type="password" id="profile-new-password" name="NEW_PASSWORD" maxlength="50" value="" autocomplete="new-password" />
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="field-title" for="profile-new-password-confirm"><?=GetMessage('NEW_PASSWORD_CONFIRM')?></label>
+					<div class="form-input">
+						<input type="password" id="profile-new-password-confirm" name="NEW_PASSWORD_CONFIRM" maxlength="50" value="" autocomplete="new-password" />
+					</div>
+				</div>
+			</section>
+
+			<div class="field field-button">
+				<button type="submit" name="save" class="btn_buy popdef" value="<?=GetMessage('MAIN_SAVE')?>"><?=GetMessage("MAIN_SAVE")?></button>
 			</div>
 		</div>
-
-		<h2><?=GetMessage("MAIN_PSWD")?></h2>
-		<div class="personal-info">
-			<div class="personal-info_in">
-				<?=GetMessage('NEW_PASSWORD_REQ')?><br>
-				<input type="password" name="NEW_PASSWORD" maxlength="50" class="input_text_style" value="" autocomplete="off" />
-				<br><br>
-
-				<?=GetMessage('NEW_PASSWORD_CONFIRM')?><br>
-				<input type="password" name="NEW_PASSWORD_CONFIRM" maxlength="50" class="input_text_style" value="" autocomplete="off" />
-			</div>
-		</div>
-
-		<button type="submit" name="save" class="btn_buy popdef bt3" value="<?=GetMessage('MAIN_SAVE')?>"><?=GetMessage("MAIN_SAVE")?></button>
 	</form>
 </div>
-<div class="clr"></div>
-<br />
-<?if($arResult["SOCSERV_ENABLED"]) {
-	$APPLICATION->IncludeComponent("bitrix:socserv.auth.split", ".default", 
-		array(
-			"SHOW_PROFILES" => "Y",
-			"ALLOW_DELETE" => "Y"
-		),
-		false
-	);
-}?>
+
+<?if($arResult["SOCSERV_ENABLED"]) {?>
+	<div class="profile-form__socserv">
+		<?$APPLICATION->IncludeComponent("bitrix:socserv.auth.split", ".default",
+			array(
+				"SHOW_PROFILES" => "Y",
+				"ALLOW_DELETE" => "Y"
+			),
+			false
+		);?>
+	</div>
+<?}?>

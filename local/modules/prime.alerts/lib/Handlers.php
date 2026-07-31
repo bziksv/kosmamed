@@ -2,6 +2,7 @@
 
 namespace Prime\Alerts;
 
+use Bitrix\Main\Application;
 use Bitrix\Main\Entity\EntityError;
 use Bitrix\Main\Entity\Event as EntityEvent;
 use Bitrix\Main\Entity\EventResult as EntityEventResult;
@@ -12,6 +13,63 @@ use Bitrix\Sale\ResultError;
 
 class Handlers
 {
+	/**
+	 * Профили заказов: POST с чужим e-mail — не даём компоненту «успешно» сохранить
+	 * (он игнорирует Result от UserPropsValueTable::update).
+	 */
+	public static function onProlog()
+	{
+		if (defined('ADMIN_SECTION') && ADMIN_SECTION === true) {
+			return;
+		}
+
+		if (!Config::isEnabled() || !Config::isYes('policy_enabled', 'Y') || !Config::isYes('policy_order', 'Y')) {
+			return;
+		}
+
+		$request = Application::getInstance()->getContext()->getRequest();
+		if (!$request->isPost()) {
+			return;
+		}
+		if ($request->getPost('save') === null && $request->getPost('apply') === null) {
+			return;
+		}
+
+		$uri = (string)$request->getRequestUri();
+		if (!preg_match('#/personal/profiles(/|$|\?)#i', $uri)) {
+			return;
+		}
+
+		if (!check_bitrix_sessid()) {
+			return;
+		}
+
+		$post = $request->getPostList()->toArray();
+		foreach ($post as $key => $value) {
+			if (!preg_match('/^ORDER_PROP_(\d+)$/', (string)$key, $m)) {
+				continue;
+			}
+			if (is_array($value)) {
+				continue;
+			}
+			$email = trim((string)$value);
+			if ($email === '' || strpos($email, '@') === false) {
+				continue;
+			}
+			$orderPropsId = (int)$m[1];
+			if (!self::isEmailOrderProp($orderPropsId)) {
+				continue;
+			}
+			if (EmailPolicy::isAllowed($email)) {
+				continue;
+			}
+
+			$session = Application::getInstance()->getSession();
+			$session->set('PRIME_ALERTS_FLASH_ERROR', EmailPolicy::getErrorText('checkout'));
+			LocalRedirect($uri);
+		}
+	}
+
 	public static function onBeforeUserRegister(&$arFields)
 	{
 		return self::validateUserEmail($arFields, 'signup');

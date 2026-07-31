@@ -41,7 +41,7 @@
 
 	function fieldWrap(inp) {
 		return inp.closest(
-			'.bx-soa-customer-field, .form-group, .soa-property-container, .field, .row, .form-input, tr, label'
+			'.sale-profile-detail-form-group, .bx-soa-customer-field, .form-group, .soa-property-container, .field, .row, .form-input, tr, label'
 		) || inp.parentNode;
 	}
 
@@ -185,6 +185,9 @@
 	function isEmailInput(inp) {
 		if (!inp || inp.tagName !== 'INPUT') return false;
 		var type = (inp.type || '').toLowerCase();
+		if (type === 'hidden' || type === 'password' || type === 'checkbox' || type === 'radio' || type === 'file' || type === 'submit' || type === 'button') {
+			return false;
+		}
 		var name = (inp.name || '').toLowerCase();
 		var auto = (inp.getAttribute('autocomplete') || '').toLowerCase();
 		var id = (inp.id || '').toLowerCase();
@@ -194,7 +197,7 @@
 		if (id.indexOf('email') >= 0) return true;
 		var wrap = fieldWrap(inp);
 		var label = wrap ? wrap.textContent : '';
-		if (/e-?mail/i.test(label) && type === 'text') return true;
+		if (/e-?mail/i.test(label) && (type === 'text' || type === '' || !inp.type)) return true;
 		return false;
 	}
 

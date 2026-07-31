@@ -2956,3 +2956,185 @@ header.fixed.fixed_f .center.inner {
 		padding: 16px 18px;
 	}
 }
+
+/* === ЛК: профиль / формы заказа (вместо фиолетовых шапок Bitrix) === */
+.personal h2,
+.catalog-subscriber-forms h2,
+.sale-profile-detail-form h2 {
+	color: var(--km-text) !important;
+	background: var(--km-surface-alt) !important;
+	border: 1px solid var(--km-border) !important;
+	border-left: 3px solid var(--km-primary) !important;
+	border-radius: 8px !important;
+	font-size: 15px !important;
+	font-weight: 600 !important;
+	line-height: 1.35 !important;
+	padding: 10px 14px !important;
+	margin: 0 0 12px !important;
+}
+
+.personal .personal-info,
+.catalog-subscriber-identification-form-wrap,
+.sale-profile-detail-block-wrap {
+	border-color: var(--km-border) !important;
+	border-radius: 10px !important;
+	background: var(--km-surface) !important;
+}
+
+.personal input[type="text"],
+.personal input[type="password"],
+.personal input[type="email"],
+.catalog-subscriber-identification-form input[type="text"],
+.sale-profile-detail-form-property input[type="text"],
+.sale-profile-detail-form-property input[type="email"] {
+	width: 100% !important;
+	max-width: 420px !important;
+	height: 40px !important;
+	padding: 0 12px !important;
+	color: var(--km-text) !important;
+	border: 1px solid var(--km-border) !important;
+	border-radius: 8px !important;
+	background: var(--km-surface) !important;
+	box-sizing: border-box !important;
+}
+
+.personal input[type="text"]:focus,
+.personal input[type="password"]:focus,
+.personal input[type="email"]:focus,
+.sale-profile-detail-form-property input[type="text"]:focus,
+.sale-profile-detail-form-property input[type="email"]:focus {
+	border-color: var(--km-primary) !important;
+	outline: none;
+	box-shadow: 0 0 0 3px var(--km-primary-light);
+}
+
+.content-form.profile-form {
+	max-width: 520px;
+	margin: 0 0 28px;
+}
+
+.content-form.profile-form .profile-form__section {
+	margin: 0 0 22px;
+	padding: 18px 20px;
+	border: 1px solid var(--km-border);
+	border-radius: 12px;
+	background: var(--km-surface);
+}
+
+.content-form.profile-form .profile-form__section-title {
+	margin: 0 0 16px !important;
+	padding: 0 0 10px !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--km-border) !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	color: var(--km-text) !important;
+	font-size: 16px !important;
+	font-weight: 600 !important;
+	line-height: 1.3 !important;
+}
+
+.content-form.profile-form .field {
+	margin: 0 0 14px;
+}
+
+.content-form.profile-form .field:last-child {
+	margin-bottom: 0;
+}
+
+.content-form.profile-form .field-title {
+	display: block;
+	margin: 0 0 6px;
+	color: var(--km-text-secondary);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.content-form.profile-form .field-title .starrequired {
+	margin-left: 2px;
+	color: #dc2626;
+}
+
+.content-form.profile-form .form-input input[type="text"],
+.content-form.profile-form .form-input input[type="password"],
+.content-form.profile-form .form-input input[type="email"] {
+	width: 100% !important;
+	max-width: none !important;
+	height: 42px !important;
+	padding: 0 14px !important;
+	color: var(--km-text) !important;
+	border: 1px solid var(--km-border) !important;
+	border-radius: 8px !important;
+	background: var(--km-surface) !important;
+	box-sizing: border-box !important;
+	font-size: 14px !important;
+}
+
+.content-form.profile-form .form-input input:focus {
+	border-color: var(--km-primary) !important;
+	outline: none;
+	box-shadow: 0 0 0 3px var(--km-primary-light);
+}
+
+.content-form.profile-form .profile-form__photo {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.content-form.profile-form .profile-form__photo-preview {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	overflow: hidden;
+	border: 1px solid var(--km-border);
+	border-radius: 10px;
+	background: var(--km-surface-alt);
+}
+
+.content-form.profile-form .profile-form__photo-preview img {
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: cover;
+}
+
+.content-form.profile-form .profile-form__file {
+	max-width: 100%;
+	font-size: 13px;
+	color: var(--km-text-muted);
+}
+
+.content-form.profile-form .field-button {
+	margin: 4px 0 0;
+}
+
+.content-form.profile-form .field-button button[type="submit"] {
+	width: auto !important;
+	min-width: 180px;
+	height: 42px !important;
+	padding: 0 24px !important;
+	border-radius: 8px !important;
+}
+
+.content-form.profile-form + .profile-form__socserv,
+.profile-form__socserv {
+	max-width: 520px;
+	margin-top: 8px;
+	padding-top: 18px;
+	border-top: 1px solid var(--km-border);
+}
+
+@media (max-width: 640px) {
+	.content-form.profile-form {
+		max-width: none;
+	}
+
+	.content-form.profile-form .profile-form__section {
+		padding: 14px 14px;
+	}
+}
