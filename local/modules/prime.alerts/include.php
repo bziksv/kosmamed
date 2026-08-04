@@ -11,7 +11,7 @@ Loader::registerAutoLoadClasses('prime.alerts', [
 ]);
 
 // Перерегистрация обработчиков при обновлении файлов модуля без переустановки
-$eventsVer = '1.2.2';
+$eventsVer = '1.2.3';
 if (Option::get('prime.alerts', 'events_version', '') !== $eventsVer) {
 	$installFile = __DIR__ . '/install/index.php';
 	if (is_file($installFile)) {

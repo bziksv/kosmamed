@@ -40,8 +40,9 @@
 	}
 
 	function fieldWrap(inp) {
+		// Keep wrap tight — never climb to .row / #bx-soa-order (notice ended up below the whole checkout).
 		return inp.closest(
-			'.sale-profile-detail-form-group, .bx-soa-customer-field, .form-group, .soa-property-container, .field, .row, .form-input, tr, label'
+			'.bx-authform-formgroup-container, .bx-authform-input-container, .sale-profile-detail-form-group, .bx-soa-customer-field, .form-group, .soa-property-container, .form-input, .field'
 		) || inp.parentNode;
 	}
 
