@@ -39,6 +39,13 @@ class Tools {
 		return 0;
 	}
 	
+	static function writeModuleDebug($path, $module, $data){
+		if(\CArturgolubevChatgpt::LOG_DEBUG){
+			// UTools::simpleDataLog($path, $module, $data);
+			AddMessage2Log($data, 'ag.chatgpt '.$module, 0);
+		}
+	}
+	
 	static function checkHlTemplate(){
 		include_once $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/arturgolubev.chatgpt/lib/installation.php';
 		\agInstaHelperChatgpt::installTemplateHL();
@@ -66,6 +73,33 @@ class Tools {
 		}
 
 		return $result;
+	}
+
+	static function makeIblockEnumVariant($value, $iblockID, $pid){
+		$save_xml_id = \Cutil::translit($value, "ru", ["replace_space" => "_", "replace_other"=> "-"]);
+
+		$db_enum_list = \CIBlockProperty::GetPropertyEnum($pid, [], Array("IBLOCK_ID"=>$iblockID, "VALUE"=>$value));
+		if($ar_enum_list = $db_enum_list->GetNext()){
+			$saveID = $ar_enum_list['ID'];
+		}
+
+		if(!$saveID){
+			$db_enum_list = \CIBlockProperty::GetPropertyEnum($pid, [], Array("IBLOCK_ID"=>$iblockID, "XML_ID"=>$save_xml_id));
+			if($ar_enum_list = $db_enum_list->GetNext()){
+				$saveID = $ar_enum_list['ID'];
+			}
+		}
+
+		if(!$saveID){
+			$ibpenum = new \CIBlockPropertyEnum;
+			$saveID = $ibpenum->Add([
+				'PROPERTY_ID'=>$pid,
+				'VALUE'=> $value,
+				'XML_ID'=> $save_xml_id,
+			]);
+		}
+
+		return $saveID;
 	}
 
 	static function remakeProxy(){
@@ -182,6 +216,7 @@ class Tools {
 		$gptKey = UTools::getSetting('api_key');
 		$sberKey = UTools::getSetting('sber_authorization');
 		$deepseekKey = UTools::getSetting('deepseek_api_key');
+		$openAiCompatibleKey = UTools::getSetting('openai_compatible_api_key');
 
 		if($gptKey || (!$gptKey && !$sberKey)){
 			$result[] = 'chatgpt';
@@ -193,6 +228,10 @@ class Tools {
 
 		if($deepseekKey){
 			$result[] = 'deepseek';
+		}
+
+		if($openAiCompatibleKey){
+			$result[] = 'openai_compatible';
 		}
 
 		return $result;
@@ -251,22 +290,6 @@ class Tools {
 		}
 
 		return $items;
-	}
-
-	static function prepareImageOutput($element, $format){
-		$image_url = $element['url'];
-
-		if(!$image_url && $element['b64_json']){
-			$decodedImage = base64_decode($element['b64_json']);
-			$image_name = '/upload/tmp/arturgolubev.chatgpt/generated_images/image_'.time().'.'.$format;
-
-			$file = new \Bitrix\Main\IO\File($_SERVER["DOCUMENT_ROOT"].$image_name);
-			$file->putContents($decodedImage);
-
-			$image_url = $image_name;
-		}
-
-		return $image_url;
 	}
 
 	static function fillInputByRequest($params){

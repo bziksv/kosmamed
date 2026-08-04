@@ -33,6 +33,8 @@ agcg.getFormContent = function(entity, form, fieldsWrap, results, masswork){
 	}else{
 		sendData = sendData + '&action=get_section_form_content';
 	}
+
+	sendData = sendData + '&sessid=' + BX.bitrix_sessid();
 	
 	BX.ajax({
 		method: 'POST',
@@ -223,46 +225,29 @@ agcg.requestImagePage = function(_this, options){
 	button.classList.add("work");
 	button.insertAdjacentHTML('beforeend', '<span class="lds-dual-ring"></span>');
 	
-	if(options.keynum == 0 && options.first)
+	if(options.first)
 		result.innerHTML = BX.message('ARTURGOLUBEV_CHATGPT_JS_ASK_GENERATE_STARTED');
 	
-	BX.ajax({
-		method: 'POST',
-		url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
-		data: agcg.getFormData(form) + '&keynum=' + options.keynum,
-		// dataType: "html",
-		dataType: 'json',
-		async: true,
-	   
-		processData: true,
-		scriptsRunFirst: false,
-		emulateOnload: false,
-		start: true,
-		cache: false,
+	BX.ajax.runAction('arturgolubev:chatgpt.Simple.imageRequest', {
+		data: {'data': Object.fromEntries(new FormData(form))}
+	}).then(function (response) {
+		data = response.data;
+		console.log('Debug Controller=Simple.imageRequest', data);
 		
-		onsuccess: function(data){
-			// console.log(data);
-			
-			button.classList.remove("work");
-			agcg.removeAllLoaders();
+		button.classList.remove("work");
+		agcg.removeAllLoaders();
 
-			if(data.error){
-				if(data.next_key){
-					result.innerHTML = result.innerHTML + '<br>' + data.error_message + '. ' + BX.message("ARTURGOLUBEV_CHATGPT_JS_NEXT_KEY_INFO") + ' ['+ (options.keynum+2) + ']';
-					options.keynum = options.keynum + 1;
-					agcg.requestImagePage(_this, options);
-				}else{
-					result.innerHTML = result.innerHTML + '<br>' + data.error_message;
-				}
-			}else{
-				let newHtml = '<img src="'+data.image+'" alt="" style="max-width: 100%;" /><br><br><a target="_blank" href="'+data.image+'">'+BX.message("ARTURGOLUBEV_CHATGPT_JS_IMAGE_IN_NEWTAB")+'</a>';
-				result.innerHTML = newHtml;
-			}
-		},
-		onfailure: function(p1, p2){
-			button.classList.remove("work");
-			agcg.removeAllLoaders();
-		},
+		if(data.error){
+			result.innerHTML = data.error_message;
+		}else{
+			let newHtml = '<img src="'+data.image+'" alt="" style="max-width: 100%;" /><br><br><a target="_blank" href="'+data.image+'">'+BX.message("ARTURGOLUBEV_CHATGPT_JS_IMAGE_IN_NEWTAB")+'</a>';
+			result.innerHTML = newHtml;
+		}
+	}, function (response) {
+		button.classList.remove("work");
+		agcg.removeAllLoaders();
+
+		result.innerHTML = BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_AJAX_ERROR");
 	});
 };
 
@@ -305,45 +290,28 @@ agcg.requestAskPage = function(_this, options){
 	button.classList.add("work");
 	button.insertAdjacentHTML('beforeend', '<span class="lds-dual-ring"></span>');
 	
-	if(options.keynum == 0 && options.first)
+	if(options.first)
 		result.innerHTML = BX.message('ARTURGOLUBEV_CHATGPT_JS_ASK_GENERATE_STARTED');
 	
-	BX.ajax({
-		method: 'POST',
-		url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
-		data: agcg.getFormData(form) + '&keynum=' + options.keynum,
-		// dataType: "html",
-		dataType: 'json',
-		async: true,
-	   
-		processData: true,
-		scriptsRunFirst: false,
-		emulateOnload: false,
-		start: true,
-		cache: false,
+	BX.ajax.runAction('arturgolubev:chatgpt.Simple.textRequest', {
+		data: {'data': Object.fromEntries(new FormData(form))}
+	}).then(function (response) {
+		data = response.data;
+		console.log('Debug Controller=Simple.textRequest', data);
 		
-		onsuccess: function(data){
-			console.log('DebugData', data);
-			
-			button.classList.remove("work");
-			agcg.removeAllLoaders();
+		button.classList.remove("work");
+		agcg.removeAllLoaders();
 
-			if(data.error){
-				if(data.next_key){
-					result.innerHTML = result.innerHTML + '<br>' + data.error_message + '. ' + BX.message("ARTURGOLUBEV_CHATGPT_JS_NEXT_KEY_INFO") + ' ['+ (options.keynum+2) + ']';
-					options.keynum = options.keynum + 1;
-					agcg.requestAskPage(_this, options);
-				}else{
-					result.innerHTML = result.innerHTML + '<br>' + data.error_message;
-				}
-			}else{
-				result.innerHTML = '<textarea>' + data.text + '</textarea><br><br>';
-			}
-		},
-		onfailure: function(p1, p2){
-			button.classList.remove("work");
-			agcg.removeAllLoaders();
-		},
+		if(data.error){
+			result.innerHTML = data.error_message;
+		}else{
+			result.innerHTML = '<textarea>' + data.text + '</textarea><br><br>';
+		}
+	}, function (response) {
+		button.classList.remove("work");
+		agcg.removeAllLoaders();
+
+		result.innerHTML = BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_AJAX_ERROR");
 	});
 };
 
@@ -510,10 +478,12 @@ agcg.massWindowShow = function(params, elements){
 				agcg.logAddLine(params.nodes.results, '<br><div id="log_title_'+eid+'">' + BX.message('ARTURGOLUBEV_CHATGPT_JS_MASS_WORK_WITH_ID') + '[' + eid + ']</div>');
 				
 				if(params.entity == 'elements'){
-					urlCreate = agcg.getFormData(params.nodes.form) + '&action=mass_create_elements&eid='+eid+'&keynum=' + params.keynum;
+					urlCreate = agcg.getFormData(params.nodes.form) + '&action=mass_create_elements&eid='+eid;
 				}else{
-					urlCreate = agcg.getFormData(params.nodes.form) + '&action=mass_create_sections&eid='+eid+'&keynum=' + params.keynum;
+					urlCreate = agcg.getFormData(params.nodes.form) + '&action=mass_create_sections&eid='+eid;
 				}
+
+				urlCreate = urlCreate + '&sessid=' + BX.bitrix_sessid();
 
 				let startTime = Date.now();
 
@@ -560,7 +530,7 @@ agcg.massWindowShow = function(params, elements){
 						if(data.error){
 							params.skip_sleep = 1;
 
-							if(data.next_key){
+							if(false){ // data.next_key
 								params.keynum = params.keynum + 1;
 								params.base_elements = backup_eid;
 								
@@ -609,7 +579,7 @@ agcg.massWindowShow = function(params, elements){
 			BX.ajax({
 				method: 'POST',
 				url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php?action=sleep20',
-				data: {},
+				data: {sessid: BX.bitrix_sessid()},
 				dataType: 'json',
 				timeout: 30,
 				async: true,
@@ -787,18 +757,19 @@ agcg.requestIblockWindow = function(_this, keynum, params){
 	startButton.classList.add("work");
 	startButton.insertAdjacentHTML('beforeend', '<span class="lds-dual-ring"></span>');
 	
-	if(keynum == 0)
-		results.innerHTML = BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_GENERATE_STARTED");
+	results.innerHTML = BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_GENERATE_STARTED");
 	
 	if(params.ENTITY == 'element' || params.ENTITY == 'elements'){
-		urlCreate = agcg.getFormData(form) + '&action=create_element_text&keynum=' + keynum;
+		urlCreate = agcg.getFormData(form) + '&action=create_element_text';
 	}else{
-		urlCreate = agcg.getFormData(form) + '&action=create_section_text&keynum=' + keynum;
+		urlCreate = agcg.getFormData(form) + '&action=create_section_text';
 	}
 	
 	if(preview_mode){
 		urlCreate = urlCreate + '&preview=1&ID='+params.ELEMENT_ID;
 	}
+
+	urlCreate = urlCreate + '&sessid=' + BX.bitrix_sessid();
 	
 	let startTime = Date.now();
 	
@@ -834,7 +805,7 @@ agcg.requestIblockWindow = function(_this, keynum, params){
 				results.innerHTML = html;
 			}else{
 				if(data.error){
-					if(data.next_key){
+					if(false){ // data.next_key
 						startButton.classList.remove("work");
 						agcg.removeAllLoaders();
 						
@@ -900,6 +871,8 @@ agcg.requestIblockWindow = function(_this, keynum, params){
 						}else{
 							urlSave = agcg.getFormData(form) + '&action=save_answer_to_section';
 						}
+
+						urlSave = urlSave + '&sessid=' + BX.bitrix_sessid();
 
 						var savefield = document.querySelector('select[name="savefield"]');
 						if(!savefield.value){

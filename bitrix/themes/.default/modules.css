@@ -2117,12 +2117,6 @@ img.linked
 {
 	background-position:  center -118px;
 }
-.adm-submenu-item-link-icon.ipol_robokassa_menu_icon
-{
-    background: url("icons/ipol.robokassa/icon.png") no-repeat 50% 50%;
-    background-size: 18px 18px;
-}
-
 /* Module menu */
 .ipol_sdek_menu_icon {
     background: url(icons/ipol.sdek/icon.png) no-repeat center;

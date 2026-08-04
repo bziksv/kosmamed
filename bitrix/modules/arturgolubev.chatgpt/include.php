@@ -1,9 +1,7 @@
 <?
 use \Bitrix\Main\Loader,
 	\Bitrix\Main\Localization\Loc,
-	\Bitrix\Iblock\InheritedProperty, 
-	\Bitrix\Main\Web\HttpClient,
-	\Bitrix\Main\Web\Json;
+	\Bitrix\Iblock\InheritedProperty;
 
 use \Arturgolubev\Chatgpt\Encoding,
 	\Arturgolubev\Chatgpt\Tools,
@@ -13,7 +11,8 @@ use \Arturgolubev\Chatgpt\Encoding,
 
 use Arturgolubev\Chatgpt\Suppliers\DeepSeek, 
 	Arturgolubev\Chatgpt\Suppliers\ChatGpt,
-	Arturgolubev\Chatgpt\Suppliers\GigaChat;
+	Arturgolubev\Chatgpt\Suppliers\GigaChat,
+	Arturgolubev\Chatgpt\Suppliers\OpenaiApi;
 
 include 'autoload.php';
 include 'jscore.php';
@@ -53,442 +52,25 @@ Class CArturgolubevChatgpt
 		return 0;
 	}
 
-	
-	// chatgpt
-	static function checkLimitError($keynum, $api_keys, $result){
-		$keynum++;
-
-		$arErrorVariants = [
-			'Rate limit reached',
-			'You exceeded your current quota',
-			// 'Incorrect API key provided',
-		];
-
-		if(is_array($result['error']) && $result['error']['message']){
-			foreach($arErrorVariants as $errorType){
-				if(strpos($result['error']['message'], $errorType) !== false){
-					if(isset($api_keys['keys'][$keynum])){
-						return 1;
-					}
-				}
-			}
-		}
-
-		return 0;
-	}
-
 	/* all system */
 	static function callChatProvider($question, $options){
 		if($options['provider'] == 'sber'){
-			return self::callSberGPT($question, $options);
+			if($options['content_type'] == 'image'){
+				return GigaChat::callImageApi($question, $options);
+			}else{
+				return GigaChat::callTextApi($question, $options);
+			}
 		}elseif($options['provider'] == 'deepseek'){
-			return self::callDeepSeekGPT($question, $options);
+			return DeepSeek::callTextApi($question, $options);
+		}elseif($options['provider'] == 'openai_compatible'){
+			return OpenaiApi::callOpenaiApi($question, $options);
 		}else{
 			if($options['content_type'] == 'image'){
-				return self::gptGenImage($question, $options);
+				return ChatGpt::callImageApi($question, $options);
 			}else{
-				return self::callChatGPT($question, $options);
+				return ChatGpt::callTextApi($question, $options);
 			}
 		}
-	}
-	
-	/* chatgpt chat api */
-	static function gptGenImage($message, $options){
-		$result = [];
-
-		$api_keys = ChatGpt::getApiKey($options['keynum']);
-
-		if($api_keys['error']){
-			$error = 1;
-			if($api_keys['error'] == 'no_next'){
-				$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.Loc::getMessage('ARTURGOLUBEV_CHATGPT_END_KEY_LIST');
-			}else{
-				$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.$api_keys['error'];
-			}
-		}
-		
-		if(!$api_keys['key']){
-			$error = 1;
-			$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_NO_API_KEY_ERROR');
-		}
-
-		if(!$error){
-			$data = ChatGpt::getImageCallData($message, $options);
-
-			self::writeModuleDebug(false, 'gpt image get', $data);
-
-			// echo '<pre>'; print_r($options); echo '</pre>';
-			// echo '<pre>'; print_r($data); echo '</pre>';
-			// die();
-
-			$curl = curl_init();
-
-			if(isset($data['image'])){
-				$headers = [
-					"Authorization: Bearer " . $api_keys['key']
-				];
-				
-				curl_setopt($curl, CURLOPT_URL, ChatGpt::getServerName()."/images/edits");
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($curl, CURLOPT_POST, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);		
-			}else{
-				$headers = [
-					"Accept: application/json" ,
-					"Content-Type: application/json" ,
-					"Authorization: Bearer " . $api_keys['key']
-				];
-				
-				curl_setopt($curl, CURLOPT_URL, ChatGpt::getServerName()."/images/generations");
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);	
-				curl_setopt($curl, CURLOPT_POST, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, Json::Encode($data));
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);	
-			}
-
-			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, Tools::getTimeout()); 
-			curl_setopt($curl, CURLOPT_TIMEOUT, Tools::getTimeout());
-
-			$proxy = ChatGpt::getProxy();
-			if(is_array($proxy)){
-				curl_setopt($curl, CURLOPT_PROXY, $proxy['ip']);
-				if($proxy['login']){
-					curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxy['login']);
-				}
-			}
-			
-			$baseResult = curl_exec($curl);
-			
-			$result["error"] = curl_error($curl);
-			$result["error_no"] = curl_errno($curl);
-			$result["header"] = curl_getinfo($curl);
-
-			curl_close($curl);
-
-			if($baseResult){
-				if(UTools::isHtmlPage($baseResult)){
-					$result['result']['error']['message'] = $baseResult;
-				}else{
-					$result["result"] = Json::Decode($baseResult);
-				}
-			}else{
-				$result['result']['error']['message'] = '['.$result['header']['http_code'].'] '.(($result["error"]) ? $result["error"] : 'Empty answer.');
-			}
-
-			self::writeModuleDebug(false, 'gpt image result', $result);
-
-			if(self::checkLimitError($options['keynum'], $api_keys, $result["result"])){
-				$result['next_key'] = 1;
-			}
-		}
-		
-		$result = Tools::prepareResult($options, $result);
-
-		return $result;
-	}
-
-	static function callChatGPT($message, $options){
-		$result = [];
-
-		$api_keys = ChatGpt::getApiKey($options['keynum']);
-
-		if($api_keys['error']){
-			$error = 1;
-
-			if($api_keys['error'] == 'no_next'){
-				$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.Loc::getMessage('ARTURGOLUBEV_CHATGPT_END_KEY_LIST');
-			}else{
-				$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.$api_keys['error'];
-			}
-		}
-		
-		if(!$api_keys['key']){
-			$error = 1;
-			$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_NO_API_KEY_ERROR');
-		}
-
-		if(!$error){
-			if(self::DEBUG){
-				$result = ChatGpt::getDebug();
-			}else{
-				$proxy = ChatGpt::getProxy();
-				$data = ChatGpt::getCallData($message, $options);
-				
-				self::writeModuleDebug(false, 'gpt chat get', $data);
-				
-				// echo '<pre>'; print_r($data); echo '</pre>';
-				// echo '<pre>'; print_r($proxy); echo '</pre>';
-				// die();
-				
-				$headers = [
-					"Accept: application/json" ,
-					"Content-Type: application/json" ,
-					"Authorization: Bearer " . $api_keys['key']
-				];
-
-				$curl = curl_init();
-				curl_setopt($curl, CURLOPT_URL, ChatGpt::getServerName()."/chat/completions");
-				curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, Tools::getTimeout()); 
-				curl_setopt($curl, CURLOPT_TIMEOUT, Tools::getTimeout());
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				// curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-				// curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-
-				if(is_array($proxy)){
-					curl_setopt($curl, CURLOPT_PROXY, $proxy['ip']);
-					if($proxy['login']){
-						curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxy['login']);
-					}
-				}
-
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-				curl_setopt($curl, CURLOPT_POST, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, Json::Encode($data));
-				
-				$baseResult = curl_exec($curl);
-				
-				$result["error"] = curl_error($curl);
-				$result["error_no"] = curl_errno($curl);
-				$result["header"] = curl_getinfo($curl);
-
-				curl_close($curl);
-
-				if($baseResult){
-					if(UTools::isHtmlPage($baseResult)){
-						$result['result']['error']['message'] = $baseResult;
-					}else{
-						$result["result"] = Json::Decode($baseResult);
-					}
-				}else{
-					$result['result']['error']['message'] = '['.$result['header']['http_code'].'] '.(($result["error"]) ? $result["error"] : 'Empty answer.');
-				}
-
-				$result = ChatGpt::prepareResult($result);
-
-				self::writeModuleDebug(false, 'gpt chat result', $result);
-			}
-
-			if(self::checkLimitError($options['keynum'], $api_keys, $result["result"])){
-				$result['next_key'] = 1;
-			}
-		}
-		
-		$result = Tools::prepareResult($options, $result);
-
-		return $result;
-	}
-
-	// deepseek
-	static function callDeepSeekGPT($message, $options){
-		$result = [];
-
-		$api_key = DeepSeek::getApiKey();
-
-		if(!$api_key){
-			$error = 1;
-			$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_NO_API_KEY_ERROR');
-		}
-
-		if(!$error){
-			if(self::DEBUG){
-				$result = DeepSeek::getDebug();
-			}else{
-				$data = DeepSeek::getCallData($message, $options);
-
-				self::writeModuleDebug(false, 'deepseek chat get', $data);
-				
-				$headers = [
-					"Accept: application/json" ,
-					"Content-Type: application/json" ,
-					"Authorization: Bearer " . $api_key
-				];
-
-				$curl = curl_init();
-				curl_setopt($curl, CURLOPT_URL, DeepSeek::getServerName()."/chat/completions");
-				curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, Tools::getTimeout()); 
-				curl_setopt($curl, CURLOPT_TIMEOUT, Tools::getTimeout());
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				// curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-				// curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-				curl_setopt($curl, CURLOPT_POST, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, Json::Encode($data));
-				
-				$baseResult = curl_exec($curl);
-				
-				$result["error"] = curl_error($curl);
-				$result["error_no"] = curl_errno($curl);
-				$result["header"] = curl_getinfo($curl);
-
-				curl_close($curl);
-
-				if($baseResult){
-					if(UTools::isHtmlPage($baseResult)){
-						$result['result']['error']['message'] = $baseResult;
-					}else{
-						$result["result"] = Json::Decode($baseResult);
-					}
-				}else{
-					$result['result']['error']['message'] = '['.$result['header']['http_code'].'] '.(($result["error"]) ? $result["error"] : 'Empty answer.');
-				}
-
-				self::writeModuleDebug(false, 'deepseek chat result', $result);
-			}
-		}
-		
-		$result = Tools::prepareResult($options, $result);
-
-		return $result;
-	}
-
-	/* sber */
-	static function checkSberToken(){
-		$exp = intval(intval(UTools::getSetting('sber_access_expires'))/1000);
-		$now = intval(microtime(true));
-
-		$real = $exp-$now;
-
-		if($real <= 60){
-			return self::getSberToken();
-		}
-
-		return [];
-	}
-
-	static function getSberToken(){
-		$result = [];
-
-		// UTools::setSetting('sber_access_token', '');
-		// UTools::setSetting('sber_access_expires', '');
-
-		$headers = [
-			"Authorization: Bearer ".UTools::getSetting('sber_authorization'),
-			"Content-Type: application/x-www-form-urlencoded",
-			"RqUID: ".Tools::getGuid4(),
-		];
-		
-		$data = [
-			'scope' => UTools::getSetting('sber_scope')
-		];
-
-		// echo '<pre>'; print_r($headers); echo '</pre>';
-		// echo '<pre>'; print_r($data); echo '</pre>';
-		
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, "https://ngw.devices.sberbank.ru:9443/api/v2/oauth");
-		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, Tools::getTimeout()); 
-		curl_setopt($curl, CURLOPT_TIMEOUT, Tools::getTimeout());
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);		
-		curl_setopt($curl, CURLOPT_POST, 1);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-		
-		$baseResult = curl_exec($curl);
-		
-		$result["error"] = curl_error($curl);
-		$result["error_no"] = curl_errno($curl);
-		$result["header"] = curl_getinfo($curl);
-		
-		curl_close($curl);
-
-		if($baseResult){
-			$result["result"] = Json::Decode($baseResult);
-
-			if($result["result"]['access_token']){
-				UTools::setSetting('sber_access_token', $result["result"]['access_token']);
-				UTools::setSetting('sber_access_expires', $result["result"]['expires_at']);
-			}elseif($result["result"]['message']){
-				$result["error_message"] = $result['result']['message'];
-				if($result["result"]['code']){
-					$result["error_message"] .= ' [error code = '.$result["result"]['code'].']';
-				}
-			}
-		}elseif($result["error"]){
-			$result["error_message"] = $result["error"];
-		}
-
-		return $result;
-	}
-
-	static function callSberGPT($message, $options){
-		$result = [];
-
-		$checkResult = self::checkSberToken();
-
-		if(is_array($checkResult) && $checkResult['error_message']){
-			$error = 1;
-			$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.$checkResult['error_message'];
-		}
-
-		$access_token = UTools::getSetting('sber_access_token');
-		
-		if(!$access_token){
-			$error = 1;
-			$result['result']['error']['message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ERROR').' '.Loc::getMessage('ARTURGOLUBEV_CHATGPT_SBER_NO_ACCESS_TOKEN_ERROR');
-		}
-		
-		if(!$error){
-			if(self::DEBUG){
-				$result = GigaChat::getDebug();
-				// $result['result']['error']['message'] = 'LIMIT';
-			}else{
-				$data = GigaChat::getCallData($message, $options);
-				
-				self::writeModuleDebug(false, 'gigachat chat get', $data);
-				
-				$headers = [
-					"Content-Type: application/json",
-					"Authorization: Bearer " . $access_token
-				];
-
-				// echo '<pre>'; print_r($data); echo '</pre>';
-
-				$curl = curl_init();
-				curl_setopt($curl, CURLOPT_URL, "https://gigachat.devices.sberbank.ru/api/v1/chat/completions");
-				curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, Tools::getTimeout()); 
-				curl_setopt($curl, CURLOPT_TIMEOUT, Tools::getTimeout());
-				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-				curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-				curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);		
-				curl_setopt($curl, CURLOPT_POST, 1);
-				curl_setopt($curl, CURLOPT_POSTFIELDS, Json::Encode($data));
-				
-				$baseResult = curl_exec($curl);
-				
-				$result["error"] = curl_error($curl);
-				$result["error_no"] = curl_errno($curl);
-				$result["header"] = curl_getinfo($curl);
-				
-				curl_close($curl);
-
-				if($baseResult){
-					if(UTools::isJsonPage($baseResult)){
-						$result["result"] = Json::Decode($baseResult);
-
-						if($result["result"]['status']){
-							$result['result']['error']['message'] = $result['result']['message'];
-						}
-					}else{
-						$result['result']['error']['message'] = $baseResult;
-					}
-				}else{
-					$result['result']['error']['message'] = 'Empty answer';
-				}
-
-				self::writeModuleDebug(false, 'gigachat chat result', $result);
-			}
-		}
-		
-		$result = Tools::prepareResult($options, $result);
-		
-		return $result;
 	}
 
 	static function applyDefaultVals($postFields, $get = 1){
@@ -524,19 +106,16 @@ Class CArturgolubevChatgpt
 	}
 	
 	static function createImage($input){
-		$data = self::gptGenImage($input['question'], $input);
-
-		if(is_array($data['result']['error'])){
-			$result['next_key'] = ($data['next_key']) ? 1 : 0;
-			$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_CHATGPT_ERROR').' '.($data['result']['error']['message'] ? $data['result']['error']['message'] : $data['result']['error']['code']);
+		if($input['provider'] == 'sber'){
+			$data = GigaChat::callImageApi($input['question'], $input);
 		}else{
-			$image_url = Tools::prepareImageOutput($data['result']['data'][0], $input['output_format']);
+			$data = ChatGpt::callImageApi($input['question'], $input);
+		}
 
-			if($image_url){
-				$result['created_image'] = $image_url;
-			}else{
-				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_CREATE_ERROR');
-			}
+		if($data['prepared']['error']){
+			$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_CHATGPT_ERROR').' '.$data['prepared']['error_message'];
+		}else{
+			$result['created_image'] = $data['prepared']['image'];
 		}
 
 		return $result;
@@ -547,7 +126,8 @@ Class CArturgolubevChatgpt
 
 		$options = [
 			'provider' => $input['provider'],
-			'keynum' => intval($input['keynum']),
+			'request_type' => 'simple',
+			'object_type' => 'simple',
 		];
 
 		$data = self::callChatProvider($input['question'], $options);
@@ -555,7 +135,6 @@ Class CArturgolubevChatgpt
 		$result['full_result'] = $data['result'];
 		
 		if($data['prepared']['error']){
-			$result['next_key'] = ($data['next_key']) ? 1 : 0;
 			$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_CHATGPT_ERROR').' '.$data['prepared']['error_message'];
 		}else{
 			if($data['prepared']['answer']){
@@ -605,11 +184,9 @@ Class CArturgolubevChatgpt
 		
 		if($input['operation'] == 'REWRITE'){
 			if($input['for'] != 'ARTICLE'){
-				switch($input['type']){
-					case 'TEXT': 
-						$question .= Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_REWRITE_TYPE_DESCRIPTION");
-					break;
-				}
+				$question .= Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_REWRITE_TYPE_DESCRIPTION");
+			}else{
+				$question .= Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_REWRITE_TYPE_DESCRIPTION_ARTICLE");
 			}
 			
 			switch($input['for']){
@@ -668,11 +245,12 @@ Class CArturgolubevChatgpt
 				break;
 			}
 			
+			if($input['lang']){
+				$question .= Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_TRANSLATE_LANG", ['#lang#' => ToLower(Encoding::convertFromUtf($input['lang']))]);
+			}
+			
 			$question .= '"' . $main_info . '" ';
 		
-			if($input['lang']){
-				$question .= Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_TRANSLATE_LANG", ['#lang#' => Encoding::convertFromUtf($input['lang'])]);
-			}
 			
 			if($input['length']){
 				$question .= Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_WRITE_LENGTH", ['#length#' => $input['length']]);
@@ -688,6 +266,11 @@ Class CArturgolubevChatgpt
 				$question = trim($question) . Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_FOR_RESULT") . implode(', ', $arDopInstruction);
 			}
 
+			if($input['operation'] == 'CREATE'){
+				if(in_array($input['type'], ['H1', 'TITLE', 'DESCRIPTION', 'KEYWORDS'])){
+					$question .= '. '.Loc::getMessage("ARTURGOLUBEV_CHATGPT_MAIN_ELEMENT_WRITE_ONE_WARIANT");
+				}
+			}
 		}
 
 		if($input['additionals']){
@@ -812,7 +395,8 @@ Class CArturgolubevChatgpt
 		$options = [
 			'content_type' => 'text',
 			'provider' => $input['provider'],
-			'keynum' => intval($input['keynum'])
+			'request_type' => 'generation',
+			'object_type' => 'element',
 		];
 
 		if($input['type'] == 'KEYWORDS'){
@@ -864,7 +448,7 @@ Class CArturgolubevChatgpt
 				return $result;
 			}
 
-			self::writeModuleDebug(false, 'createElementText', $input);
+			Tools::writeModuleDebug(false, 'createElementText', $input);
 
 			$data = self::callChatProvider($result['question'], $options);
 
@@ -873,8 +457,9 @@ Class CArturgolubevChatgpt
 			foreach(GetModuleEvents(self::MODULE_ID, "modifyElementAnswer", true) as $arEvent)
 				ExecuteModuleEventEx($arEvent, [&$data, $input, $elementInfo]);
 
+			// echo '<pre>'; print_r($data['prepared']); echo '</pre>';
+
 			if($data['prepared']['error']){
-				$result['next_key'] = ($data['next_key']) ? 1 : 0;
 				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_CHATGPT_ERROR').' '.$data['prepared']['error_message'];
 			}else{
 				if($input['mass_generation'] && self::isDemo()){
@@ -893,10 +478,8 @@ Class CArturgolubevChatgpt
 						}
 					}
 				}else{
-					$image_url = Tools::prepareImageOutput($data['result']['data'][0], $input['output_format']);
-
-					if($image_url){
-						$result['answer'] = $image_url;
+					if($data['prepared']['image']){
+						$result['answer'] = $data['prepared']['image'];
 						$result['used_tokens_cnt'] = intval($data['result']['usage']['total_tokens']);
 						$result['used_tokens'] = Tools::calculateTokens($result['used_tokens_cnt'], $options['provider']);
 					}else{
@@ -911,15 +494,104 @@ Class CArturgolubevChatgpt
 		
 		return $result;
 	}
+
+	static function checkElementWriteAccess($iblockId, $elementId, $checkPermissions){
+		if($iblockId <= 0 || $elementId <= 0){
+			return [
+				'result' => false,
+				'error_message' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ELEMENT_NOT_FOUND'),
+			];
+		}
+
+		$elementDb = \CIBlockElement::GetList([], [
+			'ID' => $elementId,
+			'IBLOCK_ID' => $iblockId,
+		], false, ['nTopCount' => 1], ['ID']);
+
+		if(!$elementDb->Fetch()){
+			return [
+				'result' => false,
+				'error_message' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ELEMENT_NOT_FOUND'),
+			];
+		}
+
+		if($checkPermissions){
+			$permissionDb = \CIBlockElement::GetList([], [
+				'ID' => $elementId,
+				'IBLOCK_ID' => $iblockId,
+				'CHECK_PERMISSIONS' => 'Y',
+				'MIN_PERMISSION' => 'W',
+			], false, ['nTopCount' => 1], ['ID']);
+
+			$element = $permissionDb->Fetch();
+			if(!$element){
+				return [
+					'result' => false,
+					'error_message' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ACCESS_DENIED'),
+				];
+			}
+		}
+
+		return ['result' => true];
+	}
+
+	static function checkSectionWriteAccess($iblockId, $sectionId, $checkPermissions){
+		if($iblockId <= 0 || $sectionId <= 0){
+			return [
+				'result' => false,
+				'error_message' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ELEMENT_NOT_FOUND'),
+			];
+		}
+
+		$sectionDb = \CIBlockSection::GetList([], [
+			'ID' => $sectionId,
+			'IBLOCK_ID' => $iblockId,
+		], false, ['ID']);
+
+		if(!$sectionDb->Fetch()){
+			return [
+				'result' => false,
+				'error_message' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ELEMENT_NOT_FOUND'),
+			];
+		}
+
+		if($checkPermissions){
+			$permissionDb = \CIBlockSection::GetList([], [
+				'ID' => $sectionId,
+				'IBLOCK_ID' => $iblockId,
+				'CHECK_PERMISSIONS' => 'Y',
+				'MIN_PERMISSION' => 'W',
+			], false, ['ID']);
+
+			$element = $permissionDb->Fetch();
+			if(!$element){
+				return [
+					'result' => false,
+					'error_message' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_ACCESS_DENIED'),
+				];
+			}
+		}
+		
+		return ['result' => true];
+	}
 	
 	static function saveToElement($params){
 		Loader::includeModule('iblock');
-		
+
+		$params['ID'] = intval($params['ID']);
+		$params['IBLOCK_ID'] = intval($params['IBLOCK_ID']);
+
+		$accessCheck = self::checkElementWriteAccess($params['IBLOCK_ID'], $params['ID'], $params['check_permissions']);
+		if(!$accessCheck['result']){
+			return $accessCheck;
+		}
+
 		if($params['re_encoding']){
 			$params['genresult'] = Encoding::convertFromUtf($params['genresult']);
 		}
 		
 		$result = [
+			'save_target_id' => $params['ID'],
 			'genresult' => $params['genresult'],
 			'savefield_type' => 'field',
 			'savefield' => $params['savefield'],
@@ -952,7 +624,10 @@ Class CArturgolubevChatgpt
 			];
 			
 			if(in_array($result['savefield'], ['PREVIEW_PICTURE', 'DETAIL_PICTURE'])){
-				$updateData[$result['savefield']] = CFile::MakeFileArray($result['genresult']);
+				$fileLink = $result['genresult'];
+				if(Encoding::exSubstr($fileLink, 0, 8) == '/upload/'){
+					$updateData[$result['savefield']] = CFile::MakeFileArray($fileLink);
+				}
 			}
 
 			if($addTypeHtml){
@@ -962,43 +637,36 @@ Class CArturgolubevChatgpt
 			$res = $el->Update($params['ID'], $updateData);
 			if(!$res){
 				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_SAVE_ERROR') . $res->LAST_ERROR;
+			}else{
+				if($result['savefield'] == 'NAME'){
+					$ipropElementValues = new InheritedProperty\ElementValues($params['IBLOCK_ID'], $params['ID']);
+					$ipropElementValues->clearValues();
+				}
 			}
 		}
 		
 		if($result['savefield_type'] == 'property'){
 			$propertyInfo = [];
 			$properties = \CIBlockProperty::GetList([], ["CODE"=>$result['savefield'], "IBLOCK_ID"=>$params['IBLOCK_ID']]);
-			if($prop_fields = $properties->GetNext()){
+			if($prop_fields = $properties->GetNext(true, false)){
 				$propertyInfo = $prop_fields;
 			}
 			
 			$result['savefield_id'] = $propertyInfo['ID'];
 
 			if($propertyInfo['PROPERTY_TYPE'] == 'L' && !$propertyInfo['USER_TYPE']){
-				$save_xml_id = \Cutil::translit($result['genresult'], "ru", ["replace_space" => "_", "replace_other"=> "-"]);
+				if($propertyInfo['MULTIPLE'] == 'Y'){
+					$saveIDs = [];
 
-				$db_enum_list = CIBlockProperty::GetPropertyEnum($propertyInfo['ID'], [], Array("IBLOCK_ID"=>$params['IBLOCK_ID'], "VALUE"=>$result['genresult']));
-				if($ar_enum_list = $db_enum_list->GetNext()){
-					$saveID = $ar_enum_list['ID'];
-				}
-
-				if(!$saveID){
-					$db_enum_list = CIBlockProperty::GetPropertyEnum($propertyInfo['ID'], [], Array("IBLOCK_ID"=>$params['IBLOCK_ID'], "XML_ID"=>$save_xml_id));
-					if($ar_enum_list = $db_enum_list->GetNext()){
-						$saveID = $ar_enum_list['ID'];
+					foreach(explode('|', $result['genresult']) as $expval){
+						$saveIDs[] = Tools::makeIblockEnumVariant(trim($expval), $params['IBLOCK_ID'], $propertyInfo['ID']);
 					}
-				}
 
-				if(!$saveID){
-					$ibpenum = new CIBlockPropertyEnum;
-					$saveID = $ibpenum->Add([
-						'PROPERTY_ID'=>$propertyInfo['ID'],
-						'VALUE'=> $result['genresult'],
-						'XML_ID'=> $save_xml_id,
-					]);
+					$saveData = [$result['savefield'] => $saveIDs];
+				}else{
+					$saveID = Tools::makeIblockEnumVariant($result['genresult'], $params['IBLOCK_ID'], $propertyInfo['ID']);
+					$saveData = [$result['savefield'] => $saveID];
 				}
-
-				$saveData = [$result['savefield'] => $saveID];
 			}elseif($propertyInfo['USER_TYPE'] == 'HTML'){
 				$result['savefield_type'] = 'property_html';
 				
@@ -1007,11 +675,51 @@ Class CArturgolubevChatgpt
 						'VALUE' => ['TYPE'=>'HTML', 'TEXT'=>$result['genresult']]
 					]
 				];
+			}elseif($propertyInfo['PROPERTY_TYPE'] == 'F'){
+				$fileLink = $result['genresult'];
+				if(Encoding::exSubstr($fileLink, 0, 8) == '/upload/'){
+					$fileArray = CFile::MakeFileArray($fileLink);
+
+					if($propertyInfo['MULTIPLE'] == 'Y'){
+						$lockStandartSave = 1;
+
+						$fileSaveArray = [];
+						$res = \CIBlockElement::GetProperty($params['IBLOCK_ID'], $params['ID'], [], ["CODE" => $result['savefield']]);
+						while ($ob = $res->Fetch()) {
+							if ($ob["VALUE"]) {
+								$fileSaveArray[$ob["PROPERTY_VALUE_ID"]] = [
+									"VALUE" => $ob["VALUE"],
+									"DESCRIPTION" => $ob["DESCRIPTION"],
+								];
+							}
+						}
+
+						$fileSaveArray['n0'] = ['VALUE' => $fileArray, 'DESCRIPTION' => ''];
+						\CIBlockElement::SetPropertyValues($params['ID'], $params['IBLOCK_ID'], $fileSaveArray, $result['savefield']);
+					}else{
+						$saveData = [$result['savefield'] => $fileArray];
+					}
+				}
 			}else{
-				$saveData = [$result['savefield'] => $result['genresult']];
+				if($propertyInfo['MULTIPLE'] == 'Y'){
+					$saveVals = [];
+
+					foreach(explode('|', $result['genresult']) as $expval){
+						$saveVals[] = trim($expval);
+					}
+
+					$saveData = [$result['savefield'] => $saveVals];
+				}else{
+					$saveData = [$result['savefield'] => $result['genresult']];
+				}
 			}
 
-			\CIBlockElement::SetPropertyValuesEx($params['ID'], $params['IBLOCK_ID'], $saveData);
+			// echo '<pre>'; print_r($saveData); echo '</pre>';
+			// echo '<pre>'; print_r($propertyInfo); echo '</pre>';
+
+			if(!$lockStandartSave){
+				\CIBlockElement::SetPropertyValuesEx($params['ID'], $params['IBLOCK_ID'], $saveData);
+			}
 		}
 		
 		if($result['savefield_type'] == 'seo'){
@@ -1021,6 +729,9 @@ Class CArturgolubevChatgpt
 			$ipropElementValues = new InheritedProperty\ElementValues($params['IBLOCK_ID'], $params['ID']);
 			$ipropElementValues->clearValues();
 		}
+
+		foreach(GetModuleEvents(self::MODULE_ID, "afterSaveDataToElement", true) as $arEvent)
+			ExecuteModuleEventEx($arEvent, [$result]);
 		
 		return $result;
 	}
@@ -1068,7 +779,8 @@ Class CArturgolubevChatgpt
 		$options = [
 			'content_type' => 'text',
 			'provider' => $input['provider'],
-			'keynum' => intval($input['keynum'])
+			'request_type' => 'generation',
+			'object_type' => 'section',
 		];
 		
 		if($input['type'] == 'KEYWORDS'){
@@ -1126,7 +838,6 @@ Class CArturgolubevChatgpt
 				ExecuteModuleEventEx($arEvent, [&$data, $input, $elementInfo]);
 
 			if($data['prepared']['error']){
-				$result['next_key'] = ($data['next_key']) ? 1 : 0;
 				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_CHATGPT_ERROR').' '.$data['prepared']['error_message'];
 			}else{
 				if($input['mass_generation'] && self::isDemo()){
@@ -1145,10 +856,8 @@ Class CArturgolubevChatgpt
 						}
 					}
 				}else{
-					$image_url = Tools::prepareImageOutput($data['result']['data'][0], $input['output_format']);
-					
-					if($image_url){
-						$result['answer'] = $image_url;
+					if($data['prepared']['image']){
+						$result['answer'] = $data['prepared']['image'];
 						$result['used_tokens_cnt'] = intval($data['result']['usage']['total_tokens']);
 						$result['used_tokens'] = Tools::calculateTokens($result['used_tokens_cnt'], $options['provider']);
 					}else{
@@ -1166,12 +875,21 @@ Class CArturgolubevChatgpt
 	
 	static function saveToSection($params){
 		Loader::includeModule('iblock');
+
+		$params['ID'] = intval($params['ID']);
+		$params['IBLOCK_ID'] = intval($params['IBLOCK_ID']);
+
+		$accessCheck = self::checkSectionWriteAccess($params['IBLOCK_ID'], $params['ID'], $params['check_permissions']);
+		if(!$accessCheck['result']){
+			return $accessCheck;
+		}
 		
 		if($params['re_encoding']){
 			$params['genresult'] = Encoding::convertFromUtf($params['genresult']);
 		}
 		
 		$result = [
+			'save_target_id' => $params['ID'],
 			'genresult' => $params['genresult'],
 			'savefield_type' => 'field',
 			'savefield' => $params['savefield'],
@@ -1203,7 +921,10 @@ Class CArturgolubevChatgpt
 			];
 
 			if(in_array($result['savefield'], ['PICTURE'])){
-				$updateData[$result['savefield']] = CFile::MakeFileArray($result['genresult']);
+				$fileLink = $result['genresult'];
+				if(Encoding::exSubstr($fileLink, 0, 8) == '/upload/'){
+					$updateData[$result['savefield']] = CFile::MakeFileArray($fileLink);
+				}
 			}
 			
 			if($addTypeHtml){
@@ -1213,44 +934,51 @@ Class CArturgolubevChatgpt
 			$res = $bs->Update($params['ID'], $updateData);
 			if(!$res){
 				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_SAVE_ERROR') . $res->LAST_ERROR;
+			}else{
+				if($result['savefield'] == 'NAME'){
+					$ipropElementValues = new InheritedProperty\SectionValues($params['IBLOCK_ID'], $params['ID']);
+					$ipropElementValues->clearValues();
+				}
 			}
 		}
 		
 		if($result['savefield_type'] == 'seo'){
-			$ipropElementTemplates = new \Bitrix\Iblock\InheritedProperty\SectionTemplates($params['IBLOCK_ID'], $params['ID']);			
+			$ipropElementTemplates = new InheritedProperty\SectionTemplates($params['IBLOCK_ID'], $params['ID']);			
 			$ipropElementTemplates->set([$result['savefield'] => $result['genresult']]);
 			
-			$ipropElementValues = new \Bitrix\Iblock\InheritedProperty\SectionValues($params['IBLOCK_ID'], $params['ID']);
+			$ipropElementValues = new InheritedProperty\SectionValues($params['IBLOCK_ID'], $params['ID']);
 			$ipropElementValues->clearValues();
 		}
+
+		foreach(GetModuleEvents(self::MODULE_ID, "afterSaveDataToSection", true) as $arEvent)
+			ExecuteModuleEventEx($arEvent, [$result]);
 		
 		return $result;
-	}
-	
-	static function writeModuleDebug($path, $module, $data){
-		if(self::LOG_DEBUG){
-			// UTools::simpleDataLog($path, $module, $data);
-			AddMessage2Log($data, 'ag.chatgpt '.$module, 0);
-		}
 	}
 
 	// tasks
 	static function taskWorker($task_id){
 		$log_path = '/logs_chatgpt/tasks/task_'.$task_id.'.txt';
 
-		self::writeModuleDebug($log_path, 'TaskWorker #'.$task_id, '= Start Iteration');
+		Tools::writeModuleDebug($log_path, 'TaskWorker #'.$task_id, '= Start Iteration');
 
-		$elements = Tasks\Element::getTaskWorkElements($task_id, 1); // todo
+		$timeLimit = 8;
+		$elementWorkLimit = (self::DEBUG) ? 2 : 10;
+		
+		$elements = Tasks\Element::getTaskWorkElements($task_id, 250);
+
 		if(count($elements)){
+			$genCount = 0;
 			$start = microtime(true);
 
 			$task = Tasks\Task::getTaskByID($task_id);
 			
 			foreach($elements as $element){
 				$workTime = round(microtime(true) - $start, 2);
-				if($workTime > 5) break;
+				if($workTime > $timeLimit) break;
+				if($genCount >= $elementWorkLimit) break;
 
-				self::writeModuleDebug($log_path, 'TaskWorker #'.$task_id.' Work $element', $element);
+				Tools::writeModuleDebug($log_path, 'TaskWorker #'.$task_id.' Work $element', $element);
 
 				if(is_array($task)){
 					if($task['UF_ETYPE'] == 'E'){
@@ -1261,7 +989,11 @@ Class CArturgolubevChatgpt
 				}
 
 				if($result['error_message'] || $result['error_type']){
-					self::writeModuleDebug($log_path, 'TaskWorker #'.$task_id.' error $result', $result);
+					if($result['error_type'] != 'skip_value'){
+						$genCount++;
+					}
+
+					Tools::writeModuleDebug($log_path, 'TaskWorker #'.$task_id.' error $result', $result);
 
 					$finishTaskError = 0;
 
@@ -1303,7 +1035,9 @@ Class CArturgolubevChatgpt
 						$r = Tasks\Task::finishTask($task_id, $updateTask);
 					}
 				}else{
-					self::writeModuleDebug($log_path, 'TaskWorker #'.$task_id.' success $result', $result);
+					$genCount++;
+
+					Tools::writeModuleDebug($log_path, 'TaskWorker #'.$task_id.' success $result', $result);
 
 					$updateElement = [
 						'UF_STATUS' => 'success',
@@ -1316,14 +1050,14 @@ Class CArturgolubevChatgpt
 				}
 			}
 		}else{
-			self::writeModuleDebug($log_path, 'TaskWorker #'.$task_id, 'finish task, no elements');
+			Tools::writeModuleDebug($log_path, 'TaskWorker #'.$task_id, 'finish task, no elements');
 
 			Tasks\Task::finishTask($task_id, [
 				'UF_STATUS' => 'finish',
 			]);
 		}
 		
-		self::writeModuleDebug($log_path, 'TaskWorker #'.$task_id, '= End Iteration');
+		Tools::writeModuleDebug($log_path, 'TaskWorker #'.$task_id, '= End Iteration');
 
 		return 'CArturgolubevChatgpt::taskWorker('.$task_id.');';
 	}
@@ -1334,7 +1068,9 @@ Class CArturgolubevChatgpt
 			$options = [
 				'content_type' => 'text',
 				'provider' => $task['UF_PARAMS']['provider'],
-				'keynum' => 0,
+				'request_type' => 'task_generation',
+				'object_type' => 'element',
+				'task_id' => $task['ID'],
 			];
 
 			$input = [
@@ -1354,7 +1090,7 @@ Class CArturgolubevChatgpt
 				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_GENERAL_DEMO_MASS_GENERATE_LIMIT');
 			}
 
-			self::writeModuleDebug(false, 'taskElementWork empty check base_field_value', $result['base_field_value']);
+			Tools::writeModuleDebug(false, 'taskElementWork empty check base_field_value', $result['base_field_value']);
 
 			if($task['UF_PARAMS']['save_only_empty'] == 'Y'){
 				if($result['base_field_value']){
@@ -1364,17 +1100,23 @@ Class CArturgolubevChatgpt
 			}
 			
 			if(!$result['error_message']){
+				$input['files'] = $task['UF_PARAMS']['files'];
 				$input['template_element'] = Encoding::convertFromUtf($task['UF_PROMPT']);
 				$input['question'] = self::makeQuestionByTemplate($input['template_element'], $elementInfo);
 				
+				if($input['files'] && $elementInfo[$input['files']]){
+					$result['files_vals'] = $elementInfo[$input['files']];
+					$options['files'] = explode(', ', $elementInfo[$input['files']]);
+				}
+
 				foreach(GetModuleEvents(self::MODULE_ID, "modifyElementQuestionBeforeSend", true) as $arEvent)
 					ExecuteModuleEventEx($arEvent, [&$input['question'], $input, $elementInfo]);
 				
-				self::writeModuleDebug(false, 'taskElementWork before request input', $input);
+				Tools::writeModuleDebug(false, 'taskElementWork before request input', $input);
 
 				$data = self::callChatProvider($input['question'], $options);
 
-				self::writeModuleDebug(false, 'taskElementWork after request data', $data);
+				Tools::writeModuleDebug(false, 'taskElementWork after request data', $data);
 				
 				foreach(GetModuleEvents(self::MODULE_ID, "modifyElementAnswer", true) as $arEvent)
 					ExecuteModuleEventEx($arEvent, [&$data, $input, $elementInfo]);
@@ -1396,7 +1138,7 @@ Class CArturgolubevChatgpt
 					'IBLOCK_ID' => $task['UF_IBLOCK'],
 				];
 
-				self::writeModuleDebug(false, 'taskElementWork before save saveParams', $saveParams);
+				Tools::writeModuleDebug(false, 'taskElementWork before save saveParams', $saveParams);
 
 				$saveResult = self::saveToElement($saveParams);
 				if($saveResult['error_message']){
@@ -1405,7 +1147,7 @@ Class CArturgolubevChatgpt
 				}
 			}
 			
-			self::writeModuleDebug(false, 'taskElementWork result', $result);
+			Tools::writeModuleDebug(false, 'taskElementWork result', $result);
 
 			return $result;
 		}
@@ -1420,7 +1162,9 @@ Class CArturgolubevChatgpt
 			$options = [
 				'content_type' => 'text',
 				'provider' => $task['UF_PARAMS']['provider'],
-				'keynum' => 0,
+				'request_type' => 'task_generation',
+				'object_type' => 'section',
+				'task_id' => $task['ID'],
 			];
 
 			$input = [
@@ -1458,7 +1202,7 @@ Class CArturgolubevChatgpt
 				foreach(GetModuleEvents(self::MODULE_ID, "modifySectionQuestionBeforeSend", true) as $arEvent)
 					ExecuteModuleEventEx($arEvent, [&$result['question'], $input, $elementInfo]);
 				
-				self::writeModuleDebug(false, 'createSectionText AutoTask', $input);
+				Tools::writeModuleDebug(false, 'createSectionText AutoTask', $input);
 				
 				$data = self::callChatProvider($input['question'], $options);
 

@@ -12,6 +12,7 @@ $APPLICATION->SetAdditionalCSS($path.'/styles.css');
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].$path."/.parameters.php");
 
 $jsFunctionName = str_replace('@', '', $arGadget['ID']).'_js_worker';
+
 ?>
 
 <div class="ag-gadgets ag-watcher">
@@ -31,7 +32,7 @@ $jsFunctionName = str_replace('@', '', $arGadget['ID']).'_js_worker';
 					BX.ajax({
 						url: '<?=$path?>ajax.php',
 						method: 'POST',
-						data: {'module': '<?=$module_id?>', 'target': '<?=$arGadgetParams["SHOW_TARGET"]?>', 'exceptions': '<?=$arGadgetParams["EXCEPTIONS"]?>'},
+						data: {'module': '<?=$module_id?>', 'target': '<?=CUtil::JSEscape($arGadgetParams["SHOW_TARGET"])?>', 'exceptions': '<?=CUtil::JSEscape($arGadgetParams["EXCEPTIONS"])?>', 'sessid': '<?=bitrix_sessid()?>'},
 						dataType: 'html',
 						timeout: 30,
 						async: true,
@@ -46,7 +47,6 @@ $jsFunctionName = str_replace('@', '', $arGadget['ID']).'_js_worker';
 						}
 					});
 				}
-				
 			}
 		}
 

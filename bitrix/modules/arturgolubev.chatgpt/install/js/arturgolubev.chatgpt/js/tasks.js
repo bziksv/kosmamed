@@ -2,23 +2,48 @@
 agcg.taskListDelete = function(task_id){
     let confirm_delete = confirm(BX.message('ARTURGOLUBEV_CHATGPT_JS_DELETE_TASK_CONFIRM'));
     if(confirm_delete){
-        agcg.deleteTask(task_id, function(){
-            document.location.reload();
-        });
+        agcg.deleteTask(task_id);
     }
 }
 agcg.taskEditDelete = function(task_id){
     let confirm_delete = confirm(BX.message('ARTURGOLUBEV_CHATGPT_JS_DELETE_TASK_CONFIRM'));
     if(confirm_delete){
-        agcg.deleteTask(task_id);
+        agcg.deleteTask(task_id, function(){
+            document.location.href = '/bitrix/admin/arturgolubev_chatgpt_automatic_tasks.php?lang=ru';
+        });
     }
 }
-    agcg.deleteTask = function(task_id){
+    agcg.deleteTask = function(task_id, callback){
         BX.ajax.runAction('arturgolubev:chatgpt.Tasks.delete', {
             data: {'task_id': task_id}
         }).then(function (response) {
             data = response.data;
             console.log('Debug Controller=Tasks.delete', data);
+            
+            let grid = BX.Main.gridManager.getById('agcg_tasks_list');
+            if (grid && grid.instance) {
+                grid.instance.reloadTable();
+            }
+
+            if(typeof(callback) == 'function'){
+                callback();
+            }
+        }, function (response) {
+            alert(BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_AJAX_ERROR"));
+        });
+	}
+
+agcg.taskListCopy = function(task_id){
+    agcg.copyTask(task_id, function(){
+        document.location.reload();
+    });
+}
+    agcg.copyTask = function(task_id){
+        BX.ajax.runAction('arturgolubev:chatgpt.Tasks.copy', {
+            data: {'task_id': task_id}
+        }).then(function (response) {
+            data = response.data;
+            console.log('Debug Controller=Tasks.copy', data);
             
             let grid = BX.Main.gridManager.getById('agcg_tasks_list');
             if (grid && grid.instance) {
@@ -67,7 +92,7 @@ agcg.initTaskEditPage = function(params){
                 BX.ajax({
                     method: 'POST',
                     url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
-                    data: agcg.getFormData(form),
+                    data: agcg.getFormData(form)+'&sessid='+BX.bitrix_sessid(),
                     // dataType: "html",
                     dataType: 'json',
                     async: true,
@@ -110,7 +135,7 @@ agcg.initTaskEditPage = function(params){
                 BX.ajax({
                     method: 'POST',
                     url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
-                    data: agcg.getFormData(form),
+                    data: agcg.getFormData(form)+'&sessid='+BX.bitrix_sessid(),
                     // dataType: "html",
                     dataType: 'json',
                     async: true,
@@ -134,6 +159,60 @@ agcg.initTaskEditPage = function(params){
                             }).then(function (response) {
                                 data = response.data;
                                 console.log('Debug Controller=Tasks.start', data);
+
+                                if(data.error){
+                                    results.innerHTML = data.error_message;
+                                }else{
+                                    document.location.reload();
+                                }
+                            }, function (response) {
+                                alert(BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_AJAX_ERROR"));
+                            });
+                        }
+                    },
+                    onfailure: function(p1, p2){
+                        alert(BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_AJAX_ERROR"));
+                    },
+                });
+            });
+        }
+
+        let btn_restart = document.querySelector('.js-taskedit-restart');
+        if(btn_restart){
+            btn_restart.addEventListener('click', function(e){
+                if(!agcg.checkRequiredFields(fields, results)){
+                    return;
+                }
+
+                console.log('btn_restart', btn_restart);
+
+                BX.ajax({
+                    method: 'POST',
+                    url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
+                    data: agcg.getFormData(form)+'&sessid='+BX.bitrix_sessid(),
+                    // dataType: "html",
+                    dataType: 'json',
+                    async: true,
+                
+                    processData: true,
+                    scriptsRunFirst: false,
+                    emulateOnload: false,
+                    start: true,
+                    cache: false,
+                    
+                    onsuccess: function(data){
+                        // console.log('Debug Action=Save', data);
+                        
+                        if(data.error){
+                            results.innerHTML = data.error_message;
+                        }else{
+                            let task_id = form.querySelector('input[name="id"]').value;
+                            
+                            BX.ajax.runAction('arturgolubev:chatgpt.Tasks.restart', {
+                                data: {'task_id': task_id}
+                            }).then(function (response) {
+                                data = response.data;
+                                console.log('Debug Controller=Tasks.restart', data);
 
                                 if(data.error){
                                     results.innerHTML = data.error_message;
@@ -194,7 +273,8 @@ agcg.initTaskEditPage = function(params){
     agcg.getTaskContent = function(form, fieldsWrap, results){
         var sendData = agcg.getFormData(form);
         sendData = sendData + '&action=get_tasks_form_content';
-
+    	sendData = sendData + '&sessid=' + BX.bitrix_sessid();
+        
         BX.ajax({
             method: 'POST',
             url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
@@ -218,7 +298,7 @@ agcg.initTaskEditPage = function(params){
                 if(renew.length){
                     renew.forEach(function(item){
                         item.addEventListener('change', function(){
-                            agcg.getFormContent(form, fieldsWrap, results);
+                            agcg.getTaskContent(form, fieldsWrap, results);
                         });
                     });
                 }
@@ -307,7 +387,7 @@ agcg.initAddWindow = function(params){
         BX.ajax({
             method: 'POST',
             url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
-            data: {action: 'tasks_addlist', ibid: params.ibid, entity: params.entity},
+            data: {action: 'tasks_addlist', ibid: params.ibid, entity: params.entity, sessid: BX.bitrix_sessid()},
             dataType: 'json',
             async: true,
         
@@ -365,7 +445,7 @@ agcg.initAddWindow = function(params){
         BX.ajax({
             method: 'POST',
             url: '/bitrix/tools/arturgolubev.chatgpt/ajax.php',
-            data: {action: 'tasks_add_elements', task_id: task_id, params: params, elements: elements},
+            data: {action: 'tasks_add_elements', task_id: task_id, params: params, elements: elements, sessid: BX.bitrix_sessid()},
             dataType: 'json',
             async: true,
         
@@ -431,8 +511,8 @@ agcg.showTaskElementInfoWindow = function(task_element_id){
             }
 
             if(data.info.UF_GENERATION_RESULT){
-                wContent += '<div style="margin-top: 10px;">'+BX.message('ARTURGOLUBEV_CHATGPT_JS_TASK_ELEMENT_MORE_FIELD_UF_GENERATION_RESULT')+': '+data.info.UF_GENERATION_RESULT+'</div>';
-                wContent += '<div style="margin-top: 10px;">'+BX.message('ARTURGOLUBEV_CHATGPT_JS_TASK_ELEMENT_MORE_FIELD_UF_VALUE_BACKUP')+': '+data.info.UF_VALUE_BACKUP+'</div>';
+                wContent += '<div style="margin-top: 10px;">'+BX.message('ARTURGOLUBEV_CHATGPT_JS_TASK_ELEMENT_MORE_FIELD_UF_VALUE_BACKUP')+': <div class="tasks-generation-info-data">'+BX.util.htmlspecialchars(data.info.UF_VALUE_BACKUP)+'</div></div>';
+                wContent += '<div style="margin-top: 10px;"><b>'+BX.message('ARTURGOLUBEV_CHATGPT_JS_TASK_ELEMENT_MORE_FIELD_UF_GENERATION_RESULT')+':</b> <div class="tasks-generation-info-data">'+BX.util.htmlspecialchars(data.info.UF_GENERATION_RESULT)+'</div></div>';
             }
         }
             
@@ -489,6 +569,18 @@ agcg.deleteTaskElementConfirm = function(task_element_id){
 	}
 agcg.readdTaskElement = function(task_element_id){
     BX.ajax.runAction('arturgolubev:chatgpt.TaskElements.readdElement', {
+        data: {'element_id': task_element_id}
+    }).then(function (response) {
+        let grid = BX.Main.gridManager.getById('agcg_task_elements_list');
+        if (grid && grid.instance) {
+            grid.instance.reloadTable();
+        }
+    }, function (response) {
+        alert(BX.message("ARTURGOLUBEV_CHATGPT_JS_ELEMENT_AJAX_ERROR"));
+    });
+}
+agcg.returnDataTaskElement = function(task_element_id){
+    BX.ajax.runAction('arturgolubev:chatgpt.TaskElements.returnDataTaskElement', {
         data: {'element_id': task_element_id}
     }).then(function (response) {
         let grid = BX.Main.gridManager.getById('agcg_task_elements_list');

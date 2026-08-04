@@ -287,7 +287,8 @@
 		text-transform: uppercase;
 		text-shadow: none;
 		white-space: nowrap;
-		font-size: 12px;
+		font-size: 13px;
+		letter-spacing: 0.5px;
 		font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 		font-weight: var(--ui-font-weight-semi-bold, 600);
 		line-height: 34px;
@@ -303,6 +304,11 @@
 			-webkit-box-shadow: none;
 					box-shadow: none;
 			color: #fff;
+		}
+		.agcg_adm_page .input-button-description {
+			margin-top: 10px;
+			margin-bottom: 10px;
+			/* display: inline-block; */
 		}
 
 /* ask page */
@@ -431,4 +437,10 @@
 
 	.tasks-description {
 		margin-bottom: 20px;
+	}
+	.tasks-generation-info-data {
+		background: #fff;
+		padding: 6px 8px;
+		margin-top: 6px;
+		border-radius: 4px;
 	}

@@ -15,6 +15,10 @@ class Grid {
 	static function listTaskElements($task_id, $sort, $nav, $filterData){
         $result = $elements = [];
 
+		$ibElements = $ibElementsData = [];
+
+		$taskData = Tasks\Task::getTaskByID($task_id);
+		
 		$data_class = Tasks\Logic::getTaskElementClass();
 		if($data_class){
 			$filter = ['=UF_TASK' => $task_id];
@@ -31,11 +35,43 @@ class Grid {
 					$arData["UF_PARAMS"] = Json::decode($arData["UF_PARAMS"]);
 				}
 
+				if($arData['UF_ELEMENT']){
+					$ibElements[] = $arData['UF_ELEMENT'];
+				}
+
 				$elements[] = $arData;
 			}
 
 			$count = $data_class::getCount($filter);
 			$nav->setRecordCount($count);
+		}
+
+		if($taskData['UF_ETYPE'] == 'S'){
+			if(count($ibElements)){
+				$rdbSection = \CIBlockSection::GetList(
+					['SORT' => 'ASC'],
+					['ID' => $ibElements],
+					false,
+					$lstSelect = ['ID', 'NAME', 'IBLOCK_ID', 'IBLOCK_TYPE_ID'],
+					false
+				);
+				while($dctSection = $rdbSection->fetch()) {
+					$ibElementsData[$dctSection['ID']] = $dctSection;
+				}
+			}
+		}else{
+			if(count($ibElements)){
+				$lstSelect = [
+					'IBLOCK_ID',
+					'IBLOCK_TYPE_ID',
+					'ID',
+					'NAME',
+				];
+				$rdb = \CIBlockElement::GetList([], ['ID' => $ibElements], false, false, $lstSelect);
+				while($dctElement = $rdb->fetch()) {
+					$ibElementsData[$dctElement['ID']] = $dctElement;
+				}
+			}
 		}
 
 		foreach($elements as $element_item){
@@ -45,28 +81,44 @@ class Grid {
 				$error = $element_item['UF_PARAMS']['error_message'].' ['.$element_item['UF_PARAMS']['error_type'].']';
 			}
 
+			$curIbElement = $ibElementsData[$element_item['UF_ELEMENT']];
+
+			$elementData = $curIbElement['NAME'];
+			$elementData .= ' [<a href="/bitrix/admin/'.($taskData['UF_ETYPE'] == 'S' ? 'iblock_section_edit': 'iblock_element_edit').'.php?IBLOCK_ID='.$curIbElement['IBLOCK_ID'].'&type='.$curIbElement['IBLOCK_TYPE_ID'].'&lang=ru&ID='.$curIbElement['ID'].'&WF=Y" target="_blank">'.$element_item['UF_ELEMENT'].'</a>]';
+
+			$actions = [
+				[
+					'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_MOREINFO"),
+					'onclick' => 'agcg.showTaskElementInfoWindow('.$element_item['ID'].');'
+				],
+				[
+					'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_DELETE_ELEMENT"),
+					'onclick' => 'agcg.deleteTaskElementConfirm('.$element_item['ID'].');'
+				],
+			];
+
+			if($element_item['UF_GENERATION_RESULT']){
+				$actions[] = [
+					'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_READD_ELEMENT"),
+					'onclick' => 'agcg.readdTaskElement('.$element_item['ID'].');'
+				];
+				$actions[] = [
+					'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_RETURN_DATA_ELEMENT"),
+					'onclick' => 'agcg.returnDataTaskElement('.$element_item['ID'].');'
+				];
+			}
+
 			$result[] = [
 				'data' => [
 					'ID' => $element_item['ID'],
-					'ELEMENT' => $element_item['UF_ELEMENT'],
+					'ELEMENT' => $elementData,
 					'STATUS' => $element_item['UF_STATUS'],
 					'STATUS_FORMAT' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_TASKS_EDIT_ELEMENTS_FIELD_STATUS_'.$element_item['UF_STATUS']),
 					'ERROR_TEXT' => $error,
+					'GENERATION_DATE' => $element_item['UF_GENERATION_DATE'],
+					'GENERATION_RESULT' => $element_item['UF_GENERATION_RESULT'],
 				],
-				'actions' => [
-					[
-						'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_MOREINFO"),
-						'onclick' => 'agcg.showTaskElementInfoWindow('.$element_item['ID'].');'
-					],
-					[
-						'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_DELETE_ELEMENT"),
-						'onclick' => 'agcg.deleteTaskElementConfirm('.$element_item['ID'].');'
-					],
-					[
-						'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_READD_ELEMENT"),
-						'onclick' => 'agcg.readdTaskElement('.$element_item['ID'].');'
-					],
-				]
+				'actions' => $actions
 			];
 		}
 
@@ -134,6 +186,10 @@ class Grid {
 					[
 						'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ACTION_EDIT"),
 						'onclick' => 'document.location.href="'.$page.'"'
+					],
+					[
+						'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ACTION_COPY"),
+						'onclick' => 'agcg.taskListCopy('.$task_item['ID'].');'
 					],
 					[
 						'text' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ACTION_DELETE"),

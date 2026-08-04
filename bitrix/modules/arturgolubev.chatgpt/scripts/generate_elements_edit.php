@@ -14,6 +14,7 @@ echo '<pre>'; print_r($id); echo '</pre>';
 <br>
 <br>
 
+<?/*
 <div class="input-buttons">
     <a class="input-button input-button-colored" href="<?=$APPLICATION->GetCurPageParam('', ['action']);?>"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_BUTTON_TO_LIST")?></a>
 </div>
@@ -36,17 +37,6 @@ echo '<pre>'; print_r($id); echo '</pre>';
                 </select>
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-        TODO: 
         
         <div class="input-field">
             <div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM")?></div>
@@ -79,3 +69,4 @@ echo '<pre>'; print_r($id); echo '</pre>';
         //agcg.initAskPage();
     //});
 </script>
+*/?>

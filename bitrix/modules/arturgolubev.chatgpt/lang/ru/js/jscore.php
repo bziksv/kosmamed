@@ -12,7 +12,8 @@ $MESS["ARTURGOLUBEV_CHATGPT_JS_EMPTY_SAVE_FIELD"] = "Не выбрано пол�
 
 $MESS["ARTURGOLUBEV_CHATGPT_JS_DEMO_NOTIFY"] = "Решение установлено в демо-режиме. В демо-режиме решение имеет ограничение на массовую генерацию - 300 элементов. Текущий остаток лимита - ";
 $MESS["ARTURGOLUBEV_CHATGPT_JS_DEMO_NOTIFY_CONTINUE"] = "Для отключения ограничения приобретите полную версию решения.";
-$MESS["ARTURGOLUBEV_CHATGPT_JS_BACKUP_NOTIFY"] = "В процессе массовой генерации, решение перезапишет выбранные поля сгенерированными данными. <b>Рекомендуется делать бэкапы.</b>";
+$MESS["ARTURGOLUBEV_CHATGPT_JS_BACKUP_NOTIFY"] = "В данном окне можно запустить массовую генерацию данных для выбранных элементов. При закрытии окна генерации или вкладки процесс генерации будет остановлен. Если вы хотите генерировать данные в фоновом режиме, воспользуйтесь <a href=\"https://arturgolubev.ru/knowledge/course35/lesson281/\" target=\"_blank\">автоматическими заданиями</a>.<br><br>
+В процессе генерации, решение перезапишет содержимое выбранного поля сгенерированными данными, <b>рекомендуется делать бэкапы</b>.";
 
 $MESS["ARTURGOLUBEV_CHATGPT_JS_ELEMENT_BUTTON"] = "ИИ Генератор (chatgpt, gigachat, deepSeek)";
 $MESS["ARTURGOLUBEV_CHATGPT_JS_ELEMENT_WINDOW_TITLE"] = "Генерация данных с помощью нейросетей";

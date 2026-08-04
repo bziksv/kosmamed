@@ -28,6 +28,19 @@ Class arturgolubev_chatgpt extends CModule
 
 	function InstallDB($arParams = array())
 	{
+		$agentName = '\Arturgolubev\Chatgpt\Settings::checkModuleUpdates("'.self::MODULE_ID.'");';
+
+		$rsAgent = \CAgent::GetList([], ['NAME' => $agentName]);
+		if(!$rsAgent->Fetch()){
+			\CAgent::AddAgent(
+				$agentName,
+				self::MODULE_ID,
+				'N',
+				86400*30,
+				date('d.m.Y H:i:s', strtotime('+1 minutes')), "Y", date('d.m.Y H:i:s', strtotime('+1 minutes')), 100
+			);
+		}
+
 		RegisterModuleDependences('main', 'OnEpilog', self::MODULE_ID, 'CArturgolubevChatgpt', 'onEpilog');
 		RegisterModuleDependences('main', 'OnAdminListDisplay', self::MODULE_ID, 'CArturgolubevChatgpt', 'addActionMenu');
 		return true;
@@ -35,6 +48,12 @@ Class arturgolubev_chatgpt extends CModule
 
 	function UnInstallDB($arParams = array())
 	{
+		
+		$res = CAgent::GetList(Array("ID" => "DESC"), array("MODULE_ID" => self::MODULE_ID));
+		while($arRes = $res->GetNext()){
+			CAgent::Delete($arRes['ID']);
+		}
+
 		UnRegisterModuleDependences('main', 'OnEpilog', self::MODULE_ID, 'CArturgolubevChatgpt','onEpilog');
 		UnRegisterModuleDependences('main', 'OnAdminListDisplay', self::MODULE_ID, 'CArturgolubevChatgpt', 'addActionMenu');
 		
@@ -62,10 +81,6 @@ Class arturgolubev_chatgpt extends CModule
 		
 		CopyDirFiles($mPath."/install/themes", $_SERVER["DOCUMENT_ROOT"]."/bitrix/themes", true, true);
 		CopyDirFiles($mPath."/install/gadgets", $_SERVER["DOCUMENT_ROOT"]."/bitrix/gadgets",true,true);
-		
-		if(class_exists('agInstaHelperChatgpt')){
-			agInstaHelperChatgpt::addGadgetToDesctop("WATCHER");
-		}
 		
 		return true;
 	}

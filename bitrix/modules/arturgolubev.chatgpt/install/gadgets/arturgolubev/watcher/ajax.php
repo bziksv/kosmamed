@@ -13,10 +13,14 @@ IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/gadgets/arturgolubev/wa
 
 $module_id = htmlspecialcharsbx($_POST["module"]);
 $check_all = (htmlspecialcharsbx($_POST["target"]) == 'all') ? 1 : 0;
-$exceptions = explode(',', (htmlspecialcharsbx($_POST["exceptions"])));
+
+$exceptions = [];
+if($_POST["exceptions"]){
+	$exceptions = explode(',', (htmlspecialcharsbx($_POST["exceptions"])));
+}
 
 global $USER;
-if($module_id && $USER->IsAdmin()){
+if($module_id && $USER->IsAdmin() && check_bitrix_sessid()){
 	if(method_exists('CUpdateClientPartner','GetLicenseKey')){
 		$lckey = md5("BITRIX".CUpdateClientPartner::GetLicenseKey()."LICENCE");
 	}else{
@@ -50,9 +54,9 @@ if($module_id && $USER->IsAdmin()){
 						$module_dir = $_SERVER["DOCUMENT_ROOT"].$folder."/".$dir;
 						if($info = CModule::CreateModuleObject($dir))
 						{
-							$arModules[$dir]["MODULE_ID"] = $info->MODULE_ID;
-							$arModules[$dir]["MODULE_NAME"] = $info->MODULE_NAME;
-							$arModules[$dir]["MODULE_DESCRIPTION"] = $info->MODULE_DESCRIPTION;
+							$arModules[$dir]["MODULE_ID"] = htmlspecialcharsbx($info->MODULE_ID);
+							$arModules[$dir]["MODULE_NAME"] = htmlspecialcharsbx($info->MODULE_NAME);
+							$arModules[$dir]["MODULE_DESCRIPTION"] = htmlspecialcharsbx($info->MODULE_DESCRIPTION);
 							$arModules[$dir]["MODULE_VERSION"] = $info->MODULE_VERSION;
 							$arModules[$dir]["MODULE_VERSION_DATE"] = $info->MODULE_VERSION_DATE;
 							$arModules[$dir]["MODULE_SORT"] = $info->MODULE_SORT;
@@ -160,9 +164,9 @@ if($module_id && $USER->IsAdmin()){
 					$tableView['demo_end'][] = $arModule;
 				}else{
 					if($linkToBuy){
-						$arModule["IMPORTANT_INFO"] = "<span style=\"color:red;\">".$arModule["UPDATE_INFO"]["DATE_TO"]."</span><br /><a href=\"".str_replace("#CODE#", $arModule["MODULE_ID"], $linkToBuy)."\" target=\"_blank\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_NEW_BUY")."</a>";
+						$arModule["IMPORTANT_INFO"] = "<span style=\"color:red;\">".htmlspecialcharsbx($arModule["UPDATE_INFO"]["DATE_TO"])."</span><br /><a href=\"".str_replace("#CODE#", $arModule["MODULE_ID"], $linkToBuy)."\" target=\"_blank\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_NEW_BUY")."</a>";
 					}else{
-						$arModule["IMPORTANT_INFO"] = GetMessage("ARTURGOLUBEV_WATCHER_DEMO_TIME_OUT").$arModule["UPDATE_INFO"]["DATE_TO"];
+						$arModule["IMPORTANT_INFO"] = GetMessage("ARTURGOLUBEV_WATCHER_DEMO_TIME_OUT").htmlspecialcharsbx($arModule["UPDATE_INFO"]["DATE_TO"]);
 					}
 					
 					if($arModule["HAVE_UPDATES"])
@@ -174,7 +178,7 @@ if($module_id && $USER->IsAdmin()){
 				$cnt++;
 			}elseif($arModule["UPDATE_INFO"]["UPDATE_END"]){
 				if($linkToBuyUpdate){
-					$arModule["IMPORTANT_INFO"] = "<span style=\"color:red;\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_UPDATE_END").$arModule["UPDATE_INFO"]["DATE_TO"]."</span><br /><a href=\"".str_replace("#CODE#", $arModule["MODULE_ID"], $linkToBuyUpdate)."\" target=\"_blank\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_UPDATE_BUY")."</a>";
+					$arModule["IMPORTANT_INFO"] = "<span style=\"color:red;\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_UPDATE_END").htmlspecialcharsbx($arModule["UPDATE_INFO"]["DATE_TO"])."</span><br /><a href=\"".str_replace("#CODE#", $arModule["MODULE_ID"], $linkToBuyUpdate)."\" target=\"_blank\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_UPDATE_BUY")."</a>";
 					
 					if($arModule["HAVE_UPDATES"])
 						$arModule["IMPORTANT_INFO"] .= "<br><span style=\"color:green;\">".GetMessage("ARTURGOLUBEV_WATCHER_MOD_HAVE_UPDATE_NOINSTALL")."</span>";

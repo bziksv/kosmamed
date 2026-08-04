@@ -8,6 +8,8 @@ global $APPLICATION;
 <br>
 <br>
 
+<?/*
 <div class="input-buttons">
     <a class="input-button input-button-colored" href="<?=$APPLICATION->GetCurPageParam('action=create', ['action']);?>"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_BUTTON_CREATE_NEW")?></a>
 </div>
+*/?>

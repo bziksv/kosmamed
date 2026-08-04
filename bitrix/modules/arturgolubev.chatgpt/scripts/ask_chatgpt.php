@@ -35,6 +35,7 @@ if(Loader::IncludeModule($module_id)):?>
 								<?if(in_array('chatgpt', $aiList)):?><option value="chatgpt"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM_CHATGTP")?></option><?endif;?>
 								<?if(in_array('sber', $aiList)):?><option value="sber"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM_SBER")?></option><?endif;?>
 								<?if(in_array('deepseek', $aiList)):?><option value="deepseek"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM_DEEPSEEK")?></option><?endif;?>
+								<?if(in_array('openai_compatible', $aiList)):?><option value="openai_compatible"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM_OPENAI_COMPATIBLE")?></option><?endif;?>
 							</select>
 						</div>
 					</div>

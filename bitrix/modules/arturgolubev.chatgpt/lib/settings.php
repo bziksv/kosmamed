@@ -1,5 +1,5 @@
 <?
-namespace Arturgolubev\Chatgpt; //2.6.1
+namespace Arturgolubev\Chatgpt; //2.8.0
 
 use \Bitrix\Main\Loader,
 	\Bitrix\Main\Localization\Loc,
@@ -7,9 +7,9 @@ use \Bitrix\Main\Loader,
 
 class Settings {
 	static function getSites(){
-		$result = array();
+		$result = [];
 		
-		$rsSites = \CSite::GetList($by="sort", $order="asc", Array());
+		$rsSites = \CSite::GetList($by="sort", $order="asc", []);
 		while($arRes = $rsSites->Fetch()){
 			$result[] = array(
 				"ID" => $arRes["ID"],
@@ -19,10 +19,81 @@ class Settings {
 		
 		return $result;
 	}
-	
-	static function checkModuleDemoEx($module_id){
-		require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/update_client_partner.php");
 
+	static function getModuleUpdatesInfo($module_id){
+		$obCache = new \CPHPCache();
+		if($obCache->InitCache(300, 'ag_module_getdata'.$module_id, '/check_mp/ag_module_getdata')){
+			$vars = $obCache->GetVars();
+			$fullModuleInfo = $vars['fullModuleInfo'];
+		}elseif($obCache->StartDataCache()){
+			require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/update_client_partner.php");
+			$fullModuleInfo = \CUpdateClientPartner::GetUpdatesList($errorMessage, LANG, "Y", [$module_id], ["fullmoduleinfo" => "Y"]);
+			if($fullModuleInfo["ERROR"] || $errorMessage){
+				$obCache->AbortDataCache();
+			}else{
+				$obCache->EndDataCache(['fullModuleInfo' => $fullModuleInfo]);
+			}
+		}
+
+		$marketModuleInfo = false;
+		if(is_array($fullModuleInfo) && is_array($fullModuleInfo['MODULE'])){
+			foreach($fullModuleInfo["MODULE"] as $k=>$v){
+				if($v["@"]["ID"] == $module_id){
+					$marketModuleInfo = $v['@'];
+					// $marketModuleInfo['UPDATES'] = $v['#'];
+
+					if(is_array($v["#"])){
+						$marketModuleInfo['HAVE_UPDATES'] = 1;
+					}else{
+						$marketModuleInfo['HAVE_UPDATES'] = 0;
+					}
+				}
+			}
+		}
+
+		return $marketModuleInfo;
+	}
+
+	static function checkUpdatesAgent($module_id){
+		$agentName = '\\'.__NAMESPACE__.'\\Settings::checkModuleUpdates("'.$module_id.'");';
+
+		$rsAgent = \CAgent::GetList([], ['NAME' => $agentName]);
+		if(!$rsAgent->Fetch()){
+			\CAgent::AddAgent(
+				$agentName,
+				$module_id,
+				'N',
+				86400*30,
+				date('d.m.Y H:i:s', strtotime('+1 minutes')), "Y", date('d.m.Y H:i:s', strtotime('+1 minutes')), 100
+			);
+		}
+	}
+	
+	static function checkModuleUpdates($module_id){
+		if(Loader::includeModule($module_id)){
+			$marketModuleInfo = self::getModuleUpdatesInfo($module_id);
+			if(is_array($marketModuleInfo)){
+				if($marketModuleInfo['HAVE_UPDATES']){
+					IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/install/index.php");
+					IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/options.php");
+
+					$messageCode = ToUpper(str_replace('.', '_', $module_id));
+					$messageCode .= ($marketModuleInfo['UPDATE_END'] == 'Y' ? '_AUTOCHECK_UPDATES_NOTIFY2' : '_AUTOCHECK_UPDATES_NOTIFY');
+
+					\CAdminNotify::Add([
+						"MESSAGE" => Loc::getMessage($messageCode, ["#MODULE_NAME#" => Loc::getMessage($module_id.'_MODULE_NAME')]),
+						"TAG" => $module_id.'_autocheck_updates',
+						"MODULE_ID" => $module_id,
+						'ENABLE_CLOSE' => 'Y'
+					]);
+				}
+			}
+		}
+
+		return '\\'.__NAMESPACE__.'\\Settings::checkModuleUpdates("'.$module_id.'");';
+	}
+
+	static function checkModuleDemoEx($module_id){
 		$moduleIdExplode = explode('.', $module_id);
 		$messageCode = 'ARTURGOLUBEV_'.ToUpper($moduleIdExplode[1]).'_CHECKDEMO_';
 
@@ -37,43 +108,23 @@ class Settings {
 		$request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest(); 
 		$rq = $request->toArray();
 		if($rq['checkperiod'] == 'Y'){
+			if(!check_bitrix_sessid()){
+				return [
+					'type' => 'session_expire',
+					'status' => 'exit',
+					'message' => '',
+				];
+			}
+
 			$message = '';
+			
+			$marketModuleInfo = self::getModuleUpdatesInfo($module_id);
+			if(is_array($marketModuleInfo)){
+				$messageReplace['#date_diff#'] = ceil((strtotime($marketModuleInfo['DATE_TO']) - strtotime(date('d.m.Y'))) / 86400);
+				$messageReplace['#date_to#'] = $marketModuleInfo['DATE_TO'];
 
-			if(true){
-				$obCache = new \CPHPCache();
-				if($obCache->InitCache(180, 'ag_module_getdata'.$module_id, '/check_mp/ag_module_getdata')){
-					$vars = $obCache->GetVars();
-					$fullModuleInfo = $vars['fullModuleInfo'];
-				}elseif($obCache->StartDataCache()){
-					$fullModuleInfo = \CUpdateClientPartner::GetUpdatesList($errorMessage, LANG, "Y", [$module_id], Array("fullmoduleinfo" => "Y"));
-					if($fullModuleInfo["ERROR"] || $errorMessage){
-						$obCache->AbortDataCache();
-					}else{
-						$obCache->EndDataCache(array('fullModuleInfo' => $fullModuleInfo));
-					}
-				}
-				
-				$marketModuleInfo = false;
-				if(is_array($fullModuleInfo) && is_array($fullModuleInfo['MODULE'])){
-					foreach($fullModuleInfo["MODULE"] as $k=>$v){
-						if($v["@"]["ID"] == $module_id){
-							$marketModuleInfo = $v['@'];
-							// $marketModuleInfo['UPDATES'] = $v['#'];
-
-							if(is_array($v["#"])){
-								$marketModuleInfo['HAVE_UPDATES'] = 1;
-							}else{
-								$marketModuleInfo['HAVE_UPDATES'] = 0;
-							}
-						}
-					}
-
-					if(is_array($marketModuleInfo)){
-						$messageReplace['#date_diff#'] = (strtotime($marketModuleInfo['DATE_TO']) - strtotime(date('d.m.Y'))) / 86400;
-						$messageReplace['#date_to#'] = $marketModuleInfo['DATE_TO'];
-					}
-
-					// echo '<pre>'; print_r($marketModuleInfo); echo '</pre>';
+				if($messageReplace['#date_diff#'] < 1){
+					$messageReplace['#date_diff#'] = 1;
 				}
 			}
 
@@ -96,11 +147,11 @@ class Settings {
 			Option::set($module_id, 'license_message', $message);
 
 			return [
+				'type' => 'check_success',
 				'status' => 'exit',
 				'message' => $message,
 			];
 		}
-
 
 		if(!$moduleStatus || $moduleStatus == Loader::MODULE_DEMO_EXPIRED){
 			$demo_over = 1;
@@ -121,12 +172,12 @@ class Settings {
 		if(!$demo_over){
 			$html .= '<script>
 				BX.ready(function(){
-					var url = document.location.pathname + document.location.search + "&checkperiod=Y";
+					var url = document.location.pathname + document.location.search;
 
 					BX.ajax({
-						method: "GET",
+						method: "POST",
 						url: url,
-						data: {},
+						data: {checkperiod: "Y", sessid: BX.bitrix_sessid()},
 						dataType: "html",
 						timeout: 30,
 						async: true,
@@ -164,13 +215,13 @@ class Settings {
 		$arVersion = explode('.', phpversion());
 
 		if($arVersion[0] < $r1){
-			\CAdminMessage::ShowMessage(array("MESSAGE" => Loc::getMessage($mess_name, ['#req#' => $r1.'.0.0', '#cur#' => phpversion()]), 'HTML' => true, 'TYPE' => 'ERROR'));
+			\CAdminMessage::ShowMessage(["MESSAGE" => Loc::getMessage($mess_name, ['#req#' => $r1.'.0.0', '#cur#' => phpversion()]), 'HTML' => true, 'TYPE' => 'ERROR']);
 		}
 	}
 
 	static function checkModuleDemo($module_id, $text){
 		if(!Loader::includeModule($module_id)){
-			\CAdminMessage::ShowMessage(array("MESSAGE" => $text, 'HTML' => true, 'TYPE' => 'ERROR'));
+			\CAdminMessage::ShowMessage(["MESSAGE" => $text, 'HTML' => true, 'TYPE' => 'ERROR']);
 		}
 	}
 	
@@ -262,56 +313,28 @@ class Settings {
 			return false;
 
 		$name = $arOption[0];
-		$isChoiceSites = array_key_exists(6, $arOption) && $arOption[6] == "Y" ? true : false;
-
-		if ($isChoiceSites)
-		{
-			if (isset($_REQUEST[$name."_all"]) && $_REQUEST[$name."_all"] <> '')
-				\COption::SetOptionString($module_id, $name, $_REQUEST[$name."_all"], $arOption[1]);
-			else
-				\COption::RemoveOption($module_id, $name);
-			$queryObject = \Bitrix\Main\SiteTable::getList(array(
-				'select' => array('LID', 'NAME'),
-				'filter' => array(),
-				'order' => array('SORT' => 'ASC'),
-			));
-			while ($site = $queryObject->fetch())
-			{
-				if (isset($_REQUEST[$name."_".$site["LID"]]) && $_REQUEST[$name."_".$site["LID"]] <> '' &&
-					!isset($_REQUEST[$name."_all"]))
-				{
-					$val = $_REQUEST[$name."_".$site["LID"]];
-					if($arOption[3][0] == "checkbox" && $val != "Y")
-						$val = "N";
-					if($arOption[3][0] == "multiselectbox")
-						$val = @implode(",", $val);
-					\COption::SetOptionString($module_id, $name, $val, $arOption[1], $site["LID"]);
-				}
-				else
-				{
-					\COption::RemoveOption($module_id, $name, $site["LID"]);
-				}
+		
+		if(!isset($_REQUEST[$name])){
+			if($arOption[3][0] <> 'checkbox' && $arOption[3][0] <> "multiselectbox"){
+				return false;
 			}
 		}
-		else
-		{
-			if(!isset($_REQUEST[$name]))
-			{
-				if($arOption[3][0] <> 'checkbox' && $arOption[3][0] <> "multiselectbox")
-				{
-					return false;
+
+		$val = $_REQUEST[$name];
+
+		if($arOption[3][0] == "checkbox" && $val != "Y")
+			$val = "N";
+		if($arOption[3][0] == "multiselectbox"){
+			$val = is_array($val) ? $val : array($val);
+			foreach($val as $k => $v){
+				if($v && !isset($arOption[3][1][$v])){
+					unset($val[$k]);
 				}
 			}
-
-			$val = $_REQUEST[$name];
-
-			if($arOption[3][0] == "checkbox" && $val != "Y")
-				$val = "N";
-			if($arOption[3][0] == "multiselectbox" && is_array($val))
-				$val = @implode(",", $val);
-
-			\COption::SetOptionString($module_id, $name, $val, $arOption[1]);
+			$val = implode(",", $val);
 		}
+
+		Option::set($module_id, $name, $val);
 
 		return null;
 	}
@@ -322,57 +345,64 @@ class Settings {
 		if(!is_array($settingList)) return 0;
 		foreach ($settingList as $Option) {
 			// echo '<pre>'; print_r($Option); echo '</pre>';
-			
-			if($Option["3"]["0"] == 'statictext'){
+			if(!is_array($Option)){
+				?><tr class="heading"><td colspan="2"><?=$Option?></td></tr><?
+			}elseif(isset($Option["note"])){
+				?><tr><td colspan="2" align="center">
+					<?echo BeginNote('align="center"');?>
+					<?=$Option["note"]?>
+					<?echo EndNote();?>
+				</td></tr>
+			<?}elseif($Option["3"]["0"] == 'statictext' || $Option["3"]["0"] == 'statichtml'){
 				?>
 				<tr>
 					<td class="adm-detail-valign-top adm-detail-content-cell-l" width="50%">
 						<?=$Option["1"]?>
 					</td>
 					<td class="adm-detail-content-cell-r" width="50%">
-						<?=htmlspecialchars_decode($Option["2"])?>
+						<?=$Option["2"]?>
 						<?if($Option[5]):?>
-							<div style="margin-top: 4px; font-size: 12px;"><?=$Option[5]?></div>
+							<div style="margin-top: 4px; font-size: 13px;"><?=$Option[5]?></div>
 						<?endif;?>
 					</td>
 				</tr>
 				<?
 			}elseif($Option["3"]["0"] == 'calendar'){
-				\CJSCore::Init(array('date'));
-				$value = \COption::GetOptionString($module_id, $Option[0],  $Option[2]);
+				\CJSCore::Init(['date']);
+				$value = Option::get($module_id, $Option[0],  $Option[2]);
 				?>
 					<tr>
 						<td class="adm-detail-content-cell-l" width="50%"><?=$Option["1"]?><a name="opt_<?=$Option["0"]?>"></a></td>
 						<td class="adm-detail-content-cell-r" width="50%">
 							<?$pickID = "pick_date_".$Option["0"];?>
 							
-							<input autocomplete="off" type="text" id="<?=$pickID?>" size="" maxlength="255" value="<?=$value?>" name="<?=$Option["0"]?>" onclick="BX.calendar({node: this, field: this, bTime: false});">
+							<input autocomplete="off" type="text" id="<?=$pickID?>" size="" maxlength="255" value="<?=htmlspecialcharsbx($value)?>" name="<?=htmlspecialcharsbx($Option["0"])?>" onclick="BX.calendar({node: this, field: this, bTime: false});">
 						</td>
 					</tr>
 				<?
 			}elseif($Option["3"]["0"] == 'datetime'){
-				\CJSCore::Init(array('date'));
-				$value = \COption::GetOptionString($module_id, $Option[0],  $Option[2]);
+				\CJSCore::Init(['date']);
+				$value = Option::get($module_id, $Option[0],  $Option[2]);
 				?>
 					<tr>
 						<td class="adm-detail-content-cell-l" width="50%"><?=$Option["1"]?><a name="opt_<?=$Option["0"]?>"></a></td>
 						<td class="adm-detail-content-cell-r" width="50%">
 							<?$pickID = "pick_date_".$Option["0"];?>
 							
-							<input autocomplete="off" type="text" id="<?=$pickID?>" size="" maxlength="255" value="<?=$value?>" name="<?=$Option["0"]?>" onclick="BX.calendar({node: this, field: this, bTime: true});">
+							<input autocomplete="off" type="text" id="<?=$pickID?>" size="" maxlength="255" value="<?=htmlspecialcharsbx($value)?>" name="<?=htmlspecialcharsbx($Option["0"])?>" onclick="BX.calendar({node: this, field: this, bTime: true});">
 						</td>
 					</tr>
 				<?
 			}elseif($Option["3"]["0"] == 'colorbox'){
-				\CJSCore::Init(array('color_picker'));
-				$value = \COption::GetOptionString($module_id, $Option[0]);
+				\CJSCore::Init(['color_picker']);
+				$value = Option::get($module_id, $Option[0]);
 				?>
 					<tr>
 						<td class="adm-detail-content-cell-l" width="50%"><?=$Option["1"]?><a name="opt_<?=$Option["0"]?>"></a></td>
 						<td class="adm-detail-content-cell-r" width="50%">
 							<?$pickID = "pick_color_".$Option["0"];?>
 							
-							<input autocomplete="off" type="text" id="<?=$pickID?>" size="" maxlength="255" value="<?=$value?>" name="<?=$Option["0"]?>">
+							<input autocomplete="off" type="text" id="<?=$pickID?>" size="" maxlength="255" value="<?=htmlspecialcharsbx($value)?>" name="<?=htmlspecialcharsbx($Option["0"])?>">
 							
 							<script type="text/javascript">
 							BX.ready(function() {
@@ -399,7 +429,7 @@ class Settings {
 					</tr>
 				<?
 			}elseif($Option["3"]["0"] == 'filepath'){
-				$value = \COption::GetOptionString($module_id, $Option[0], $Option[2]);
+				$value = Option::get($module_id, $Option[0], $Option[2]);
 				?>
 					<tr>
 						<td class="adm-detail-content-cell-l" width="50%"><?=$Option["1"]?><a name="opt_<?=$Option["0"]?>"></a></td>
@@ -410,7 +440,7 @@ class Settings {
 							\CAdminFileDialog::ShowScript(Array(
 								'event' => 'BX_FD_'.$opt,
 								'arResultDest' => Array('FUNCTION_NAME' => 'BX_FD_ONRESULT_'.$opt),
-								'arPath' => Array(),
+								'arPath' => [],
 								'select' => 'F',
 								'operation' => 'O',
 								'showUploadTab' => true,
@@ -421,7 +451,7 @@ class Settings {
 							));
 							?>
 							
-							<input autocomplete="off" type="text" id="visual_inp_<?=$opt?>" size="" maxlength="512" value="<?=$value?>" name="<?=$Option["0"]?>">
+							<input autocomplete="off" type="text" id="visual_inp_<?=$opt?>" size="" maxlength="512" value="<?=htmlspecialcharsbx($value)?>" name="<?=htmlspecialcharsbx($Option["0"])?>">
 							<input value="<?=Loc::getMessage("MAIN_SELECT")?>" type="button" onclick="window.BX_FD_<?=$opt?>();" />
 							
 							<script>
@@ -452,121 +482,40 @@ class Settings {
 	static function drawRow($module_id, $Option)
 	{
 		$arControllerOption = \CControllerClient::GetInstalledOptions($module_id);
-		if(!is_array($Option)):
+
+		if ($Option[0] != ""){
+			$val = Option::get($module_id, $Option[0], $Option[2]);
+		}else{
+			$val = $Option[2];
+		}
 		?>
-			<tr class="heading">
-				<td colspan="2"><?=$Option?></td>
+			<?$rid = preg_replace('/[^a-zA-Z0-9_]+/i', '', $Option[0]);?>
+			<tr id="input_row_<?=$rid?>">
+				<?self::drawLable($Option);?>
+				<?self::drawInput($Option, $arControllerOption, $Option[0], $val);?>
 			</tr>
 		<?
-		elseif(isset($Option["note"])):
-		?>
-			<tr>
-				<td colspan="2" align="center">
-					<?echo BeginNote('align="center"');?>
-					<?=$Option["note"]?>
-					<?echo EndNote();?>
-				</td>
-			</tr>
-		<?
-		else:
-			$isChoiceSites = array_key_exists(6, $Option) && $Option[6] == "Y" ? true : false;
-			$listSite = array();
-			$listSiteValue = array();
-			if ($Option[0] != "")
-			{
-				if ($isChoiceSites)
-				{
-					$queryObject = \Bitrix\Main\SiteTable::getList(array(
-						"select" => array("LID", "NAME"),
-						"filter" => array(),
-						"order" => array("SORT" => "ASC"),
-					));
-					$listSite[""] = Loc::getMessage("MAIN_ADMIN_SITE_DEFAULT_VALUE_SELECT");
-					$listSite["all"] = Loc::getMessage("MAIN_ADMIN_SITE_ALL_SELECT");
-					while ($site = $queryObject->fetch())
-					{
-						$listSite[$site["LID"]] = $site["NAME"];
-						$val = \COption::GetOptionString($module_id, $Option[0], $Option[2], $site["LID"], true);
-						if ($val)
-							$listSiteValue[$Option[0]."_".$site["LID"]] = $val;
-					}
-					$val = "";
-					if (empty($listSiteValue))
-					{
-						$value = \COption::GetOptionString($module_id, $Option[0], $Option[2]);
-						if ($value)
-							$listSiteValue = array($Option[0]."_all" => $value);
-						else
-							$listSiteValue[$Option[0]] = "";
-					}
-				}
-				else
-				{
-					$val = \COption::GetOptionString($module_id, $Option[0], $Option[2]);
-				}
-			}
-			else
-			{
-				$val = $Option[2];
-			}
-			if ($isChoiceSites):?>
-			<tr>
-				<td colspan="2" style="text-align: center!important;">
-					<label><?=$Option[1]?></label>
-				</td>
-			</tr>
-			<?endif;?>
-			<?if ($isChoiceSites):
-				foreach ($listSiteValue as $fieldName => $fieldValue):?>
-				<tr>
-				<?
-					$siteValue = str_replace($Option[0]."_", "", $fieldName);
-					self::drawLable($Option, $listSite, $siteValue);
-					self::drawInput($Option, $arControllerOption, $fieldName, $fieldValue);
-				?>
-				</tr>
-				<?endforeach;?>
-			<?else:?>
-				<?$rid = preg_replace('/[^a-zA-Z0-9_]+/i', '', $Option[0]);?>
-				<tr id="input_row_<?=$rid?>">
-				<?
-					self::drawLable($Option, $listSite);
-					self::drawInput($Option, $arControllerOption, $Option[0], $val);
-				?>
-				</tr>
-			<?endif;?>
-			<? if ($isChoiceSites): ?>
-				<tr>
-					<td width="50%">
-						<a href="javascript:void(0)" onclick="addSiteSelector(this)" class="bx-action-href">
-							<?=Loc::getMessage("MAIN_ADMIN_ADD_SITE_SELECTOR")?>
-						</a>
-					</td>
-					<td width="50%"></td>
-				</tr>
-			<? endif; ?>
-		<?
-		endif;
 	}
-	
 	
 	static function drawInput($Option, $arControllerOption, $fieldName, $val)
 	{
 		$type = $Option[3];
 		$disabled = array_key_exists(4, $Option) && $Option[4] == 'Y' ? ' disabled' : '';
 		$bottom_text = array_key_exists(5, $Option) ? $Option[5] : '';
+
+		$inputID = preg_replace('/[^a-zA-Z0-9_]+/i', '', htmlspecialcharsbx($fieldName));
 		?><td width="50%"><?
 		if($type[0]=="checkbox"):
-			?><input autocomplete="off" type="checkbox" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> id="<?echo htmlspecialcharsbx($Option[0])?>" name="<?=htmlspecialcharsbx($fieldName)?>" value="Y"<?if($val=="Y")echo" checked";?><?=$disabled?><?if($type[2]<>'') echo " ".$type[2]?>><?
+			?><input id="<?=$inputID?>" autocomplete="off" type="checkbox" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> name="<?=htmlspecialcharsbx($fieldName)?>" value="Y"<?if($val=="Y")echo" checked";?><?=$disabled?><?if($type[2]<>'') echo " ".$type[2]?>><?
 		elseif($type[0]=="text" || $type[0]=="password"):
 			$maxlength = ($type['maxlength'] > 0) ? $type['maxlength'] : 512;
 		
-			?><input autocomplete="off" type="<?echo $type[0]?>"<?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> size="<?echo $type[1]?>" maxlength="<?=$maxlength?>" value="<?echo htmlspecialcharsbx($val)?>" name="<?=htmlspecialcharsbx($fieldName)?>"<?=$disabled?><?=($type[0]=="password" || $type["noautocomplete"]? ' autocomplete="new-password"':'')?>><?
+			?><input id="<?=$inputID?>" autocomplete="off" type="<?echo $type[0]?>"<?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> size="<?echo $type[1]?>" maxlength="<?=$maxlength?>" value="<?echo htmlspecialcharsbx($val)?>" name="<?=htmlspecialcharsbx($fieldName)?>"<?=$disabled?><?=($type[0]=="password" || $type["noautocomplete"]? ' autocomplete="new-password"':'')?>><?
 		elseif($type[0]=="selectbox"):
 			$arr = $type[1];
 			if(!is_array($arr))
-				$arr = array();
-			?><select autocomplete="off" name="<?=htmlspecialcharsbx($fieldName)?>" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> <?=$disabled?>><?
+				$arr = [];
+			?><select id="<?=$inputID?>" autocomplete="off" name="<?=htmlspecialcharsbx($fieldName)?>" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> <?=$disabled?>><?
 			foreach($arr as $key => $v):
 				?><option value="<?echo $key?>"<?if($val==$key)echo" selected"?>><?echo htmlspecialcharsbx($v)?></option><?
 			endforeach;
@@ -574,25 +523,20 @@ class Settings {
 		elseif($type[0]=="multiselectbox"):
 			$arr = $type[1];
 			if(!is_array($arr))
-				$arr = array();
+				$arr = [];
 			$arr_val = explode(",",$val);
-			?><select autocomplete="off" size="5" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> multiple name="<?=htmlspecialcharsbx($fieldName)?>[]"<?=$disabled?>><?
+			?><select id="<?=$inputID?>" autocomplete="off" size="5" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> multiple name="<?=htmlspecialcharsbx($fieldName)?>[]"<?=$disabled?>><?
 			foreach($arr as $key => $v):
 				?><option value="<?echo $key?>"<?if(in_array($key, $arr_val)) echo " selected"?>><?echo htmlspecialcharsbx($v)?></option><?
 			endforeach;
 			?></select><?
 		elseif($type[0]=="textarea"):
-			?><textarea autocomplete="off" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> rows="<?echo $type[1]?>" cols="<?echo $type[2]?>" name="<?=htmlspecialcharsbx($fieldName)?>"<?=$disabled?>><?echo htmlspecialcharsbx($val)?></textarea><?
+			?><textarea id="<?=$inputID?>" autocomplete="off" <?if(isset($arControllerOption[$Option[0]]))echo ' disabled title="'.Loc::getMessage("MAIN_ADMIN_SET_CONTROLLER_ALT").'"';?> rows="<?echo $type[1]?>" cols="<?echo $type[2]?>" name="<?=htmlspecialcharsbx($fieldName)?>"<?=$disabled?>><?echo htmlspecialcharsbx($val)?></textarea><?
 		elseif($type[0]=="html"):
-		
 			echo self::showHtmlEditor($fieldName, $val, $Option[3][1]);
-		elseif($type[0]=="statictext"):
-			echo htmlspecialcharsbx($val);
-		elseif($type[0]=="statichtml"):
-			echo $val;
 		endif;?>
 			<?if($bottom_text):?>
-				<div style="margin-top: 4px; font-size: 12px;"><?=$bottom_text?></div>
+				<div style="margin-top: 4px; font-size: 13px;"><?=$bottom_text?></div>
 			<?endif;?>
 		</td><?
 	}
@@ -624,52 +568,15 @@ class Settings {
 			ob_end_clean();
 			
 			return $s;
+		}else{
+			return '<textarea name="'.$name.'" style="width: 100%; height: 250px;">'.htmlspecialcharsbx($value).'</textarea>';
 		}
-		else
-		{
-			return '<textarea name="'.$name.'" style="width: 100%; height: 250px;">'.$value.'</textarea>';
-		} 
 	}
 	
 	
-	static function drawLable($Option, array $listSite, $siteValue = "")
-	{
+	static function drawLable($Option){
 		$type = $Option[3];
-		$isChoiceSites = array_key_exists(6, $Option) && $Option[6] == "Y" ? true : false;
 		?>
-		<?if ($isChoiceSites): ?>
-		<script type="text/javascript">
-			//TODO It is possible to modify the functions if necessary to clone different elements
-			function changeSite(el, fieldName)
-			{
-				var tr = jsUtils.FindParentObject(el, "tr");
-				var sel = jsUtils.FindChildObject(tr.cells[1], "select");
-				sel.name = fieldName+"_"+el.value;
-			}
-			function addSiteSelector(a)
-			{
-				var row = jsUtils.FindParentObject(a, "tr");
-				var tbl = row.parentNode;
-				var tableRow = tbl.rows[row.rowIndex-1].cloneNode(true);
-				tbl.insertBefore(tableRow, row);
-				var sel = jsUtils.FindChildObject(tableRow.cells[0], "select");
-				sel.name = "";
-				sel.selectedIndex = 0;
-				sel = jsUtils.FindChildObject(tableRow.cells[1], "select");
-				sel.name = "";
-				sel.selectedIndex = 0;
-			}
-		</script>
-		<td width="50%">
-			<select autocomplete="off" onchange="changeSite(this, '<?=htmlspecialcharsbx($Option[0])?>')">
-				<?foreach ($listSite as $lid => $siteName):?>
-					<option <?if ($siteValue ==$lid) echo "selected";?> value="<?=htmlspecialcharsbx($lid)?>">
-						<?=htmlspecialcharsbx($siteName)?>
-					</option>
-				<?endforeach;?>
-			</select>
-		</td>
-		<?else:?>
 			<td<?if ($type[0]=="multiselectbox" || $type[0]=="html" || $type[0]=="textarea" || $type[0]=="statictext" ||
 			$type[0]=="statichtml") echo ' class="adm-detail-valign-top"'?> width="50%"><?
 			if ($type[0]=="checkbox")
@@ -677,6 +584,6 @@ class Settings {
 			else
 				echo $Option[1];
 			?><a name="opt_<?=htmlspecialcharsbx($Option[0])?>"></a></td>
-		<?endif;
+		<?
 	}
 }

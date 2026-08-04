@@ -1,5 +1,5 @@
 <?
-namespace Arturgolubev\Chatgpt; //3.3.2
+namespace Arturgolubev\Chatgpt; //3.5.1
 
 use \Bitrix\Main\Page\Asset,
 	\Bitrix\Main\Config\Option,
@@ -25,6 +25,20 @@ class Unitools {
 		return (isset(self::$storage[$type][$name]) ? self::$storage[$type][$name] : null);
 	}
 	
+	// cache
+	public static function fastPhpCache($cacheId, $cachePath, $time, $callback, $callbackArgs){
+		$obCache = new \CPHPCache();
+		if($obCache->InitCache($time, md5($cacheId), $cachePath)){
+			$vars = $obCache->GetVars();
+			$result = $vars['result'];
+		}elseif($obCache->StartDataCache()){
+			$result = call_user_func_array($callback, $callbackArgs);
+			$obCache->EndDataCache(array('result' => $result));
+		}
+
+		return $result;
+	}
+
 	// logger
     public static function simpleDataLog($path, $module, $data){
         $realPath = $_SERVER['DOCUMENT_ROOT'].$path;
@@ -217,7 +231,8 @@ class Unitools {
 			}
 
 			foreach($pages as $page){
-				$pattern = '/^'.str_replace(['/', '*'], ['\/', '.*'], $page).'$/sU';
+				$quoted = preg_quote($page, '/');
+				$pattern = '/^'.str_replace('\\*', '.*', $quoted).'$/sU';
 				if(preg_match($pattern, $cur) || preg_match($pattern, $curParams) || $page == $serverName)
 					return 0;
 			}
@@ -247,6 +262,32 @@ class Unitools {
 		static function explodeByEOL($str){
 			return self::explodetrim(PHP_EOL, $str);
 		}
+
+	static function getExistJquery(){
+		$jvers = 'jquery';
+
+		$dir = $_SERVER['DOCUMENT_ROOT'].'/bitrix/js/main/jquery/';
+		$files = scandir($dir);
+		if(is_array($files)){ 
+			foreach ($files as $file) {
+				if(strpos($file, 'jquery-1') !== false){
+					break;
+				}
+
+				if(strpos($file, 'jquery-2') !== false){
+					$jvers = 'jquery2';
+					break;
+				}
+				
+				if(strpos($file, 'jquery-3') !== false){
+					$jvers = 'jquery3';
+					break;
+				}
+			}
+		}
+
+		return $jvers;
+	}
 	
 	// append
 	static function addBodyScript($script, $oldBuffer, $toEnd = 0){

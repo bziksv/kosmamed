@@ -23,21 +23,38 @@ Class sng_secure extends CModule
 		$this->PARTNER_NAME = GetMessage("sng.secure_PARTNER_NAME");
 		$this->PARTNER_URI = GetMessage("sng.secure_PARTNER_URI");
 	}
-/*
+
+	function UpdateDB($arParams = array())
+	{
+		global $APPLICATION;
+		
+		// Удаляем уязвимый файл pr.php при обновлении
+		$vulnerableFile = $_SERVER["DOCUMENT_ROOT"]."/bitrix/tools/".self::MODULE_ID."/pr.php";
+		if(file_exists($vulnerableFile))
+		{
+			unlink($vulnerableFile);
+		}
+		
+		// Также удаляем из папки admin, если там оказался
+		$vulnerableFileAdmin = $_SERVER["DOCUMENT_ROOT"]."/bitrix/admin/".self::MODULE_ID."_pr.php";
+		if(file_exists($vulnerableFileAdmin))
+		{
+			unlink($vulnerableFileAdmin);
+		}
+		
+		return true;
+	}
+
 	function InstallDB($arParams = array())
 	{		
-		//RegisterModuleDependences('main', 'OnBuildGlobalMenu', self::MODULE_ID, 'CSngOK', 'OnBuildGlobalMenu');
-		RegisterModuleDependences("main","OnBeforeEndBufferContent", self::MODULE_ID, "CSngOK","AddScriptUp", "100");
 		return true;
 	}
 
 	function UnInstallDB($arParams = array())
 	{		
-		//UnRegisterModuleDependences('main', 'OnBuildGlobalMenu', self::MODULE_ID, 'CSngOK', 'OnBuildGlobalMenu');
-        UnRegisterModuleDependences("main", "OnBeforeEndBufferContent", self::MODULE_ID, "CSngOK", "AddScriptUp");		
 		return true;
 	}
-*/
+
 	function InstallEvents()
 	{
 		return true;
@@ -56,7 +73,7 @@ Class sng_secure extends CModule
 			{
 				while (false !== $item = readdir($dir))
 				{
-					if ($item == '..' || $item == '.' || $item == 'menu.php')
+					if ($item == '..' || $item == '.' || $item == 'menu.php' || $item == 'pr.php')
 						continue;
 					file_put_contents($file = $_SERVER['DOCUMENT_ROOT'].'/bitrix/admin/'.self::MODULE_ID.'_'.$item,
 					'<'.'? require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/'.self::MODULE_ID.'/admin/'.$item.'");?'.'>');
@@ -76,12 +93,19 @@ Class sng_secure extends CModule
 				}
 				closedir($dir);
 			}
+		}		
+	
+		// Удаляем старый pr.php
+		$oldPr = $_SERVER["DOCUMENT_ROOT"]."/bitrix/tools/".self::MODULE_ID."/pr.php";
+		if(file_exists($oldPr))
+		{
+			unlink($oldPr);
 		}
-        //CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/sng.ok/install/js", $_SERVER["DOCUMENT_ROOT"]."/bitrix/js/sng.ok/", true, true);
-       // CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/sng.ok/install/images", $_SERVER["DOCUMENT_ROOT"]."/bitrix/images/sng.ok/", true, true);
-	    CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".self::MODULE_ID."/install/tools", $_SERVER["DOCUMENT_ROOT"]."/bitrix/tools/".self::MODULE_ID."/", true, true);
+		
+		// Копируем остальное
 		CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".self::MODULE_ID."/admin/ajax.php", $_SERVER["DOCUMENT_ROOT"]."/bitrix/admin/", true, true);
 		CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".self::MODULE_ID."/install/images", $_SERVER["DOCUMENT_ROOT"]."/bitrix/images/".self::MODULE_ID."/", true, true);
+		
 		return true;
 	}
 
@@ -121,9 +145,8 @@ Class sng_secure extends CModule
 				closedir($dir);
 			}
 		}
-		//DeleteDirFilesEx("/bitrix/js/sng.ok");
 		DeleteDirFilesEx("/bitrix/tools/".self::MODULE_ID."/");	
-        DeleteDirFilesEx("/bitrix/images/".self::MODULE_ID."/");		
+		DeleteDirFilesEx("/bitrix/images/".self::MODULE_ID."/");		
 		DeleteDirFilesEx("/bitrix/admin/".self::MODULE_ID."ajax.php");		
 		return true; 
 	}
@@ -132,7 +155,6 @@ Class sng_secure extends CModule
 	{
 		global $APPLICATION;
 		$this->InstallFiles();
-
 		$this->InstallDB();
 		RegisterModule(self::MODULE_ID);
 	}

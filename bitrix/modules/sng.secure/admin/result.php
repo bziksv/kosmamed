@@ -1,5 +1,13 @@
 <?
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
+
+// Проверка CSRF и прав администратора
+global $USER;
+if (!check_bitrix_sessid() || !$USER->IsAdmin()) {
+    http_response_code(403);
+    die('Forbidden');
+}
+
 \Bitrix\Main\Loader::includeModule('sng.secure');
 IncludeModuleLangFile(__FILE__); 
 krsort($_SESSION['SNG_SECURE']);
@@ -22,7 +30,7 @@ if(!empty($arSort)){
 	{
 		?>
 		<tr>
-		<td style="width:150px;"><?=$key?></td>
+		<td style="width:150px;"><?=htmlspecialcharsbx($key)?></td>
 		<td>
 			<table style="border:none;">		
 				<?		
@@ -30,14 +38,14 @@ if(!empty($arSort)){
 				{	
 					?>
 					<tr>
-					<td style="border:none !important;width:180px;"><?=$v;?></td>
-					<td style="border:none !important;"><?=$k;?></td>
+					<td style="border:none !important;width:180px;"><?=htmlspecialcharsbx($v);?></td>
+					<td style="border:none !important;"><?=htmlspecialcharsbx($k);?></td>
 					</tr>
 					<?				
 				}
 				?>
 			</table>
-		</td>			
+			</tr>			
 		</tr>
 		<?
 	}
@@ -46,15 +54,12 @@ if(!empty($arSort)){
 	#table_secure td{border-collapse:collapse;border: 1px solid #C4CED2 !important; margin-top:1px;margin-right:1px;}
 	</style>
 	<?
-	COption::SetOptionString('sng.secure', 'path', htmlspecialchars($_POST['secure_path']));
+	COption::SetOptionString('sng.secure', 'path', htmlspecialcharsbx($_POST['secure_path']));
 	COption::SetOptionString("sng.secure", "last_search", serialize($arSort));
 	?>
 	<br><b style="color:red;"><?echo GetMessage("SNG_SECURE_SEND");?></b><br>
 	<?
 	echo GetMessage("SNG_SECURE_SEND_BLOCK");
-	
-	//send mail to admin
-
 }
 else
 {

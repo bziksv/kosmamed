@@ -17,9 +17,10 @@ $APPLICATION->SetTitle(Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_PAGE_TITLE"));
 
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_after.php");
 
+/* 
+
 $gptKey = UTools::getSetting('api_key');
 $sberKey = UTools::getSetting('sber_authorization');
-
 if(Loader::IncludeModule($module_id)):?>
 	<div class="agcg_adm_page">
 		<?if(Tools::checkRights('question')):?>
@@ -67,6 +68,6 @@ if(Loader::IncludeModule($module_id)):?>
 	
 <?else:
 	CAdminMessage::ShowMessage(array("DETAILS"=>Loc::getMessage("ARTURGOLUBEV_CHATGPT_DEMO_IS_EXPIRED"), "HTML"=>true));
-endif;
+endif; */
 
 require($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/epilog_admin.php');?>

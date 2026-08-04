@@ -56,6 +56,12 @@ $elements = Tasks\Grid::listTasks($sort, $nav, $filterData);
 // echo '<pre>'; print_r($elements); echo '</pre>';
 ?>
 
+<?
+if (!(defined("BX_CRONTAB_SUPPORT") && BX_CRONTAB_SUPPORT===true)){
+    \CAdminMessage::ShowMessage(["DETAILS"=>Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_CRON_ERROR_BODY"), "MESSAGE" => '', "HTML"=>true]);
+}
+?>
+
 <div class="tasks-description agcg_adm_page"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_TESTMODE_NOTIFY")?></div>
 
 <div class="agcg_adm_page agcg_tasks_list">

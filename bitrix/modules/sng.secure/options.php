@@ -6,7 +6,7 @@
 #   Copyright (c) 2009-2019 Semen Golikov       #
 #################################################
 
-IncludeModuleLangFile(__FILE__);  //Connecting the language files for the current script
+IncludeModuleLangFile(__FILE__);
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/options.php");
 \Bitrix\Main\Loader::includeModule('sng.secure');
 DeleteDirFilesEx("/bitrix/managed_cache/MYSQL/");
@@ -31,17 +31,17 @@ if(!strlen($path)>0)
 	<tr class="field-str">
 		<td align="left" valign='middle' width='50%'>
 			<div style="text-align:left;"><a href="https://www.sng-it.ru" target="new" style="text-decoration:none;"><img src="/bitrix/images/sng.secure/logo_sng.png" width="137" height="43" alt="www.sng-it.ru"></a></div> 
-		</td>
+			</td>
 		 <td valign='middle' width='50%'>		 
 		 <?=GetMessage('SNG_SECURE_DESCRIPTION')?> 
 		 </td>
 	</tr>	
 	
 	<tr class="field-str">
-		<td valign='middle' width='50%' class='field-name'><?=GetMessage('SNG_SECURE_PATH')?>: &nbsp;<input type="text" size="35" maxlength="255" value="<?=$path;?>" name="secure_path" id="secure_path"></td>
+		<td valign='middle' width='50%' class='field-name'><?=GetMessage('SNG_SECURE_PATH')?>: &nbsp;<input type="text" size="35" maxlength="255" value="<?=htmlspecialcharsbx($path);?>" name="secure_path" id="secure_path"></td>
 		<td valign='middle' width='50%'>
 			<input style="padding: 5px 30px; height:auto;font-size:16px;" type="button" title="<?echo GetMessage("SNG_START_SECURE")?>" OnClick="StartSecure();" value="<?echo GetMessage("SNG_START_SECURE")?>">
-		</td>
+			</td>
 	</tr>	
 	
 	<tr class="field-str">
@@ -49,13 +49,19 @@ if(!strlen($path)>0)
 		<td valign='middle' width='50%'><br>			
 			<div id="secure_exeptions">
 				<?
-				$arEx = unserialize(COption::GetOptionString("sng.secure", "exeptions", ''));
+				$rawEx = COption::GetOptionString("sng.secure", "exeptions", '');
+				$arEx = ($rawEx !== '') ? unserialize($rawEx, ['allowed_classes' => false]) : array();
+				if(!is_array($arEx))
+				{
+					$arEx = array();
+				}
+				
 				if(!empty($arEx))
 				{					
 					foreach($arEx as $key => $path)
 					{
 					?>
-					<input class="secure_exeptions_i" type="text" size="35" maxlength="255" value="<?=$path;?>" name="secure_ex[]"><br>
+					<input class="secure_exeptions_i" type="text" size="35" maxlength="255" value="<?=htmlspecialcharsbx($path);?>" name="secure_ex[]"><br>
 					<?
 					}
 				}
@@ -65,7 +71,7 @@ if(!strlen($path)>0)
 			</div>
 			<input style="padding: 5px 10px; height:auto; font-size:14px; font-weight:500;" type="button" title="<?echo GetMessage("SNG_SECURE_EX_ADD")?>" OnClick="AddExeption();" value="<?echo GetMessage("SNG_SECURE_EX_ADD")?>">
 			<input style="padding: 5px 10px; height:auto; font-size:14px; font-weight:500;" type="button" title="<?echo GetMessage("SNG_SECURE_EX_SAVE")?>" OnClick="SaveExeption();" value="<?echo GetMessage("SNG_SECURE_EX_SAVE")?>">
-		</td>
+			</td>
 	</tr>	
 	
 </table>
@@ -76,7 +82,12 @@ if(!strlen($path)>0)
 	<div id="secure_result_count_block" style="display:none;text-align:center;margin-bottom:20px;"><?echo GetMessage("SNG_SECURE_COUNT");?> <span id="secure_result_count"></span></div>
 <div id="secure_result">
 	<?
-	$arTable = unserialize(COption::GetOptionString("sng.secure", "last_search", ""));
+	$rawTable = COption::GetOptionString("sng.secure", "last_search", "");
+	$arTable = ($rawTable !== '') ? unserialize($rawTable, ['allowed_classes' => false]) : array();
+	if(!is_array($arTable))
+	{
+		$arTable = array();
+	}
 	
 	if(!empty($arTable))
 	{
@@ -87,29 +98,29 @@ if(!strlen($path)>0)
 		<td style="width:150px;"><b><?echo GetMessage("SNG_SECURE_TABLE_DATE")?></b></td>
 		<td><b><span style="width:180px;display:inline-block"><?echo GetMessage("SNG_SECURE_TABLE_TYPE")?></span> <?echo GetMessage("SNG_SECURE_TABLE_FILE")?></b></td>
 		
-		</tr>
+	</tr>
 		<?
 		foreach($arTable as $key => $value)
 		{
 			?>
-			<tr>
-			<td style="width:150px;"><?=$key?></td>
-				<td>
+				<tr>
+			<td style="width:150px;"><?=htmlspecialcharsbx($key)?></td>
+					<td>
 				<table style="border:none;">
 				<?		
 				foreach($value as $k => $v)
 				{
 					?>
-					<tr>
-					<td style="border:none !important;width:180px;"><?=$v;?></td>
-					<td style="border:none !important;"><?=$k;?></td>
+						<tr>
+					<td style="border:none !important;width:180px;"><?=htmlspecialcharsbx($v);?></td>
+					<td style="border:none !important;"><?=htmlspecialcharsbx($k);?></td>
 					</tr>
 					<?	
 				}
 				?>
 				</table>
 				</td>
-			</tr>
+				</tr>
 			<?
 		}
 		?>
@@ -117,29 +128,14 @@ if(!strlen($path)>0)
 	<style>
 	#table_secure td{border-collapse:collapse;border: 1px solid #C4CED2 !important; margin-top:1px;margin-right:1px;}
 	</style>
-	<?/*?>
-	<div class="adm-info-message-wrap adm-info-message-red" style="text-align:center;">
-		<br>
-		<div class="adm-info-message" style="margin: 0 auto"><?echo GetMessage("SNG_SECURE_SEND");?><div class="adm-info-message-icon"></div></div>
-		<br>
-		<br>
-		<div style="background-color: #e0e8ea;font-size: 14px;padding: 8px 4px 10px!important;font-weight: bold;"><?echo GetMessage("SNG_SECURE_SEND_BLOCK");?></div>
-		<br><br>
-		<form action="send.php">
-			<input type="text" placeholder="Ваше Имя" style="margin-bottom:10px;"><br>
-			<input type="text" placeholder="Ваш E-mail" style="margin-bottom:10px;"><br>
-			<input type="submit" value="Отправить заявку"><br>
-		</form>		
-	</div>	
-	<?*/
-	?><br><b style="color:red;"><?echo GetMessage("SNG_SECURE_SEND");?></b><br><?
+	<br><b style="color:red;"><?echo GetMessage("SNG_SECURE_SEND");?></b><br><?
 	echo GetMessage("SNG_SECURE_SEND_BLOCK");
 	}
 	?>	
 </div>
 
 <?echo GetMessage("SNG_SECURE_REGULAR");?>
-<script>	
+<script>
 	function SaveExeption(){	
 		var arr = document.getElementsByClassName('secure_exeptions_i'),
 		len = arr.length,
@@ -150,10 +146,12 @@ if(!strlen($path)>0)
 		
 		BX.ajax({ 
 			url: '/bitrix/admin/<?=$module_id?>_save_ex.php', 
-			data: {'secure_exeptions': data_exeptions}, 
+			data: {
+				'secure_exeptions': data_exeptions,
+				'sessid': BX.bitrix_sessid()
+			}, 
 			method: 'POST',
 			async: true,		 
-            //dataType: 'json',			
 			onsuccess: function(data)
 			{
 				document.getElementById('secure_exeptions').innerHTML = data;					
@@ -187,10 +185,15 @@ if(!strlen($path)>0)
 	{	 
 		BX.ajax({ 
 			url: '/bitrix/admin/<?=$module_id?>_ajax.php', 
-			data: {'secure_path': document.getElementById('secure_path').value, 'file':file, 'countF': countF}, 
+			data: {
+				'secure_path': document.getElementById('secure_path').value, 
+				'file': file, 
+				'countF': countF,
+				'sessid': BX.bitrix_sessid()
+			}, 
 			method: 'POST',
 			async: true,		 
-            dataType: 'json',			
+			dataType: 'json',			
 			onsuccess: function(data)
 			{
 				document.getElementById('secure_result_count_block').style.display = "block";
@@ -213,6 +216,10 @@ if(!strlen($path)>0)
 		BX.ajax({ 
 			url: '/bitrix/admin/<?=$module_id?>_result.php', 
 			method: 'POST',
+			data: {
+				'sessid': BX.bitrix_sessid(),
+				'secure_path': document.getElementById('secure_path').value
+			},
 			async: true,		 
 			onsuccess: function(data)
 			{
@@ -225,4 +232,4 @@ if(!strlen($path)>0)
 $tabControl->Buttons();
 $tabControl->End();
 CUtil::InitJSCore(Array("jquery"));
-?>		
+?>

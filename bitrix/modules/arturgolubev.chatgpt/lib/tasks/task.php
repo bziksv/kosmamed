@@ -20,6 +20,8 @@ class Task {
 			$dopData = [
 				'provider' => htmlspecialchars($postFields['provider']),
 				'save_field' => htmlspecialchars($postFields['save_field']),
+				'save_only_empty' => htmlspecialchars($postFields['save_only_empty']),
+				'files' => htmlspecialchars($postFields['files']),
 			];
 			$data = [
 				"UF_NAME" => htmlspecialchars($postFields['name']),
@@ -50,6 +52,7 @@ class Task {
 				'provider' => htmlspecialchars($postFields['provider']),
 				'save_field' => htmlspecialchars($postFields['save_field']),
 				'save_only_empty' => htmlspecialchars($postFields['save_only_empty']),
+				'files' => htmlspecialchars($postFields['files']),
 			];
 
 			$data = [
@@ -104,7 +107,39 @@ class Task {
 		return $result;
 	}
 
-	static function startTask($task_id){
+	static function copyTask($task_id){
+		$result = [];
+
+		$result['old_task'] = self::getTaskByID($task_id);
+
+		$result['create_task_result'] = self::createTask([
+			'provider' => $result['old_task']['UF_PARAMS']['provider'],
+			'save_field' => $result['old_task']['UF_PARAMS']['save_field'],
+			'name' => $result['old_task']['UF_NAME'].' copy',
+			'iblock_id' => $result['old_task']['UF_IBLOCK'],
+			'entity_type' => $result['old_task']['UF_ETYPE'],
+			'prompt' => $result['old_task']['UF_PROMPT'],
+		]);
+
+		if($result['create_task_result']['error_message']){
+			$result['error_message'] = $result['create_task_result']['error_message'];
+		}else{
+			$taskElements = Tasks\Logic::uniGetlist('elements', [
+				'select' => ['ID', 'UF_ELEMENT'],
+				"filter" => ['=UF_TASK' => $task_id]
+			]);
+
+			if(count($taskElements)){
+				foreach($taskElements as $tElement){
+					Tasks\Element::addElementToTask($result['create_task_result']['id'], $tElement['UF_ELEMENT']);
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	static function startTask($task_id, $options = []){
 		$result = [];
 
 		if($task_id){
@@ -117,12 +152,24 @@ class Task {
 				$result['error_message'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_TASKS_EDIT_START_TASK_ERROR_NO_ELEMENTS');
 			}else{
 				foreach($taskElements as $tElement){
-					if($tElement['UF_STATUS'] == 'error'){
-						Tasks\Element::update($tElement['ID'], [
-							'UF_STATUS' => '',
-							'UF_GENERATION_DATE' => '',
-							'UF_PARAMS' => '',
-						]);
+					if($options['restart'] && $options['restart'] == 'all'){
+						if($tElement['UF_STATUS']){
+							Tasks\Element::update($tElement['ID'], [
+								'UF_STATUS' => '',
+								'UF_GENERATION_DATE' => '',
+								'UF_GENERATION_RESULT' => '',
+								'UF_VALUE_BACKUP' => '',
+								'UF_PARAMS' => '',
+							]);
+						}
+					}else{
+						if($tElement['UF_STATUS'] == 'error'){
+							Tasks\Element::update($tElement['ID'], [
+								'UF_STATUS' => '',
+								'UF_GENERATION_DATE' => '',
+								'UF_PARAMS' => '',
+							]);
+						}
 					}
 				}
 

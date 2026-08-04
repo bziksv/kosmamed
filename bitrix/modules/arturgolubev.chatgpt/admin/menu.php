@@ -146,6 +146,11 @@ if($showSetting || $showGenerate){
 				'more_url' => [],
 				'url' => 'javascript: window.open("https://arturgolubev.ru/knowledge/course35/chapter0250/", "_blank");void(0);',
 				'icon' => '',
+			],[
+				'text' => GetMessage("ARTURGOLUBEV_CHATGPT_DOCUMENTATIONS_PROBLEMS"),
+				'more_url' => [],
+				'url' => 'javascript: window.open("https://arturgolubev.ru/knowledge/course35/chapter0227/", "_blank");void(0);',
+				'icon' => '',
 			],
 			[
 				'text' => GetMessage("ARTURGOLUBEV_CHATGPT_DOCUMENTATIONS_FAQ"),

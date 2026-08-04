@@ -24,6 +24,23 @@ class Tasks extends \Bitrix\Main\Engine\Controller
         return $result;
     }
 
+    public function copyAction($task_id){
+        $result = [];
+
+        if($this->checkOperationRights()){
+            $data = TasksLogic\Task::copyTask($task_id);
+            if($data['error_message']){
+                $result['error_message'] = $data['error_message'];
+            }
+
+            $result['data'] = $data;
+        }else{
+            $this->addError(new Error('Access Denied', 'CHECK_USER'));
+        }
+        
+        return $result;
+    }
+
     public function stopAction($task_id){
         $result = [];
 
@@ -44,6 +61,22 @@ class Tasks extends \Bitrix\Main\Engine\Controller
 
         if($this->checkOperationRights()){
             $data = TasksLogic\Task::startTask($task_id);
+            if($data['error_message']){
+                $result['error_message'] = $data['error_message'];
+            }
+        }else{
+            $this->addError(new Error('Access Denied', 'CHECK_USER'));
+        }
+        
+        return $result;
+    }
+
+
+    public function restartAction($task_id){
+        $result = [];
+
+        if($this->checkOperationRights()){
+            $data = TasksLogic\Task::startTask($task_id, ['restart' => 'all']);
             if($data['error_message']){
                 $result['error_message'] = $data['error_message'];
             }

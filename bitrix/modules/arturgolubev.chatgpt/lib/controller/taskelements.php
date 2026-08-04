@@ -50,6 +50,18 @@ class TaskElements extends \Bitrix\Main\Engine\Controller
         return $result;
     }
 
+    public function returnDataTaskElementAction($element_id){
+        $result = [];
+
+        if($this->checkOperationRights()){
+            $result['backup_returned'] = Tasks\Element::returnBackup($element_id);
+        }else{
+            $this->addError(new Error('Access Denied', 'CHECK_USER'));
+        }
+        
+        return $result;
+    }
+
     private function checkOperationRights(){
         global $USER;
         if(!is_object($USER)){

@@ -2,6 +2,8 @@
 use \Bitrix\Main\Loader,
     \Bitrix\Main\Localization\Loc;
 
+use Bitrix\Main\Grid\Panel\Snippet; //?
+
 use \Arturgolubev\Chatgpt\Unitools as UTools,
     \Arturgolubev\Chatgpt\Tools,
     \Arturgolubev\Chatgpt\Tasks;
@@ -44,7 +46,24 @@ if($isEdit){
     $context->Show();
 }
 
-// CArturgolubevChatgpt::taskWorker($task_id); // todo
+if($task_id){
+    $elDelAction = $_REQUEST['action_button_agcg_task_elements_list'];
+    if($elDelAction == 'delete' && Tools::checkRights('tasks')){
+        $IDS = [];
+
+        if(is_array($_REQUEST['ID'])){
+            foreach($_REQUEST['ID'] as $id){
+                $IDS[] = intval($id);
+            }
+        }
+
+        if(count($IDS)){
+            Tasks\Element::deleteTaskElements($IDS);
+        }
+    }
+}
+
+// CArturgolubevChatgpt::taskWorker($task_id); echo 'TEST START ACTIVE!'; // todo
 ?>
 
 <div class="tasks-description agcg_adm_page"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_TESTMODE_NOTIFY")?></div>
@@ -63,7 +82,7 @@ if($isEdit){
                         <option value=""><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_FIELD_IBLOCK_NEED_SELECT")?></option>
 
                         <?foreach($iblocks as $iblock):?>
-                            <option value="<?=$iblock['ID']?>">[<?=$iblock['TYPE_ID']?>] <?=$iblock['NAME']?></option>
+                            <option value="<?=intval($iblock['ID'])?>">[<?=htmlspecialcharsbx($iblock['TYPE_ID'])?>] <?=htmlspecialcharsbx($iblock['NAME'])?></option>
                         <?endforeach;?>
                     </select>
                 </div>
@@ -121,7 +140,7 @@ if($isEdit){
                             <?if($isEdit):
                                 // echo '<pre>'; print_r($taskData['UF_STATUS']); echo '</pre>';
                             ?>
-                                <?if(in_array($taskData['UF_STATUS'], ['new', 'stop', 'finish'])):?>
+                                <?if(in_array($taskData['UF_STATUS'], ['new'])):?>
                                     <div class="input-button input-button-colored js-taskedit-start"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_START")?></div>
                                 <?endif;?>
 
@@ -129,8 +148,25 @@ if($isEdit){
                                     <div class="input-button input-button-colored js-taskedit-stop"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP")?></div>
                                 <?endif;?>
                                 
+                                <?if(in_array($taskData['UF_STATUS'], ['stop'])):?>
+                                    <div class="input-button input-button-colored js-taskedit-start"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_CONTINUE")?></div>
+                                    <br><br><br>
+                                    <div class="input-button input-button-colored js-taskedit-restart"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP_RESTART")?></div>
+                                    <div class="input-button-description"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP_RESTART_DESCR")?></div>
+                                <?endif;?>
+                                
                                 <?if(in_array($taskData['UF_STATUS'], ['stop_error'])):?>
                                     <div class="input-button input-button-colored js-taskedit-start"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_RESTART")?></div>
+                                <?endif;?>
+                                
+                                <?if(in_array($taskData['UF_STATUS'], ['finish'])):?>
+                                    <br><br><br>
+                                    <div class="input-button input-button-colored js-taskedit-start"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_START")?></div>
+                                    <div class="input-button-description"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_FINISH_START_DESCR")?></div>
+
+                                    <br>
+                                    <div class="input-button input-button-colored js-taskedit-restart"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_FINISH_RESTART")?></div>
+                                    <div class="input-button-description"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_FINISH_RESTART_DESCR")?></div>
                                 <?endif;?>
                             <?endif;?>
                         </div>
@@ -197,6 +233,9 @@ if($isEdit){
 
                     $elements = Tasks\Grid::listTaskElements($task_id, $sort, $nav, $filterData);
                     // echo '<pre>'; print_r($elements); echo '</pre>';
+
+                    $snippet = new Snippet();
+                    $removeButton = $snippet->getRemoveButton();
                     ?>
 
                     <div class="agcg_tasks_elements_list">
@@ -208,6 +247,8 @@ if($isEdit){
                                 ['id' => 'ELEMENT', 'name' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_ELEMENT"), 'sort' => 'ELEMENT', 'default' => true], 
                                 ['id' => 'STATUS_FORMAT', 'name' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_STATUS"), 'sort' => 'STATUS', 'default' => true], 
                                 ['id' => 'ERROR_TEXT', 'name' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ERROR_TEXT"), 'sort' => false, 'default' => true], 
+                                ['id' => 'GENERATION_DATE', 'name' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_GENERATION_DATE"), 'sort' => false, 'default' => false], 
+                                ['id' => 'GENERATION_RESULT', 'name' => Loc::getMessage("ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_GENERATION_RESULT"), 'sort' => false, 'default' => false], 
                             ], 
                             'ROWS' => $elements,
                             'NAV_OBJECT' => $nav, 
@@ -221,21 +262,30 @@ if($isEdit){
                                 ['NAME' => '100', 'VALUE' => '100'],
                                 ['NAME' => '500', 'VALUE' => '500'],
                             ], 
-                            'SHOW_ROW_CHECKBOXES' => false, 
-                            'SHOW_CHECK_ALL_CHECKBOXES' => false, 
-                            'SHOW_ROW_ACTIONS_MENU'     => true, 
-                            'SHOW_GRID_SETTINGS_MENU'   => true, 
-                            'SHOW_NAVIGATION_PANEL'     => true, 
-                            'SHOW_PAGINATION'           => true, 
-                            'SHOW_SELECTED_COUNTER'     => true, 
-                            'SHOW_TOTAL_COUNTER'        => true, 
-                            'SHOW_PAGESIZE'             => true, 
-                            'SHOW_ACTION_PANEL'         => false, 
-                            'ALLOW_COLUMNS_SORT'        => true, 
-                            'ALLOW_COLUMNS_RESIZE'      => true, 
-                            'ALLOW_HORIZONTAL_SCROLL'   => true, 
-                            'ALLOW_SORT'                => true, 
-                            'ALLOW_PIN_HEADER'          => true, 
+                            'SHOW_ROW_CHECKBOXES' => true, 
+                            'SHOW_CHECK_ALL_CHECKBOXES' => true, 
+                            'SHOW_ROW_ACTIONS_MENU' => true, 
+                            'SHOW_GRID_SETTINGS_MENU' => true, 
+                            'SHOW_NAVIGATION_PANEL' => true, 
+                            'SHOW_PAGINATION' => true, 
+                            'SHOW_SELECTED_COUNTER' => true, 
+                            'SHOW_TOTAL_COUNTER' => true, 
+                            'SHOW_PAGESIZE' => true, 
+                            'SHOW_ACTION_PANEL' => true, 
+                            'ALLOW_COLUMNS_SORT' => true, 
+                            'ALLOW_COLUMNS_RESIZE' => true, 
+                            'ALLOW_HORIZONTAL_SCROLL' => true, 
+                            'ALLOW_SORT' => true, 
+                            'ALLOW_PIN_HEADER' => true, 
+                            'ACTION_PANEL' => [
+                                'GROUPS' => [
+                                    [
+                                        'ITEMS' => [
+                                            $removeButton
+                                        ], 
+                                    ],     
+                                ],
+                            ],
                         ]);?>
                     </div>
 

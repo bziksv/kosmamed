@@ -4,6 +4,7 @@ $arParameters = Array(
 	"USER_PARAMETERS" => Array(),
 );
 
+
 /* $arParameters["USER_PARAMETERS"]["EXTENDED_MODE"] = array(
 	"NAME" => GetMessage("ARTURGOLUBEV_WATCHER_PARAM_EXTENDED_MODE"),
 	"TYPE" => "CHECKBOX",

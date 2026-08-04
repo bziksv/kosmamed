@@ -22,13 +22,13 @@ Class CSNGSecure
 	"gogettop.ru",
 	"blogun.ru",
 	"prnews.io", 
-	"seopult.ru",
+	"seopult.ru", 
 	"megaindex.ru",
 	"webeffector.ru",
 	"rookee.ru",
 	"seowizard.ru");	
 	
-	static $arLinksPhiten = array("LinkfeedClient");	
+	static $arLinksPhiten = array("1px dashed #dadada");
 	
 	static $arExeptions = array(
 	"/bxu/main/.access.php",	
@@ -41,10 +41,14 @@ Class CSNGSecure
 	"/bitrix/modules/main/classes/general/update_client.php",
 	);	
 
-	
 	public static function searchPhp($dirname, $file_path, $countEl, $type = "ajax")
 	{
 		$max_ex_time = 10;
+		
+		if(!is_dir($dirname))
+		{
+			$dirname = $_SERVER['DOCUMENT_ROOT'];
+		}
 		
 		$fileinfos = new RecursiveIteratorIterator(
 			new RecursiveDirectoryIterator($dirname)
@@ -52,66 +56,60 @@ Class CSNGSecure
 
 		$limit = new LimitIterator($fileinfos, $countEl);
 		
-		$arEx = unserialize(COption::GetOptionString("sng.secure", "exeptions", ''));
+		// Безопасная десериализация
+		$rawEx = COption::GetOptionString("sng.secure", "exeptions", '');
+		$arEx = ($rawEx !== '') ? unserialize($rawEx, ['allowed_classes' => false]) : array();
+		if (!is_array($arEx)) {
+			$arEx = array();
+		}
+		
 		$arExeptions = array();
 	
 		foreach(self::$arExeptions as $k => $v){	
 			$arExeptions[] = $v;
 		}
 		foreach($arEx as $k => $v){	
-			$arExeptions[] = $v;
-			
+			if(!empty($v))
+			{
+				$arExeptions[] = $v;
+			}
 		}		
 		
 		foreach ($limit as $file =>  $ar)  
 		{	
 			$countEl++;			
-				$flagEx = 0;
-				
-				if(!empty($arExeptions))
-				{
-					foreach($arExeptions as $k => $v)
-					{				
-						if(preg_match("#".$v."#", $file))
-						{
-							$flagEx = 1;
-						}
-					}	
+			$flagEx = 0;
+			
+			if(!empty($arExeptions))
+			{
+				foreach($arExeptions as $k => $v)
+				{				
+					// Исправлено: вместо preg_match используем strpos
+					if($v !== '' && strpos($file, $v) !== false)
+					{
+						$flagEx = 1;
+						break;
+					}
 				}	
+			}	
 
-					
-				if ($file != '.' && $file != '..' && !$flagEx) {
+			if ($file != '.' && $file != '..' && !$flagEx) {
 				
-					// не добавляем «не файлы» — это каталоги и ссылки
-					if (is_file($file) 
-					&& preg_match("#\.php#",$file) 
-					)					
-					{ 	
-					
-						//сразу делаем проверку файла, если найден подозрительный код, то записываем файл в сессию
-					
-						if($result = self::CheckFile($file))
-						{	
-				
-							$_SESSION['SNG_SECURE'][filemtime($file)][$file] = $result;
-							
-						}
-							
-							
+				if (is_file($file) && preg_match("#\.php#",$file)) 					
+				{ 					
+					if($result = self::CheckFile($file))
+					{	
+						$_SESSION['SNG_SECURE'][filemtime($file)][$file] = $result;
 					}
 				}
-/*file_put_contents(
-                        $_SERVER["DOCUMENT_ROOT"]."/log_secure.txt", 
-                        date('d m o, H:i:s') . ' - '.filemtime($file).' - '.$file. ' - '.$result.$countEl. PHP_EOL,
-                        FILE_APPEND
-                    );	
-*/					
-						if(intval(getmicrotime()-START_EXEC_TIME)>$max_ex_time && $file && $type == "ajax")
-						{
-								global $number;
-								$number = $countEl;
-								return $file;
-						}					
+			}
+			
+			if(intval(getmicrotime()-START_EXEC_TIME)>$max_ex_time && $file && $type == "ajax")
+			{
+				global $number;
+				$number = $countEl;
+				return $file;
+			}					
 		}
 		
 		global $number;
@@ -159,7 +157,6 @@ Class CSNGSecure
 		return true;
 	}
 
-	
 	public static function CheckFile($f)
 	{
 		global $LAST_REG;
@@ -234,7 +231,6 @@ Class CSNGSecure
 			$LAST_REG = $regs[0];
 			return '[615] hidden vars';
 		}
-
 
 		# CODE 620
 		if (preg_match('#\$['."_\x80-\xff".']+'.self::$spaces.'=#i', $str, $regs))
@@ -320,7 +316,7 @@ Class CSNGSecure
 		
 		foreach(self::$arLinksPhiten as $key => $link)
 		{	
-			if (preg_match("#".$link."#", $str, $regs))
+			if (preg_match("#".preg_quote($link, '#')."#", $str, $regs))
 			{
 				$LAST_REG = $regs[0];
 				return '['.$link.'] '.$link;
@@ -330,7 +326,7 @@ Class CSNGSecure
 		# CODE 805
 		foreach(self::$arLinks as $key => $link)
 		{	
-			if (preg_match("#".$link."#", $str, $regs))
+			if (preg_match("#".preg_quote($link, '#')."#", $str, $regs))
 			{
 				$LAST_REG = $regs[0];
 				return '[805] link stock';

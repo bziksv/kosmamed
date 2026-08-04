@@ -20,57 +20,65 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_aft
 if(Loader::IncludeModule($module_id)):
 	$arSizes = \Arturgolubev\Chatgpt\FormConstructor::getImageSizeVarians();
 	$model = UTools::getSetting('alg_image_model');
+
+	$aiList = Tools::getAiList();
 ?>
 	<div class="agcg_adm_page">
 		<?if(Tools::checkRights('question')):?>
 			<?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_IMAGE_PAGE_TEXT")?>
 			
-			<div class="agcg_askpage_form">
-				<div class="title"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_QUERY_AREA")?></div>
-				
+			<div class="agcg_askpage_form">				
 				<form class="input-form js-image-form">
 					<input type="hidden" name="action" value="image-request" />
+					
+					<div class="input-field">
+						<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM")?></div>
+						<div class="input-field">
+							<select class="js-image-system" name="provider">
+								<?if(in_array('chatgpt', $aiList)):?><option value="chatgpt"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM_CHATGTP")?></option><?endif;?>
+								<?if(in_array('sber', $aiList)):?><option value="sber"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_ASK_INPUT_SYSTEM_SBER")?></option><?endif;?>
+							</select>
+						</div>
+					</div>
 					
 					<div class="input-field">
 						<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_IMAGE_INPUT_QUERY")?></div>
 						<div class="input-field"><textarea name="question" class="js-image-area"></textarea></div>
 					</div>
-					
-					<?if($model == 'gpt-image-1'):
-						$arOpt1 = [
-							'jpeg' => 'jpeg',
-							// 'webp' => 'webp',
-							'png' => 'png',
-						];	
-						$arOpt2 = [
-							'low' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_LOW'),
-							'medium' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_MEDIUM'),
-							'high' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_HIGH'),
-						];	
-						
+
+					<?
+					$arOpt1 = [
+						'jpeg' => 'jpeg',
+						// 'webp' => 'webp',
+						'png' => 'png',
+					];	
+					$arOpt2 = [
+						'low' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_LOW'),
+						'medium' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_MEDIUM'),
+						'high' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_HIGH'),
+					];
 					?>
+					<div class="input-field">
+						<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_OUTPUT_FORMAT")?></div>
 						<div class="input-field">
-							<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_OUTPUT_FORMAT")?></div>
-							<div class="input-field">
-								<select name="output_format">
-									<?foreach($arOpt1 as $k=>$v):?>
-										<option value="<?=$k?>"><?=$v?></option>
-									<?endforeach?>
-								</select>
-							</div>
+							<select name="output_format">
+								<?foreach($arOpt1 as $k=>$v):?>
+									<option value="<?=$k?>"><?=$v?></option>
+								<?endforeach?>
+							</select>
 						</div>
-						
+					</div>
+					
+					<div class="input-field">
+						<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY")?></div>
 						<div class="input-field">
-							<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY")?></div>
-							<div class="input-field">
-								<select name="quality">
-									<?foreach($arOpt2 as $k=>$v):?>
-										<option value="<?=$k?>"><?=$v?></option>
-									<?endforeach?>
-								</select>
-							</div>
+							<select name="quality">
+								<?foreach($arOpt2 as $k=>$v):?>
+									<option value="<?=$k?>"><?=$v?></option>
+								<?endforeach?>
+							</select>
 						</div>
-					<?endif;?>
+					</div>
 
 					<div class="input-field">
 						<div class="input-label"><?=Loc::getMessage("ARTURGOLUBEV_CHATGPT_IMAGE_INPUT_SIZE")?></div>

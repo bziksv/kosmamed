@@ -183,7 +183,7 @@ class FormConstructor {
 	}
 	
 	// elements
-	static function getElementFieldsToFiles($IBLOCK_ID, $operation, $type){
+	static function getElementFieldsToFiles($IBLOCK_ID){
 		$result = [
 			'no_name' => [],
 			'fields' => [],
@@ -237,16 +237,13 @@ class FormConstructor {
 		];
 
 		if($operation == 'IMAGE'){
-			$result['fields'] = [
-				[
-					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_SAVETO_PREVIEW_PICTURE'),
-					'CODE' => 'PREVIEW_PICTURE',
-				],
-				[
-					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_SAVETO_DETAIL_PICTURE'),
-					'CODE' => 'DETAIL_PICTURE',
-				]
-			];
+			$saveFields = self::getElementFieldsToFiles($IBLOCK_ID);
+			if(is_array($saveFields['fields']) && count($saveFields['fields'])){
+				$result['fields'] = $saveFields['fields'];
+			}
+			if(is_array($saveFields['properties']) && count($saveFields['properties'])){
+				$result['properties'] = $saveFields['properties'];
+			}
 		}else{
 			$result['fields'] = [
 				[
@@ -389,12 +386,16 @@ class FormConstructor {
 			if(in_array('deepseek', $aiList)){
 				$arFields['provider']['VALUES']['deepseek'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER_DEEPSEEK');
 			}
+			
+			if(in_array('openai_compatible', $aiList)){
+				$arFields['provider']['VALUES']['openai_compatible'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER_OPENAI_COMPATIBLE');
+			}
 		}
 		
 		if(1){ // operation
 			$arFields['operation']['VALUES']['TEMPLATE'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_OPERATION_TEMPLATE');
 
-			if(!in_array($postFields['provider'], ['sber', 'deepseek'])){
+			if(!in_array($postFields['provider'], ['deepseek', 'openai_compatible'])){
 				$arFields['operation']['VALUES']['IMAGE'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_OPERATION_IMAGE_GENERATION');
 			}
 			
@@ -447,6 +448,7 @@ class FormConstructor {
 					'CLASS' => '',
 					'VALUES_GROUPS' => 0,
 					'VALUES' => [
+						Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_EN') => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_EN'),
 						Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_RU') => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_RU'),
 						Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_BY') => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_BY'),
 						Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_UA') => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_TRANSLATE_LANG_UA'),
@@ -460,7 +462,8 @@ class FormConstructor {
 			unset($arFields['type']); unset($arFields['for']); unset($arFields['from']);
 
 			$model = UTools::getSetting('alg_image_model');
-			if($model == 'gpt-image-1'){
+
+			if($postFields['provider'] != 'sber'){
 				$arFields['output_format'] = [
 					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_OUTPUT_FORMAT'),
 					'TYPE' => 'select',
@@ -484,15 +487,15 @@ class FormConstructor {
 						'high' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_HIGH'),
 					]
 				];
-			}
 
-			$arFields['size'] = [
-				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_SIZE'),
-				'TYPE' => 'select',
-				'CLASS' => '',
-				'VALUES_GROUPS' => 0,
-				'VALUES' => self::getImageSizeVarians()
-			];
+				$arFields['size'] = [
+					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_SIZE'),
+					'TYPE' => 'select',
+					'CLASS' => '',
+					'VALUES_GROUPS' => 0,
+					'VALUES' => self::getImageSizeVarians()
+				];
+			}
 
 			$arFields['template_image'] = [
 				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE'),
@@ -605,6 +608,16 @@ class FormConstructor {
 				]
 			];
 
+			$arFields['template_element']['HINT_BUTTON_VARIANTS'][] = [
+				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_GROUP_SEO'),
+				'ITEMS' => [
+					'SEO_ELEMENT_PAGE_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_PAGE_TITLE'),
+					'SEO_ELEMENT_META_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_TITLE'),
+					'SEO_ELEMENT_META_KEYWORDS' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_KEYWORDS'),
+					'SEO_ELEMENT_META_DESCRIPTION' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_DESCRIPTION'),
+				]
+			];
+
 			if(count($arProps)){
 				$arFields['template_element']['HINT_BUTTON_VARIANTS'][] = [
 					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_GROUP_PROPERTIES'),
@@ -650,8 +663,7 @@ class FormConstructor {
 			$arFields['from']['VALUES'] = self::_getElementFrom($postFields['IBLOCK_ID'], $postFields['operation']);
 		}
 		
-		
-		if(in_array($postFields['operation'], ['TEMPLATE']) && $postFields['provider'] == 'chatgpt'){ // , 'IMAGE'
+		if(in_array($postFields['operation'], ['TEMPLATE']) && ($postFields['provider'] == 'chatgpt' || (!$postFields['provider'] && in_array('chatgpt', $aiList)))){ // , 'IMAGE'
 			$arFields['files'] = [
 				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FILES'),
 				'TYPE' => 'select',
@@ -661,7 +673,7 @@ class FormConstructor {
 			];
 
 			if($postFields['IBLOCK_ID']){
-				$saveFields = self::getElementFieldsToFiles($postFields['IBLOCK_ID'], $postFields['operation'], $postFields['type']);
+				$saveFields = self::getElementFieldsToFiles($postFields['IBLOCK_ID']);
 				foreach($saveFields as $groupKey=>$items){
 					$selectItems = [];
 					foreach($items as $item){
@@ -1021,12 +1033,15 @@ class FormConstructor {
 			if(in_array('deepseek', $aiList)){
 				$arFields['provider']['VALUES']['deepseek'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER_DEEPSEEK');
 			}
+			if(in_array('openai_compatible', $aiList)){
+				$arFields['provider']['VALUES']['openai_compatible'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER_OPENAI_COMPATIBLE');
+			}
 		}
 		
 		if(1){ // operation
 			$arFields['operation']['VALUES']['TEMPLATE'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_OPERATION_TEMPLATE');
 
-			if(!in_array($postFields['provider'], ['sber', 'deepseek'])){
+			if(!in_array($postFields['provider'], ['deepseek', 'openai_compatible'])){
 				$arFields['operation']['VALUES']['IMAGE'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_OPERATION_IMAGE_GENERATION');
 			}
 
@@ -1069,7 +1084,8 @@ class FormConstructor {
 			unset($arFields['type']); unset($arFields['for']); unset($arFields['from']);
 			
 			$model = UTools::getSetting('alg_image_model');
-			if($model == 'gpt-image-1'){
+
+			if($postFields['provider'] != 'sber'){
 				$arFields['output_format'] = [
 					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_OUTPUT_FORMAT'),
 					'TYPE' => 'select',
@@ -1093,15 +1109,15 @@ class FormConstructor {
 						'high' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_QUALITY_HIGH'),
 					]
 				];
-			}
 
-			$arFields['size'] = [
-				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_SIZE'),
-				'TYPE' => 'select',
-				'CLASS' => '',
-				'VALUES_GROUPS' => 0,
-				'VALUES' => self::getImageSizeVarians()
-			];
+				$arFields['size'] = [
+					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE_SIZE'),
+					'TYPE' => 'select',
+					'CLASS' => '',
+					'VALUES_GROUPS' => 0,
+					'VALUES' => self::getImageSizeVarians()
+				];
+			}
 			
 			$arFields['template_image'] = [
 				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_IMAGE'),
@@ -1201,6 +1217,16 @@ class FormConstructor {
 					'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FROM_SECTION_NAME'),
 					'DESCRIPTION' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FROM_SECTION_DESCRIPTION'),
 					'PICTURE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FROM_SECTION_PICTURE'),
+				]
+			];
+
+			$arFields['template_section']['HINT_BUTTON_VARIANTS'][] = [
+				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_GROUP_SEO'),
+				'ITEMS' => [
+					'SEO_SECTION_PAGE_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_SPAGE_TITLE'),
+					'SEO_SECTION_META_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_TITLE'),
+					'SEO_SECTION_META_KEYWORDS' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_KEYWORDS'),
+					'SEO_SECTION_META_DESCRIPTION' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_DESCRIPTION'),
 				]
 			];
 			
@@ -1322,27 +1348,13 @@ class FormConstructor {
 
 
 	static function getImageSizeVarians(){
-		$model = UTools::getSetting('alg_image_model');
+		// $model = UTools::getSetting('alg_image_model');
 
-		if($model == 'gpt-image-1'){
-			$arSizes = [
-				'1024x1024' => '1024x1024',
-				'1024x1536' => '1024x1536',
-				'1536x1024' => '1536x1024'
-			];
-		}elseif($model == 'dall-e-3'){
-			$arSizes = [
-				'1024x1024' => '1024x1024',
-				'1024x1792' => '1024x1792',
-				'1792x1024' => '1792x1024'
-			];
-		}else{
-			$arSizes = [
-				'256x256' => '256x256',
-				'512x512' => '512x512',
-				'1024x1024' => '1024x1024'
-			];
-		}
+		$arSizes = [
+			'1024x1024' => '1024x1024',
+			'1024x1536' => '1024x1536',
+			'1536x1024' => '1536x1024'
+		];
 
 		return $arSizes;
 	}

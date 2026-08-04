@@ -144,10 +144,68 @@ class Element {
             'UF_PARAMS' => '',
         ]);
 	}
-    
+
+    static function returnBackup($element_id){
+		$result = [
+			'success' => 0,
+			'error_message' => '',
+		];
+
+		$elementData = self::getTaskElementByID($element_id);
+		if($elementData){
+			$taskData = Tasks\Task::getTaskByID($elementData['UF_TASK']);
+			if(is_array($taskData)){
+				$saveParams = [
+					'genresult' => $elementData['UF_VALUE_BACKUP'],
+					'savefield' => $taskData['UF_PARAMS']['save_field'],
+					'ID' => $elementData['UF_ELEMENT'],
+					'IBLOCK_ID' => $taskData['UF_IBLOCK'],
+				];
+
+				if($saveParams['savefield'] && $saveParams['ID'] && $saveParams['IBLOCK_ID']){
+					if($taskData['UF_ETYPE'] == 'E'){
+						$saveResult = \CArturgolubevChatgpt::saveToElement($saveParams);
+					}else{
+						$saveResult = \CArturgolubevChatgpt::saveToSection($saveParams);
+					}
+
+					if($saveResult['error_message']){
+						$result['error_message'] = $saveResult['error_message'];
+					}else{
+						$result['success'] = 1;
+						self::clean($element_id);
+					}
+				}else{
+					$result['error_message'] = 'Not enough data for return';
+				}
+			}else{
+				$result['error_message'] = 'Task Not Found';
+			}
+		}else{
+			$result['error_message'] = 'Element Not Found';
+		}
+
+		return $result;
+	}
 
 	static function deleteTaskElement($element_id){
+		// $elementClass = Tasks\Logic::getTaskElementClass();
+		// $elementClass::delete($element_id);
+		self::deleteTaskElements([$element_id]);
+	}
+
+	static function deleteTaskElements($elementIds){
 		$elementClass = Tasks\Logic::getTaskElementClass();
-		$elementClass::delete($element_id);
+		if(is_array($elementIds) && !empty($elementIds)){
+			$elements = Tasks\Logic::uniGetlist('elements', [
+				'select' => ["ID"],
+				'order' => ["ID" => "ASC"],
+				"filter" => ['=ID' => $elementIds]
+			]);
+
+			foreach($elements as $element){
+				$elementClass::delete($element['ID']);
+			}
+		}
 	}
 }

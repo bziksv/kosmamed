@@ -1,11 +1,14 @@
 <?
-$MESS["ARTURGOLUBEV_CHATGPT_TASKS_TESTMODE_NOTIFY"] = "Автоматические задачи - новый режим и пока находится в стадии бета тестирования. Перед использованием <b>рекомендуется делать бэкапы</b>.<br>
-Работает он так: вы создаёте задачу на генерацию, добавляете в неё элементы для которых необходимо сгенерировать данные и генерация происходит в фоновом режиме.";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_TESTMODE_NOTIFY"] = "Автоматические задачи - позволяют генерировать данные в фоновом режиме. Создал задачу, добавил элементы, запустил - можно заниматься своими делами. При использовании <b>рекомендуется делать бэкапы</b>.<br><br>
+Видео-инструкция по работе с автоматическими задачами: <a href='https://arturgolubev.ru/knowledge/course35/lesson281/' target='_blank'>https://arturgolubev.ru/knowledge/course35/lesson281/</a>";
+
+
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_CRON_ERROR_BODY"] = "Агенты выполняются на хитах (константа BX_CRONTAB_SUPPORT не определена).<br><br>
+Для стабильной работы фоновой генерации агенты рекомендуется перевести на cron (Процесс перевода агентов на cron не сложен, но требует создания cron задания на сервере, поэтому для выполнения рекомендую обратиться к вашему разработчику)";
 
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_TITLE"] = "Автоматическая генерация данных";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_TITLE"] = "Редактирование автоматической генерации ##id#";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_NEW_TITLE"] = "Создание новой автоматической генерации";
-
 
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_PREPARE_DESCRIPTION"] = "Подготовка к созданию генерации, выберите инфобок и для какой сущности будут генерироваться данные.";
 
@@ -13,10 +16,17 @@ $MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_TAB_TASK"] = "Редактировани�
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_TAB_ELEMENTS"] = "Элементы задания";
 
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_SEND"] = "Отправить";
-$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_SAVE"] = "Сохранить";
-$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_START"] = "Сохранить и Запустить";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_SAVE"] = "Сохранить настройки";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_START"] = "Запустить";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_CONTINUE"] = "Продолжить";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_RESTART"] = "Сбросить ошибки и запустить";
-$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP"] = "Остановить";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP"] = "Остановить (пауза)";
+
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_FINISH_START_DESCR"] = "Сброс ошибок и генерация для элементов с ошибками + новых элементов (добавленым после завешения задачи)";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_FINISH_RESTART"] = "Повторный запуск";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_FINISH_RESTART_DESCR"] = "Повторный запуск для всех элементов добавленных в задачу (для новых, для элементов с ошибками, для успешно сгенерированных)";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP_RESTART"] = "Перезапуск запуск";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_BUTTON_STOP_RESTART_DESCR"] = "Выполнение задачи пойдет заново (для всех элементов добавленных в задачу)";
 
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_EDIT_FIELD_NAME"] = "Название:";
 
@@ -63,18 +73,20 @@ $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_NAME"] = "Название з
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_IBLOCK"] = "Инфоблок";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_STATUS"] = "Статус";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ERROR_TEXT"] = "Ошибка";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_GENERATION_DATE"] = "Дата генерации";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_GENERATION_RESULT"] = "Результат генерации";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_PROMPT"] = "Промпт";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_ETYPE"] = "Сущность";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_ELEMENT"] = "Элемент";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_FIELD_ELEMENTS"] = "Элементов в задаче";
 
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ACTION_EDIT"] = "Изменить";
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ACTION_COPY"] = "Копировать";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_LIST_TABLE_ACTION_DELETE"] = "Удалить";
 
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_MOREINFO"] = "Подробнее";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_DELETE_ELEMENT"] = "Удалить из задачи";
 $MESS["ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_READD_ELEMENT"] = "Повторить генерацию";
-
-
+$MESS["ARTURGOLUBEV_CHATGPT_TASKS_ELEMENTS_LIST_TABLE_ACTION_RETURN_DATA_ELEMENT"] = "Откатить генерацию";
 
 ?>

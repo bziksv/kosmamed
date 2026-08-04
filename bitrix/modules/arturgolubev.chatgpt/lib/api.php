@@ -13,7 +13,6 @@ class Api {
         $params = [
             'question' => $question,
             'provider' => ($options['provider'] ? $options['provider'] : 'chatgpt'),
-            'keynum' => ($options['keynum'] ? $options['keynum'] : 0),
         ];
 
         $data = \CArturgolubevChatgpt::askQuestion($params);

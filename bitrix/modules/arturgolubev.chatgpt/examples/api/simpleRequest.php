@@ -6,13 +6,13 @@
 /*
 // example usage
 if(\Bitrix\Main\Loader::includeModule('arturgolubev.chatgpt')){
-    $taskID = 1;
-    $elementID = 100;
-    $type = 'E'; // E or S
-    $autostart = true; // autostart task after add
+    $question = 'Как тебя зовут?';
+    $options = [
+        'provider' => 'sber', // chatgpt or sber
+    ];
 
-    $result = \Arturgolubev\Chatgpt\Api::addElementToTask($taskID, $elementID, $type, $autostart);
-
+    $result = \Arturgolubev\Chatgpt\Api::simpleRequest($question, $options);
+    
     echo '<pre>'; print_r($result); echo '</pre>';
 }
 */

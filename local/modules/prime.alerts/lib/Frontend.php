@@ -21,6 +21,19 @@ class Frontend
 			return;
 		}
 
+		// Only full HTML pages — never append to JSON/AJAX (location selector, sale.order.ajax, etc.)
+		if (stripos($content, '</body>') === false) {
+			return;
+		}
+		try {
+			$request = \Bitrix\Main\Context::getCurrent()->getRequest();
+			if ($request->isAjaxRequest()) {
+				return;
+			}
+		} catch (\Throwable $e) {
+			// ignore
+		}
+
 		if (!Config::isEnabled() || !Config::isYes('policy_enabled', 'Y')) {
 			return;
 		}
@@ -46,8 +59,8 @@ class Frontend
 			'noticeCheckout' => EmailPolicy::getNoticeHtml('checkout'),
 		];
 
-		$cssHref = '/local/modules/prime.alerts/assets/style.css?v=1.2.1';
-		$jsHref = '/local/modules/prime.alerts/assets/policy.js?v=1.2.1';
+		$cssHref = '/local/modules/prime.alerts/assets/style.css?v=1.2.2';
+		$jsHref = '/local/modules/prime.alerts/assets/policy.js?v=1.2.2';
 		$flash = '';
 		try {
 			$session = \Bitrix\Main\Application::getInstance()->getSession();
@@ -78,10 +91,6 @@ class Frontend
 			}
 		}
 
-		if (stripos($content, '</body>') !== false) {
-			$content = preg_replace('/<\/body>/i', $inject . '</body>', $content, 1);
-		} else {
-			$content .= $inject;
-		}
+		$content = preg_replace('/<\/body>/i', $inject . '</body>', $content, 1);
 	}
 }

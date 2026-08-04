@@ -1,32 +1,52 @@
 <?
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
+
+// Проверка CSRF и прав администратора
+global $USER;
+if (!check_bitrix_sessid() || !$USER->IsAdmin()) {
+    http_response_code(403);
+    die('Forbidden');
+}
+
 \Bitrix\Main\Loader::includeModule('sng.secure');
 
-foreach($_POST['secure_exeptions'] as $key => $path)
+$secureExeptions = array();
+if(is_array($_POST['secure_exeptions']))
 {
-	if(!strlen(trim(htmlspecialchars($path)))>0)
+	foreach($_POST['secure_exeptions'] as $key => $path)
 	{
-		unset($_POST['secure_exeptions'][$key]);
+		$cleanPath = trim($path);
+		if(strlen($cleanPath) > 0)
+		{
+			$secureExeptions[] = $cleanPath;
+		}
 	}
 }
-if(!empty($_POST['secure_exeptions']))
+
+if(!empty($secureExeptions))
 {	
-	COption::SetOptionString("sng.secure", "exeptions", serialize($_POST['secure_exeptions']));
+	COption::SetOptionString("sng.secure", "exeptions", serialize($secureExeptions));
 }
 else
 {
 	COption::SetOptionString("sng.secure", "exeptions", '');
 }
 
-				$arEx = unserialize(COption::GetOptionString("sng.secure", "exeptions", ''));
-				if(!empty($arEx))
-				{					
-					foreach($arEx as $key => $path)
-					{
-					?>
-					<input class="secure_exeptions_i" type="text" size="35" maxlength="255" value="<?=$path;?>" name="secure_ex[]"><br>
-					<?
-					}
-				}
-				?>
-				<input class="secure_exeptions_i" type="text" size="35" maxlength="255" value="" name="secure_ex[]"><br>
+$rawEx = COption::GetOptionString("sng.secure", "exeptions", '');
+$arEx = ($rawEx !== '') ? unserialize($rawEx, ['allowed_classes' => false]) : array();
+if(!is_array($arEx))
+{
+	$arEx = array();
+}
+
+if(!empty($arEx))
+{					
+	foreach($arEx as $key => $path)
+	{
+		?>
+		<input class="secure_exeptions_i" type="text" size="35" maxlength="255" value="<?=htmlspecialcharsbx($path);?>" name="secure_ex[]"><br>
+		<?
+	}
+}
+?>
+<input class="secure_exeptions_i" type="text" size="35" maxlength="255" value="" name="secure_ex[]"><br>

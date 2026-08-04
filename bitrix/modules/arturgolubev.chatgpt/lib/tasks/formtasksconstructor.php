@@ -48,7 +48,7 @@ class FormTasksConstructor extends \Arturgolubev\Chatgpt\FormConstructor {
 		$arFields['provider'] = [
 			'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER'),
 			'TYPE' => 'select',
-			'CLASS' => '',
+			'CLASS' => 'js-renew-form',
 			'VALUES_GROUPS' => 0,
 			'VALUES' => []
 		];
@@ -65,6 +65,10 @@ class FormTasksConstructor extends \Arturgolubev\Chatgpt\FormConstructor {
 			}
 			if(in_array('deepseek', $aiList)){
 				$arFields['provider']['VALUES']['deepseek'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER_DEEPSEEK');
+			}
+
+			if(in_array('openai_compatible', $aiList)){
+				$arFields['provider']['VALUES']['openai_compatible'] = Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_PROVIDER_OPENAI_COMPATIBLE');
 			}
 		}
 
@@ -115,18 +119,27 @@ class FormTasksConstructor extends \Arturgolubev\Chatgpt\FormConstructor {
 		}
 
 		if(is_array($curElement)){
-			// echo '<pre>'; print_r($curElement); echo '</pre>';
-
 			$arFields['name']['VALUE'] = $curElement['UF_NAME'];
 			$arFields['prompt']['VALUE'] = $curElement['UF_PROMPT'];
 
 			$arFields['provider']['VALUE'] = $curElement['UF_PARAMS']['provider'];
 			$arFields['save_field']['VALUE'] = $curElement['UF_PARAMS']['save_field'];
 			$arFields['save_only_empty']['VALUE'] = $curElement['UF_PARAMS']['save_only_empty'];
+
+			if(isset($arFields['files'])){
+				$arFields['files']['VALUE'] = $curElement['UF_PARAMS']['files'];
+			}
+		}
+		
+		foreach($arFields as $key=>$field){
+			if(isset($postFields[$key])){
+				$arFields[$key]['VALUE'] = $postFields[$key];
+			}
 		}
 
-		// echo '<pre>'; print_r($postFields); echo '</pre>';
-		// echo '<pre>'; print_r($arFields); echo '</pre>';
+		if($arFields['provider']['VALUE'] == 'sber' || $arFields['provider']['VALUE'] == 'deepseek'){
+			unset($arFields['files']);
+		}
 
 		return self::_makeHtmlForJsForm($arFields);
 	}
@@ -152,6 +165,16 @@ class FormTasksConstructor extends \Arturgolubev\Chatgpt\FormConstructor {
 				'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FROM_SECTION_NAME'),
 				'DESCRIPTION' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FROM_SECTION_DESCRIPTION'),
 				// 'PICTURE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FROM_SECTION_PICTURE'),
+			]
+		];
+
+		$arFields['prompt']['HINT_BUTTON_VARIANTS'][] = [
+			'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_GROUP_SEO'),
+			'ITEMS' => [
+				'SEO_SECTION_PAGE_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_SPAGE_TITLE'),
+				'SEO_SECTION_META_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_TITLE'),
+				'SEO_SECTION_META_KEYWORDS' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_KEYWORDS'),
+				'SEO_SECTION_META_DESCRIPTION' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_DESCRIPTION'),
 			]
 		];
 		
@@ -215,6 +238,16 @@ class FormTasksConstructor extends \Arturgolubev\Chatgpt\FormConstructor {
 				// 'DETAIL_PICTURE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_DETAIL_PICTURE'),
 			]
 		];
+
+		$arFields['prompt']['HINT_BUTTON_VARIANTS'][] = [
+			'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_GROUP_SEO'),
+			'ITEMS' => [
+				'SEO_ELEMENT_PAGE_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_PAGE_TITLE'),
+				'SEO_ELEMENT_META_TITLE' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_TITLE'),
+				'SEO_ELEMENT_META_KEYWORDS' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_KEYWORDS'),
+				'SEO_ELEMENT_META_DESCRIPTION' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_TEMPLATE_META_DESCRIPTION'),
+			]
+		];
 		
 		$arProps = self::_getElementFromProperties($postFields['iblock_id']);
 		if(count($arProps)){
@@ -244,6 +277,32 @@ class FormTasksConstructor extends \Arturgolubev\Chatgpt\FormConstructor {
 					'name' => $template['UF_NAME'],
 					'template' => $template['UF_TEMPLATE'],
 				];
+			}
+		}
+
+
+		$arFields['files'] = [
+			'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_CREATE_FILES'),
+			'TYPE' => 'select',
+			'CLASS' => '',
+			'VALUES_GROUPS' => 1,
+			'VALUES' => [],
+		];
+
+		if($postFields['iblock_id']){
+			$saveFields = self::getElementFieldsToFiles($postFields['iblock_id']);
+			foreach($saveFields as $groupKey=>$items){
+				$selectItems = [];
+				foreach($items as $item){
+					$selectItems[$item['CODE']] = $item['NAME'];
+				}
+				
+				if(count($selectItems)){
+					$arFields['files']['VALUES'][] = [
+						'NAME' => Loc::getMessage('ARTURGOLUBEV_CHATGPT_FORM_ELEMENT_GROUP_'.$groupKey),
+						'ITEMS' => $selectItems
+					];
+				}
 			}
 		}
 
