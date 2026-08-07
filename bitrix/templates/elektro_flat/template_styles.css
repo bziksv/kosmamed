@@ -1326,14 +1326,26 @@ header .center{
 	padding:0px 20px;
 }
 
+.city-confirm .popup-window-buttons{
+	display:flex;
+	flex-direction:column;
+	gap:8px;
+	align-items:stretch;
+}
+
 .city-confirm button{
 	width:100%;
-	height:31px;
-	margin-bottom:5px;
+	height:auto;
+	min-height:36px;
+	margin:0;
+	padding:8px 12px;
+	white-space:normal;
+	line-height:1.3;
+	box-sizing:border-box;
 }
 
 .city-confirm button:last-child{
-	margin:0px;
+	margin:0;
 }
 
 /***CITY_CHANGE***/
@@ -10415,8 +10427,10 @@ table.compare-grid .delay .catalog-item-delayed i:nth-child(2){
 
 /***POPUP_CITY_CONFIRM***/
 .pop-up.city-confirm{
-	width:225px;
-	left:-38px !important;	
+	width:280px;
+	max-width:calc(100vw - 24px);
+	left:auto !important;
+	right:0 !important;
 	top:100% !important;
 	margin-top:10px;
 }

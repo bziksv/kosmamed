@@ -3138,3 +3138,35 @@ header.fixed.fixed_f .center.inner {
 		padding: 14px 14px;
 	}
 }
+
+/* === Попап «Ваш город» — кнопки в столбик, без узкой колонки текста === */
+.pop-up.city-confirm {
+	width: 280px !important;
+	max-width: calc(100vw - 24px) !important;
+	left: auto !important;
+	right: 0 !important;
+	box-sizing: border-box;
+}
+
+.pop-up.city-confirm .popup-window-buttons {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: stretch !important;
+	gap: 8px;
+	float: none !important;
+}
+
+.pop-up.city-confirm .popup-window-buttons .popup-window-button,
+.pop-up.city-confirm .popup-window-buttons button {
+	float: none !important;
+	display: block !important;
+	width: 100% !important;
+	height: auto !important;
+	min-height: 36px;
+	margin: 0 !important;
+	padding: 8px 12px !important;
+	white-space: normal !important;
+	line-height: 1.3 !important;
+	text-align: center;
+	box-sizing: border-box;
+}
