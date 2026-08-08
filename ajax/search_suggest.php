@@ -14,7 +14,7 @@ header("Content-Type: text/html; charset=UTF-8");
 header("X-Robots-Tag: noindex");
 
 const KS_IBLOCK_ID      = 24;
-const KS_PRICE_NAMES    = array("Цена - КосмаМед Сайт", "Цена - Медмаркет Сайт");
+const KS_PRICE_NAMES    = array("Цена - Медмаркет Сайт", "Цена - КосмаМед Сайт");
 const KS_MAX_PRODUCTS   = 16;  // в выпадашке (для фильтра по категориям)
 const KS_FETCH_PRODUCTS = 80;  // кандидаты до сортировки
 const KS_MAX_CATEGORIES = 10;
@@ -35,6 +35,20 @@ function ks_words($string) {
 	$string = mb_strtolower($string, "UTF-8");
 	$parts = preg_split('~[^\p{L}\p{Nd}]+~u', $string, -1, PREG_SPLIT_NO_EMPTY);
 	return is_array($parts) ? $parts : array();
+}
+
+/**
+ * Токены для поиска: обычные слова + целый код вида «сву-3» / «a1-18014»
+ * (дефис не разбиваем — иначе артикул не матчится).
+ */
+function ks_search_tokens($query) {
+	$query = trim((string)$query);
+	$norm = mb_strtolower($query, "UTF-8");
+	// Артикул/код целиком: «сву-3», «a1-18014» — не дробим по дефису
+	if ($norm !== "" && preg_match('~^[\p{L}\p{Nd}]+(?:[\-./][\p{L}\p{Nd}]+)+$~u', $norm)) {
+		return array($norm);
+	}
+	return ks_words($query);
 }
 
 /** GetNext() уже html-escapes поля — декодируем перед повторным выводом */
@@ -531,8 +545,26 @@ function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 		"ACTIVE_DATE"          => "Y",
 		"SECTION_GLOBAL_ACTIVE"=> "Y",
 	);
+	$queryTrim = trim((string)$queryForRank);
 	foreach ($words as $w) {
-		$filter[] = array("LOGIC" => "OR", "%NAME" => $w, "%PROPERTY_CML2_ARTICLE" => $w);
+		$or = array(
+			"LOGIC" => "OR",
+			"%NAME" => $w,
+			"%PROPERTY_CML2_ARTICLE" => $w,
+		);
+		// «Код товара» в карточке = ID элемента
+		if (preg_match('~^\d{3,}$~', (string)$w)) {
+			$or["=ID"] = (int)$w;
+		}
+		$filter[] = $or;
+	}
+	// Целый запрос по артикулу/имени (на случай, если токены уже разбиты)
+	if ($queryTrim !== "" && !in_array(mb_strtolower($queryTrim, "UTF-8"), $words, true)) {
+		$filter[] = array(
+			"LOGIC" => "OR",
+			"%NAME" => $queryTrim,
+			"%PROPERTY_CML2_ARTICLE" => $queryTrim,
+		);
 	}
 
 	$raw = array();
@@ -611,11 +643,21 @@ function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 	$rankQuery = $queryForRank !== "" ? $queryForRank : implode(" ", $words);
 	$res = ks_sort_products_by_availability_and_price($res, $rankQuery);
 
-	// В выпадашке — только с ценой: сначала наличие, потом под заказ (без заглушек)
+	// Обычно прячем «без цены»; но точный код/артикул всегда показываем
+	$qLower = mb_strtolower(trim($rankQuery), "UTF-8");
 	$withPrice = array();
 	foreach ($res as $item) {
-		if (($item["STOCK_STATUS"] ?? "") === "unavailable") {
-			continue;
+		$status = $item["STOCK_STATUS"] ?? ks_stock_status($item);
+		if ($status === "unavailable") {
+			$art = mb_strtolower((string)($item["ARTICLE"] ?? ""), "UTF-8");
+			$idStr = (string)(int)$item["ID"];
+			$keep = ($qLower !== "" && (
+				$idStr === $qLower
+				|| ($art !== "" && ($art === $qLower || mb_strpos($art, $qLower) !== false))
+			));
+			if (!$keep) {
+				continue;
+			}
 		}
 		$withPrice[] = $item;
 		if (count($withPrice) >= KS_MAX_PRODUCTS) {
@@ -648,7 +690,7 @@ function ks_price_type_id() {
 
 $priceTypeId = $hasCatalog ? ks_price_type_id() : 0;
 
-$queryWords = ks_words($q);
+$queryWords = ks_search_tokens($q);
 if (empty($queryWords)) { echo ""; die(); }
 
 $rankQuery = implode(" ", $queryWords);
@@ -657,7 +699,7 @@ $suggestNote = "";
 $suggestRelaxed = false;
 
 $sections = ks_find_sections($queryWords);
-$products = ks_find_products($queryWords, $priceTypeId, $rankQuery);
+$products = ks_find_products($queryWords, $priceTypeId, $q);
 
 if (empty($sections) && empty($products)) {
 	$dict = ks_dictionary();
