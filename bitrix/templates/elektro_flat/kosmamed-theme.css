@@ -2957,6 +2957,1039 @@ header.fixed.fixed_f .center.inner {
 	}
 }
 
+/* === Как купить === */
+.km-howtobuy-page {
+	max-width: 980px;
+	margin: 0 auto;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+	line-height: 1.6;
+}
+
+.km-howtobuy-page__intro {
+	margin: 0 0 20px;
+	padding: 20px 24px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, var(--km-primary-light) 0%, var(--km-surface) 100%);
+	border: 1px solid var(--km-border);
+}
+
+.km-howtobuy-page__intro p {
+	margin: 0;
+	color: var(--km-text);
+	font-size: 16px;
+	line-height: 1.65;
+}
+
+.km-howtobuy-notice {
+	margin: 0 0 28px;
+	padding: 14px 18px;
+	border: 1px solid #f0d78c;
+	border-left: 4px solid #d4a017;
+	border-radius: 0 10px 10px 0;
+	background: #fffdf6;
+	color: var(--km-text);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-howtobuy-page__section-title {
+	margin: 0 0 16px;
+	color: var(--km-text);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.3;
+	text-align: center;
+}
+
+.km-howtobuy-steps {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+	margin: 0 0 40px;
+	padding: 0;
+	list-style: none;
+}
+
+.km-howtobuy-step {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	min-height: 100%;
+	padding: 20px 18px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 14px;
+	background: var(--km-surface);
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.km-howtobuy-step:hover {
+	border-color: #a5f3fc;
+	box-shadow: 0 8px 20px rgba(14, 116, 144, 0.08);
+	transform: translateY(-2px);
+}
+
+.km-howtobuy-step__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	margin-bottom: 12px;
+}
+
+.km-howtobuy-step__num {
+	flex: 0 0 28px;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--km-primary);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 28px;
+	text-align: center;
+}
+
+.km-howtobuy-step__icon {
+	flex: 0 0 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: var(--km-primary-light);
+	color: var(--km-primary);
+}
+
+.km-howtobuy-step__icon svg {
+	display: block;
+	width: 24px;
+	height: 24px;
+	fill: currentColor;
+}
+
+.km-howtobuy-step__title {
+	margin: 0 0 8px;
+	color: var(--km-text);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.km-howtobuy-step__text {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-howtobuy-page a {
+	color: var(--km-primary);
+}
+
+.km-howtobuy-links {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin: 0 0 32px;
+}
+
+.km-howtobuy-link {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 18px 18px 16px;
+	border: 1px solid var(--km-border);
+	border-radius: 14px;
+	background: var(--km-surface);
+	text-decoration: none !important;
+	color: inherit !important;
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.km-howtobuy-link:hover {
+	border-color: var(--km-primary);
+	background: var(--km-primary-light);
+	box-shadow: 0 6px 16px rgba(14, 116, 144, 0.08);
+}
+
+.km-howtobuy-link__icon {
+	flex: 0 0 42px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	background: var(--km-primary-light);
+	color: var(--km-primary);
+}
+
+.km-howtobuy-link:hover .km-howtobuy-link__icon {
+	background: var(--km-surface);
+}
+
+.km-howtobuy-link__icon svg {
+	display: block;
+	width: 22px;
+	height: 22px;
+	fill: currentColor;
+}
+
+.km-howtobuy-link__body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.km-howtobuy-link__title {
+	color: var(--km-text);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.km-howtobuy-link__text {
+	color: var(--km-text-secondary);
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+.km-howtobuy-cta {
+	margin: 0 0 8px;
+	padding: 24px 28px;
+	border-radius: 14px;
+	border: 1px solid var(--km-border);
+	background: linear-gradient(135deg, var(--km-surface-alt) 0%, var(--km-primary-light) 100%);
+	text-align: center;
+}
+
+.km-howtobuy-cta__title {
+	margin: 0 0 6px;
+	color: var(--km-text);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.km-howtobuy-cta__text {
+	margin: 0 0 18px;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+}
+
+.km-howtobuy-cta__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+}
+
+.km-howtobuy-cta__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 42px;
+	padding: 0 18px;
+	border-radius: 10px;
+	border: 1px solid var(--km-primary);
+	background: var(--km-primary);
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none !important;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.km-howtobuy-cta__btn:hover {
+	background: var(--km-primary-dark);
+	border-color: var(--km-primary-dark);
+	color: #fff !important;
+}
+
+.km-howtobuy-cta__btn--outline {
+	background: var(--km-surface);
+	color: var(--km-primary-dark) !important;
+}
+
+.km-howtobuy-cta__btn--outline:hover {
+	background: var(--km-primary-light);
+	color: var(--km-primary-dark) !important;
+	border-color: var(--km-primary);
+}
+
+@media (max-width: 991px) {
+	.km-howtobuy-steps {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	.km-howtobuy-steps,
+	.km-howtobuy-links {
+		grid-template-columns: 1fr;
+	}
+
+	.km-howtobuy-page__intro,
+	.km-howtobuy-cta {
+		padding: 16px 18px;
+	}
+
+	.km-howtobuy-cta__actions {
+		flex-direction: column;
+	}
+
+	.km-howtobuy-cta__btn {
+		width: 100%;
+	}
+}
+
+/* === Гарантия === */
+.km-warranty-page {
+	max-width: 980px;
+	margin: 0 auto;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+	line-height: 1.6;
+}
+
+.km-warranty-page__intro {
+	margin: 0 0 20px;
+	padding: 20px 24px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, var(--km-primary-light) 0%, var(--km-surface) 100%);
+	border: 1px solid var(--km-border);
+}
+
+.km-warranty-page__intro p {
+	margin: 0;
+	color: var(--km-text);
+	font-size: 16px;
+	line-height: 1.65;
+}
+
+.km-warranty-page__section-title {
+	margin: 0 0 16px;
+	color: var(--km-text);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.3;
+	text-align: center;
+}
+
+.km-warranty-note {
+	margin: 0 0 28px;
+	padding: 14px 18px;
+	border-left: 4px solid var(--km-primary);
+	border-radius: 0 10px 10px 0;
+	background: var(--km-surface-alt);
+	color: var(--km-text);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-warranty-page a {
+	color: var(--km-primary);
+}
+
+.km-warranty-benefits {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px;
+	margin: 0 0 40px;
+	padding: 0;
+	list-style: none;
+}
+
+.km-warranty-benefit {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	min-height: 100%;
+	padding: 20px 16px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 14px;
+	background: var(--km-surface);
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.km-warranty-benefit:hover {
+	border-color: #a5f3fc;
+	box-shadow: 0 8px 20px rgba(14, 116, 144, 0.08);
+	transform: translateY(-2px);
+}
+
+.km-warranty-benefit__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 14px;
+	border-radius: 12px;
+	background: var(--km-primary-light);
+	color: var(--km-primary);
+}
+
+.km-warranty-benefit__icon svg {
+	display: block;
+	width: 26px;
+	height: 26px;
+	fill: currentColor;
+}
+
+.km-warranty-benefit__title {
+	margin-bottom: 6px;
+	color: var(--km-text);
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.km-warranty-benefit__text {
+	color: var(--km-text-secondary);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.km-warranty-steps {
+	display: grid;
+	gap: 12px;
+	margin: 0 0 28px;
+	padding: 0;
+	list-style: none;
+}
+
+.km-warranty-step {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 16px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 12px;
+	background: var(--km-surface);
+}
+
+.km-warranty-step__num {
+	flex: 0 0 28px;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--km-primary);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 28px;
+	text-align: center;
+}
+
+.km-warranty-step__title {
+	margin: 0 0 4px;
+	color: var(--km-text);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.km-warranty-step__text {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-warranty-links {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 14px;
+	margin: 0 0 28px;
+}
+
+.km-warranty-link {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 16px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 12px;
+	background: var(--km-surface);
+	text-decoration: none !important;
+	color: inherit !important;
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.km-warranty-link:hover {
+	border-color: var(--km-primary);
+	background: var(--km-primary-light);
+	box-shadow: 0 6px 16px rgba(14, 116, 144, 0.08);
+}
+
+.km-warranty-link__title {
+	color: var(--km-text);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.km-warranty-link__text {
+	color: var(--km-text-muted);
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.km-warranty-cta {
+	margin: 0 0 8px;
+	padding: 24px 28px;
+	border-radius: 14px;
+	border: 1px solid var(--km-border);
+	background: linear-gradient(135deg, var(--km-surface-alt) 0%, var(--km-primary-light) 100%);
+	text-align: center;
+}
+
+.km-warranty-cta__title {
+	margin: 0 0 6px;
+	color: var(--km-text);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.km-warranty-cta__text {
+	margin: 0 0 18px;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+}
+
+.km-warranty-cta__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+}
+
+.km-warranty-cta__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 42px;
+	padding: 0 18px;
+	border-radius: 10px;
+	border: 1px solid var(--km-primary);
+	background: var(--km-primary);
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none !important;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.km-warranty-cta__btn:hover {
+	background: var(--km-primary-dark);
+	border-color: var(--km-primary-dark);
+	color: #fff !important;
+}
+
+.km-warranty-cta__btn--outline {
+	background: var(--km-surface);
+	color: var(--km-primary-dark) !important;
+}
+
+.km-warranty-cta__btn--outline:hover {
+	background: var(--km-primary-light);
+	color: var(--km-primary-dark) !important;
+	border-color: var(--km-primary);
+}
+
+@media (max-width: 991px) {
+	.km-warranty-benefits {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.km-warranty-links {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	.km-warranty-benefits {
+		grid-template-columns: 1fr;
+	}
+
+	.km-warranty-page__intro,
+	.km-warranty-cta {
+		padding: 16px 18px;
+	}
+
+	.km-warranty-cta__actions {
+		flex-direction: column;
+	}
+
+	.km-warranty-cta__btn {
+		width: 100%;
+	}
+}
+
+/*
+ * Bitrix `.body_text ul` даёт padding-left:20px и margin:0 — ломает наши сетки.
+ * Перебиваем для всех инфостраниц.
+ */
+.body_text .km-delivery-page ul,
+.body_text .km-howtobuy-page ul,
+.body_text .km-warranty-page ul,
+.body_text .km-payments-page ul,
+.body_text .km-delivery-page ol,
+.body_text .km-howtobuy-page ol,
+.body_text .km-warranty-page ol,
+.body_text .km-payments-page ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.body_text .km-delivery-page .km-delivery-steps,
+.body_text .km-howtobuy-page .km-howtobuy-steps {
+	margin: 0 0 40px;
+}
+
+.body_text .km-warranty-page .km-warranty-benefits,
+.body_text .km-warranty-page .km-warranty-steps {
+	margin: 0 0 28px;
+}
+
+.body_text .km-payments-page .km-payments-facts {
+	margin: 0 0 28px;
+}
+
+.body_text .km-payments-page .km-payments-links,
+.body_text .km-howtobuy-page .km-howtobuy-links,
+.body_text .km-warranty-page .km-warranty-links {
+	margin: 0 0 28px;
+}
+
+.body_text .km-payments-page .payments-section-list ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* === Способы оплаты === */
+.km-payments-page {
+	max-width: 980px;
+	margin: 0 auto;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+	line-height: 1.6;
+}
+
+.km-payments-page__intro {
+	margin: 0 0 20px;
+	padding: 20px 24px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, var(--km-primary-light) 0%, var(--km-surface) 100%);
+	border: 1px solid var(--km-border);
+}
+
+.km-payments-page__intro p {
+	margin: 0;
+	color: var(--km-text);
+	font-size: 16px;
+	line-height: 1.65;
+}
+
+.km-payments-page__section-title {
+	margin: 0 0 16px;
+	color: var(--km-text);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.3;
+	text-align: left;
+}
+
+.km-payments-notice {
+	margin: 0 0 28px;
+	padding: 14px 18px;
+	border: 1px solid #f0d78c;
+	border-left: 4px solid #d4a017;
+	border-radius: 0 10px 10px 0;
+	background: #fffdf6;
+	color: var(--km-text);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-payments-notice strong {
+	color: #b8860b;
+}
+
+.km-payments-note {
+	display: block;
+	clear: both;
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0 0 28px;
+	padding: 14px 18px;
+	border: 1px solid var(--km-border);
+	border-left: 4px solid var(--km-primary);
+	border-radius: 10px;
+	background: var(--km-surface-alt);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-payments-page a {
+	color: var(--km-primary);
+}
+
+/* Переоформление списка из инфоблока */
+.km-payments-page .payments-section-list {
+	margin: 0 0 36px;
+	padding: 0;
+}
+
+.km-payments-page .payments-section-list > ul > li {
+	margin: 0 0 20px;
+	padding: 0;
+	border: 1px solid var(--km-border);
+	border-radius: 14px;
+	background: var(--km-surface);
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+	overflow: hidden;
+}
+
+.km-payments-page .payments-section-list > ul > li > .payment-section-title {
+	margin: 0;
+	padding: 14px 20px;
+	color: var(--km-text);
+	font-size: 16px;
+	font-weight: 700;
+	background: linear-gradient(135deg, var(--km-surface-alt) 0%, var(--km-primary-light) 100%);
+	border-bottom: 1px solid var(--km-border);
+}
+
+.km-payments-page .payments-section-list ul li .payment-items {
+	margin: 0;
+	padding: 8px;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	margin: 0 0 8px;
+	padding: 16px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 12px;
+	background: var(--km-surface-alt);
+	box-sizing: border-box;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item:last-child {
+	margin-bottom: 0;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item:hover {
+	padding: 16px 18px;
+	border-color: #a5f3fc;
+	box-shadow: 0 8px 20px rgba(14, 116, 144, 0.08);
+	transform: translateY(-1px);
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-info,
+.km-payments-page .payments-section-list ul li .payment-item-logo,
+.km-payments-page .payments-section-list ul li .payment-item-url {
+	display: block;
+	vertical-align: baseline;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-info {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-block {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: auto;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-number,
+.km-payments-page .payments-section-list ul li .payment-item-title {
+	display: block;
+	width: auto;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-number {
+	flex: 0 0 28px;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--km-primary);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 28px;
+	text-align: center;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-title {
+	color: var(--km-text);
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-descr {
+	margin: 8px 0 0;
+	padding: 0 0 0 40px;
+	color: var(--km-text-secondary);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-logo {
+	flex: 0 0 auto;
+	width: auto;
+	padding: 0;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-logo img {
+	float: none;
+	display: block;
+	max-height: 48px;
+	width: auto;
+	margin: 0;
+	border-radius: 8px;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-logo.no-logo {
+	display: none;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-url {
+	flex: 0 0 auto;
+	width: auto;
+	padding: 0;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-url.no-url {
+	display: none;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-url a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 36px;
+	padding: 0 14px;
+	border: 1px solid var(--km-primary);
+	border-radius: 8px;
+	background: var(--km-surface);
+	color: var(--km-primary) !important;
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none !important;
+}
+
+.km-payments-page .payments-section-list ul li .payment-item-url a:hover {
+	background: var(--km-primary-light);
+}
+
+.km-payments-facts {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	align-items: stretch;
+	gap: 16px;
+	margin: 0 0 28px;
+	padding: 0;
+	list-style: none;
+}
+
+.km-payments-fact {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	height: 100%;
+	box-sizing: border-box;
+	padding: 20px 18px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 14px;
+	background: var(--km-surface);
+	box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.km-payments-fact:hover {
+	border-color: #a5f3fc;
+	box-shadow: 0 8px 20px rgba(14, 116, 144, 0.08);
+	transform: translateY(-2px);
+}
+
+.km-payments-fact__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 14px;
+	border-radius: 12px;
+	background: var(--km-primary-light);
+	color: var(--km-primary);
+}
+
+.km-payments-fact__icon svg {
+	display: block;
+	width: 26px;
+	height: 26px;
+	fill: currentColor;
+}
+
+.km-payments-fact__title {
+	margin-bottom: 6px;
+	color: var(--km-text);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.km-payments-fact__text {
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.km-payments-links {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 14px;
+	margin: 0 0 28px;
+}
+
+.km-payments-link {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 16px 18px;
+	border: 1px solid var(--km-border);
+	border-radius: 12px;
+	background: var(--km-surface);
+	text-decoration: none !important;
+	color: inherit !important;
+	transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.km-payments-link:hover {
+	border-color: var(--km-primary);
+	background: var(--km-primary-light);
+	box-shadow: 0 6px 16px rgba(14, 116, 144, 0.08);
+}
+
+.km-payments-link__title {
+	color: var(--km-text);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.km-payments-link__text {
+	color: var(--km-text-muted);
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.km-payments-cta {
+	margin: 0 0 8px;
+	padding: 24px 28px;
+	border-radius: 14px;
+	border: 1px solid var(--km-border);
+	background: linear-gradient(135deg, var(--km-surface-alt) 0%, var(--km-primary-light) 100%);
+	text-align: center;
+}
+
+.km-payments-cta__title {
+	margin: 0 0 6px;
+	color: var(--km-text);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.km-payments-cta__text {
+	margin: 0 0 18px;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+}
+
+.km-payments-cta__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+}
+
+.km-payments-cta__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 42px;
+	padding: 0 18px;
+	border-radius: 10px;
+	border: 1px solid var(--km-primary);
+	background: var(--km-primary);
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none !important;
+	transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.km-payments-cta__btn:hover {
+	background: var(--km-primary-dark);
+	border-color: var(--km-primary-dark);
+	color: #fff !important;
+}
+
+.km-payments-cta__btn--outline {
+	background: var(--km-surface);
+	color: var(--km-primary-dark) !important;
+}
+
+.km-payments-cta__btn--outline:hover {
+	background: var(--km-primary-light);
+	color: var(--km-primary-dark) !important;
+	border-color: var(--km-primary);
+}
+
+@media (max-width: 991px) {
+	.km-payments-facts,
+	.km-payments-links {
+		grid-template-columns: 1fr;
+	}
+
+	.km-payments-page .payments-section-list ul li .payment-item {
+		flex-wrap: wrap;
+	}
+}
+
+@media (max-width: 640px) {
+	.km-payments-page__intro,
+	.km-payments-cta {
+		padding: 16px 18px;
+	}
+
+	.km-payments-page .payments-section-list ul li .payment-item-descr {
+		padding-left: 0;
+	}
+
+	.km-payments-cta__actions {
+		flex-direction: column;
+	}
+
+	.km-payments-cta__btn {
+		width: 100%;
+	}
+}
+
 /* === ЛК: профиль / формы заказа (вместо фиолетовых шапок Bitrix) === */
 .personal h2,
 .catalog-subscriber-forms h2,

@@ -25,21 +25,16 @@ if($request->isPost() && check_bitrix_sessid()) {
 		$arParams = unserialize(gzuncompress(stripslashes(base64_decode(strtr($arParams, '-_,', '+/=')))));
 
 	//DELETE_GEOLOCATION_COOKIES//
-	$flush = false;
+	// Do not flush after deletes: new cookies must be in the same response.
 	foreach($arParams["OPTIONS"] as $arOption) {
 		if($request->getCookie($arOption)) {
-			if(!$flush)
-				$flush = true;
 			$cookie = new Cookie($arOption, null, time() - 3600);
-			$cookie->setDomain(SITE_SERVER_NAME);
 			$cookie->setHttpOnly(false);
 			$context->getResponse()->addCookie($cookie);			
 			unset($cookie);
 		}		
 	}
-	if($flush)
-		$context->getResponse()->flush("");
-	
+
 	switch($action) {
 		case "searchLocation":
 			//GEOLOCATION_COUNTRY//
@@ -167,34 +162,29 @@ if($request->isPost() && check_bitrix_sessid()) {
 
 			//SET_GEOLOCATION_COOKIES//			
 			$cookie = new Cookie("GEOLOCATION_CITY", $searchResult["city"], time() + $arParams["COOKIE_TIME"]);
-			$cookie->setDomain(SITE_SERVER_NAME);
 			$cookie->setHttpOnly(false);
 			$context->getResponse()->addCookie($cookie);			
 			unset($cookie);			
 			if(!empty($locationId)) {
 				$cookie = new Cookie("GEOLOCATION_LOCATION_ID", $locationId, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);				
 				unset($cookie);
 			}			
 			if(!empty($contactsId)) {
 				$cookie = new Cookie("GEOLOCATION_CONTACTS_ID", $contactsId, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);				
 				unset($cookie);
 			}			
 			if(!empty($phoneMask)) {
 				$cookie = new Cookie("GEOLOCATION_PHONE_MASK", $phoneMask, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);				
 				unset($cookie);
 			}			
 			if(!empty($validatePhoneMask)) {
 				$cookie = new Cookie("GEOLOCATION_VALIDATE_PHONE_MASK", $validatePhoneMask, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);				
 				unset($cookie);
@@ -370,57 +360,48 @@ if($request->isPost() && check_bitrix_sessid()) {
 			//SET_GEOLOCATION_COOKIES//
 			if(!empty($setResult["village"])) {
 				$cookie = new Cookie("GEOLOCATION_CITY", $setResult["village"], time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			} elseif(!empty($setResult["city"])) {
 				$cookie = new Cookie("GEOLOCATION_CITY", $setResult["city"], time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			} elseif(!empty($setResult["subregion"])) {
 				$cookie = new Cookie("GEOLOCATION_CITY", $setResult["subregion"], time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			} elseif(!empty($setResult["region"])) {
 				$cookie = new Cookie("GEOLOCATION_CITY", $setResult["region"], time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			} elseif(!empty($setResult["country"])) {
 				$cookie = new Cookie("GEOLOCATION_CITY", $setResult["country"], time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			}
 			$cookie = new Cookie("GEOLOCATION_LOCATION_ID", $locationId, time() + $arParams["COOKIE_TIME"]);
-			$cookie->setDomain(SITE_SERVER_NAME);
 			$cookie->setHttpOnly(false);
 			$context->getResponse()->addCookie($cookie);			
 			unset($cookie);
 			if(!empty($contactsId)) {
 				$cookie = new Cookie("GEOLOCATION_CONTACTS_ID", $contactsId, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			}
 			if(!empty($phoneMask)) {
 				$cookie = new Cookie("GEOLOCATION_PHONE_MASK", $phoneMask, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
 			}
 			if(!empty($validatePhoneMask)) {
 				$cookie = new Cookie("GEOLOCATION_VALIDATE_PHONE_MASK", $validatePhoneMask, time() + $arParams["COOKIE_TIME"]);
-				$cookie->setDomain(SITE_SERVER_NAME);
 				$cookie->setHttpOnly(false);
 				$context->getResponse()->addCookie($cookie);			
 				unset($cookie);
