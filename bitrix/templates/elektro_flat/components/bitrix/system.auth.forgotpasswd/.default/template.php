@@ -42,7 +42,7 @@
 						<span class="input-checkbox" id="input-checkbox"></span>
 					</div>	
 					<div class="label">
-						<?=$arSetting["TEXT_PERSONAL_DATA"]?>
+						<?=function_exists('kmPersonalDataConsentHtml') ? kmPersonalDataConsentHtml() : $arSetting["TEXT_PERSONAL_DATA"]?>
 					</div>
 				</div>
 			<?}?>	

@@ -7,8 +7,8 @@
 		"ELEMENT_AREA_ID" => $arCheaperFilter["ELEMENT_AREA_ID"],
 		"ELEMENT_NAME" => $arCheaperFilter["ELEMENT_NAME"],
 		"ELEMENT_PRICE" => $arCheaperFilter["ELEMENT_PRICE"],		
-		"CACHE_TYPE" => "A",
-		"CACHE_TIME" => "36000000"
+		"CACHE_TYPE" => "N",
+		"CACHE_TIME" => "0"
 	),
 	false
 );?>

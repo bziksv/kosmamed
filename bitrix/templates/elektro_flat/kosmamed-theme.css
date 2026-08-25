@@ -2364,25 +2364,27 @@ header.fixed.fixed_f .center.inner {
 	position: fixed;
 	z-index: 10050;
 	pointer-events: none;
-	border-radius: 8px;
+	border-radius: 10px;
 	object-fit: contain;
 	background: #fff;
-	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18);
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
 	will-change: transform, opacity;
 }
 
 .cart_line a.cart.km-cart-pulse,
 .cart_line .cart.km-cart-pulse {
-	animation: kmCartPulse 0.45s ease;
+	animation: kmCartPulse 0.48s ease;
 }
 
 .cart_line a.cart.km-cart-pulse .fa {
-	animation: kmCartPulse 0.45s ease;
+	animation: kmCartPulse 0.48s ease;
 }
 
 @keyframes kmCartPulse {
 	0% { transform: scale(1); }
-	35% { transform: scale(1.2); }
+	30% { transform: scale(1.28); }
+	60% { transform: scale(0.94); }
 	100% { transform: scale(1); }
 }
 
@@ -2623,7 +2625,8 @@ header.fixed.fixed_f .center.inner {
 }
 
 /* Оформление заказа: согласие на обработку персональных данных */
-#hint_agreement.km-order-consent {
+#hint_agreement.km-order-consent,
+#km-auth-consent.km-order-consent {
 	display: block;
 	margin: 16px 0 8px;
 	padding: 12px 14px;
@@ -2633,19 +2636,23 @@ header.fixed.fixed_f .center.inner {
 	font-size: 14px;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__row {
+#hint_agreement.km-order-consent .km-order-consent__row,
+#km-auth-consent.km-order-consent .km-order-consent__row {
 	display: flex;
 	align-items: flex-start;
 	gap: 10px;
 }
 
 #hint_agreement.km-order-consent .km-order-consent__check,
-#hint_agreement.km-order-consent .km-order-consent__text {
+#hint_agreement.km-order-consent .km-order-consent__text,
+#km-auth-consent.km-order-consent .km-order-consent__check,
+#km-auth-consent.km-order-consent .km-order-consent__text {
 	float: none !important;
 	vertical-align: initial !important;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check {
+#hint_agreement.km-order-consent .km-order-consent__check,
+#km-auth-consent.km-order-consent .km-order-consent__check {
 	flex: 0 0 18px;
 	width: 18px;
 	height: 20px;
@@ -2656,7 +2663,8 @@ header.fixed.fixed_f .center.inner {
 	margin: 0 !important;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__text {
+#hint_agreement.km-order-consent .km-order-consent__text,
+#km-auth-consent.km-order-consent .km-order-consent__text {
 	flex: 1 1 auto;
 	min-width: 0;
 	margin: 0 !important;
@@ -2672,25 +2680,32 @@ header.fixed.fixed_f .center.inner {
 #hint_agreement.km-order-consent .km-order-consent__text span,
 #hint_agreement.km-order-consent .km-order-consent__text p,
 #hint_agreement.km-order-consent .km-order-consent__text font,
-#hint_agreement.km-order-consent .km-order-consent__text div {
+#hint_agreement.km-order-consent .km-order-consent__text div,
+#km-auth-consent.km-order-consent .km-order-consent__text span,
+#km-auth-consent.km-order-consent .km-order-consent__text p,
+#km-auth-consent.km-order-consent .km-order-consent__text font,
+#km-auth-consent.km-order-consent .km-order-consent__text div {
 	color: #374151 !important;
 	font-size: inherit !important;
 	line-height: inherit !important;
 	text-align: left !important;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__text a {
+#hint_agreement.km-order-consent .km-order-consent__text a,
+#km-auth-consent.km-order-consent .km-order-consent__text a {
 	color: #1d4ed8 !important;
 	text-decoration: underline;
 	vertical-align: baseline;
 	line-height: inherit !important;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__text a:hover {
+#hint_agreement.km-order-consent .km-order-consent__text a:hover,
+#km-auth-consent.km-order-consent .km-order-consent__text a:hover {
 	color: #1e40af !important;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox {
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox,
+#km-auth-consent.km-order-consent .km-order-consent__check .input-checkbox {
 	display: block !important;
 	width: 18px !important;
 	height: 18px !important;
@@ -2703,33 +2718,39 @@ header.fixed.fixed_f .center.inner {
 	cursor: pointer;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox:hover {
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox:hover,
+#km-auth-consent.km-order-consent .km-order-consent__check .input-checkbox:hover {
 	border-color: #cc9900;
 	background: #cc9900;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox.cheked {
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox.cheked,
+#km-auth-consent.km-order-consent .km-order-consent__check .input-checkbox.cheked {
 	border-color: #9cc218;
 	background: #fff;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox.cheked:hover {
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox.cheked:hover,
+#km-auth-consent.km-order-consent .km-order-consent__check .input-checkbox.cheked:hover {
 	border-color: #cc9900;
 	background: #fff;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox i {
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox i,
+#km-auth-consent.km-order-consent .km-order-consent__check .input-checkbox i {
 	display: block;
 	font-size: 11px;
 	color: #9cc218;
 	line-height: 12px;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox:hover i {
+#hint_agreement.km-order-consent .km-order-consent__check .input-checkbox:hover i,
+#km-auth-consent.km-order-consent .km-order-consent__check .input-checkbox:hover i {
 	color: #cc9900;
 }
 
-#hint_agreement.km-order-consent .km-order-consent__error {
+#hint_agreement.km-order-consent .km-order-consent__error,
+#km-auth-consent.km-order-consent .km-order-consent__error {
 	margin: 0 0 10px;
 	padding: 8px 10px;
 	border-left: 3px solid #dc2626;
@@ -2740,19 +2761,22 @@ header.fixed.fixed_f .center.inner {
 	border-radius: 0 6px 6px 0;
 }
 
-#hint_agreement.km-order-consent.km-consent-error {
+#hint_agreement.km-order-consent.km-consent-error,
+#km-auth-consent.km-order-consent.km-consent-error {
 	border-color: #dc2626;
 	background: #fff5f5;
 	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
-#hint_agreement.km-order-consent.km-consent-error .input-checkbox {
+#hint_agreement.km-order-consent.km-consent-error .input-checkbox,
+#km-auth-consent.km-order-consent.km-consent-error .input-checkbox {
 	border-color: #dc2626 !important;
 	background: #fff !important;
 	box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
 }
 
-#hint_agreement.km-order-consent.km-consent-error .km-order-consent__error {
+#hint_agreement.km-order-consent.km-consent-error .km-order-consent__error,
+#km-auth-consent.km-order-consent.km-consent-error .km-order-consent__error {
 	display: block !important;
 }
 
@@ -3573,6 +3597,112 @@ header.fixed.fixed_f .center.inner {
 	list-style: none;
 }
 
+/* === Юридические документы === */
+.km-legal-page {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 4px 0 12px;
+	color: var(--km-text-secondary);
+	font-size: 15px;
+	line-height: 1.65;
+}
+
+.km-legal-doc p {
+	margin: 0 0 14px;
+}
+
+.km-legal-doc__lead {
+	margin-bottom: 20px;
+	font-size: 16px;
+	color: var(--km-text);
+}
+
+.km-legal-doc__related {
+	margin: 0 0 24px;
+	padding: 14px 18px;
+	font-size: 14px;
+	background: var(--km-surface-alt);
+	border: 1px solid var(--km-border);
+	border-radius: 10px;
+}
+
+.km-legal-doc h2 {
+	margin: 24px 0 12px;
+	color: var(--km-text);
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.35;
+}
+
+.km-legal-doc ul {
+	margin: 0 0 14px 20px;
+	padding: 0;
+}
+
+.km-legal-doc li {
+	margin-bottom: 6px;
+}
+
+.km-legal-doc a {
+	color: var(--km-primary);
+}
+
+.km-legal-table-wrap {
+	overflow-x: auto;
+	margin: 16px 0 24px;
+}
+
+.km-legal-table {
+	width: 100%;
+	min-width: 720px;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.km-legal-table th,
+.km-legal-table td {
+	padding: 12px 14px;
+	border: 1px solid var(--km-border);
+	vertical-align: top;
+	text-align: left;
+}
+
+.km-legal-table th {
+	background: var(--km-surface-alt);
+	color: var(--km-text);
+}
+
+.km-legal-table ul {
+	margin: 0;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.km-legal-doc__operator {
+	margin-top: 28px;
+	padding: 18px 20px;
+	border: 1px solid var(--km-border);
+	border-radius: 12px;
+	background: var(--km-surface-alt);
+}
+
+.km-legal-doc__operator h2 {
+	margin-top: 0;
+}
+
+.body_text .km-legal-page ul,
+.body_text .km-legal-page ol {
+	margin: 0 0 14px 20px;
+	padding: 0;
+	list-style: disc;
+}
+
+.body_text .km-legal-page .km-legal-table ul {
+	margin: 0;
+	padding-left: 18px;
+	list-style: disc;
+}
+
 /* === Способы оплаты === */
 .km-payments-page {
 	max-width: 980px;
@@ -4202,4 +4332,445 @@ header.fixed.fixed_f .center.inner {
 	line-height: 1.3 !important;
 	text-align: center;
 	box-sizing: border-box;
+}
+
+/* === Страница успешного заказа + оплата QR === */
+.km-order-confirm {
+	max-width: 920px;
+	margin: 0 auto 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.km-order-confirm__success {
+	display: flex;
+	gap: 18px;
+	align-items: flex-start;
+	padding: 22px 24px;
+	background: linear-gradient(135deg, #ecfeff 0%, #f0fdfa 55%, #ffffff 100%);
+	border: 1px solid #a5f3fc;
+	border-radius: 16px;
+	box-shadow: 0 8px 24px rgba(14, 116, 144, 0.06);
+}
+
+.km-order-confirm__success-icon {
+	flex: 0 0 48px;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #0e7490;
+	background: #fff;
+	border: 1px solid #99f6e4;
+}
+
+.km-order-confirm__eyebrow {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #0e7490;
+	margin-bottom: 4px;
+}
+
+.km-order-confirm__title {
+	margin: 0 0 4px;
+	font-size: 28px;
+	line-height: 1.2;
+	font-weight: 800;
+	color: #0f172a;
+}
+
+.km-order-confirm__meta {
+	margin: 0 0 10px;
+	color: #64748b;
+	font-size: 14px;
+}
+
+.km-order-confirm__hint {
+	margin: 0 0 14px;
+	color: #475569;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.km-order-confirm__hint a {
+	color: #0e7490;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.km-order-confirm__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.km-order-confirm__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 0 16px;
+	border-radius: 10px;
+	font-size: 14px;
+	font-weight: 700;
+	text-decoration: none !important;
+	transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.km-order-confirm__btn--primary {
+	background: #0e7490;
+	color: #fff !important;
+	border: 1px solid #0e7490;
+}
+
+.km-order-confirm__btn--primary:hover {
+	background: #155e75;
+	border-color: #155e75;
+	color: #fff !important;
+}
+
+.km-order-confirm__btn--ghost {
+	background: #fff;
+	color: #0e7490 !important;
+	border: 1px solid #a5f3fc;
+}
+
+.km-order-confirm__btn--ghost:hover {
+	background: #ecfeff;
+}
+
+.km-order-confirm__pay {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 16px;
+	padding: 20px 22px;
+}
+
+.km-order-confirm__pay--qr {
+	padding: 0;
+	border: none;
+	background: transparent;
+}
+
+.km-order-confirm__pay-head {
+	margin-bottom: 14px;
+}
+
+.km-order-confirm__pay-label {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: #64748b;
+	margin-bottom: 8px;
+}
+
+.km-order-confirm__pay-name {
+	font-size: 16px;
+	font-weight: 700;
+	color: #1e293b;
+}
+
+.km-order-confirm__pay-logo img {
+	max-width: 72px;
+	height: auto;
+	margin-bottom: 8px;
+}
+
+.km-order-confirm__error {
+	color: #b91c1c;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	border-radius: 12px;
+	padding: 12px 14px;
+}
+
+.km-order-confirm__note {
+	color: #475569;
+	padding: 12px 14px;
+	background: #f8fafc;
+	border-radius: 12px;
+}
+
+/* QR payment card */
+.km-qr-pay {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 18px;
+	padding: 22px 24px 24px;
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+/* Не <header>: в шаблоне elektro_flat на header висит position:fixed */
+.km-qr-pay__head {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: flex-start;
+	margin-bottom: 20px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid #e2e8f0;
+	position: static !important;
+	top: auto !important;
+	left: auto !important;
+	right: auto !important;
+	width: auto !important;
+	z-index: auto !important;
+	background: transparent !important;
+}
+
+.km-qr-pay__title {
+	margin: 0 0 6px;
+	font-size: 22px;
+	line-height: 1.25;
+	font-weight: 800;
+	color: #0f172a;
+}
+
+.km-qr-pay__lead {
+	margin: 0;
+	max-width: 420px;
+	color: #64748b;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.km-qr-pay__amount {
+	min-width: 180px;
+	padding: 12px 16px;
+	border-radius: 14px;
+	background: #0f172a;
+	color: #fff;
+	text-align: right;
+}
+
+.km-qr-pay__amount-label {
+	display: block;
+	font-size: 12px;
+	opacity: 0.7;
+	margin-bottom: 2px;
+}
+
+.km-qr-pay__amount-value {
+	display: block;
+	font-size: 24px;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+}
+
+.km-qr-pay__amount-order {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	opacity: 0.75;
+}
+
+.km-qr-pay__layout {
+	display: grid;
+	grid-template-columns: minmax(220px, 280px) 1fr;
+	gap: 24px;
+	align-items: start;
+}
+
+.km-qr-pay__qr-frame {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 16px;
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.km-qr-pay__qr img,
+.km-qr-pay__qr svg,
+.km-qr-pay__qr canvas {
+	display: block;
+	width: 100% !important;
+	max-width: 240px;
+	height: auto !important;
+	margin: 0 auto;
+}
+
+.km-qr-pay__qr-caption {
+	margin: 10px 0 0;
+	text-align: center;
+	font-size: 13px;
+	color: #64748b;
+}
+
+.km-qr-pay__check {
+	background: #fff7ed;
+	border: 1px solid #fed7aa;
+	border-radius: 14px;
+	padding: 14px 16px;
+	margin-bottom: 16px;
+}
+
+.km-qr-pay__check-title {
+	font-size: 13px;
+	font-weight: 800;
+	color: #9a3412;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.km-qr-pay__check-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.km-qr-pay__check-list li {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 12px;
+	align-items: baseline;
+}
+
+.km-qr-pay__check-key {
+	min-width: 110px;
+	font-size: 12px;
+	color: #9a3412;
+	opacity: 0.85;
+}
+
+.km-qr-pay__check-val {
+	font-size: 15px;
+	font-weight: 700;
+	color: #7c2d12;
+}
+
+.km-qr-pay__purpose {
+	margin: 10px 0 0;
+	font-size: 13px;
+	color: #9a3412;
+}
+
+.km-qr-pay__steps {
+	list-style: none;
+	margin: 0 0 16px;
+	padding: 0;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.km-qr-pay__steps li {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	padding: 10px 12px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+}
+
+.km-qr-pay__step-num {
+	flex: 0 0 24px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: #0e7490;
+	color: #fff;
+	font-size: 12px;
+	font-weight: 800;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.km-qr-pay__step-text {
+	font-size: 13px;
+	line-height: 1.35;
+	color: #334155;
+}
+
+.km-qr-pay__help {
+	font-size: 13px;
+	line-height: 1.45;
+	color: #64748b;
+	padding: 12px 14px;
+	background: #f1f5f9;
+	border-radius: 12px;
+}
+
+.km-qr-pay__help a {
+	color: #0e7490;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.km-qr-pay__errors,
+.km-qr-pay__error {
+	color: #b91c1c;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	border-radius: 12px;
+	padding: 12px 14px;
+}
+
+/* Hide legacy table wrappers around confirm when empty chrome */
+.sale_order_full_table:has(.km-order-confirm),
+.sale_order_full_table:has(.km-qr-pay) {
+	border: none !important;
+	background: transparent !important;
+	width: 100% !important;
+}
+
+@media (max-width: 760px) {
+	.km-order-confirm__success {
+		flex-direction: column;
+		padding: 18px;
+	}
+
+	.km-order-confirm__title {
+		font-size: 24px;
+	}
+
+	.km-qr-pay {
+		padding: 16px;
+	}
+
+	.km-qr-pay__layout {
+		grid-template-columns: 1fr;
+	}
+
+	.km-qr-pay__amount {
+		width: 100%;
+		text-align: left;
+	}
+
+	.km-qr-pay__steps {
+		grid-template-columns: 1fr;
+	}
+
+	.km-qr-pay__steps li:nth-child(3) .km-qr-pay__step-text {
+		/* "слева" на мобиле → код выше */
+	}
+}
+
+/* Юр. ссылки в копирайте футера — иначе сливаются с серым текстом */
+.footer-bottom__copyright a.footer__legal-link,
+.footer-bottom__copyright a.footer__legal-link:link,
+.footer-bottom__copyright a.footer__legal-link:visited {
+	color: #e2e8f0 !important;
+	text-decoration: underline !important;
+	text-underline-offset: 2px;
+	font-weight: 600;
+}
+
+.footer-bottom__copyright a.footer__legal-link:hover {
+	color: #67e8f9 !important;
 }

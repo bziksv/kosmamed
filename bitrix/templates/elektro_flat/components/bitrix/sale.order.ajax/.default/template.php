@@ -510,9 +510,9 @@ else
 				?>
 				<?php
 				global $arSetting;
-				$kmConsentText = !empty($arSetting['TEXT_PERSONAL_DATA']['VALUE'])
-					? $arSetting['TEXT_PERSONAL_DATA']['VALUE']
-					: 'Я согласен на обработку персональных данных и принимаю условия <a target="_blank" href="/upload/mm_politics.png">Политики</a>';
+				$kmConsentText = function_exists('kmPersonalDataConsentHtml')
+					? kmPersonalDataConsentHtml()
+					: 'Я даю <a target="_blank" href="/upload/compliance.png">согласие на обработку персональных данных</a> в соответствии с <a target="_blank" href="/upload/mm_politics.png">политикой обработки персональных данных</a>';
 				?>
 				<div id="hint_agreement" class="hint_agreement order km-order-consent">
 					<input type="hidden" name="PERSONAL_DATA" id="PERSONAL_DATA_order" value="N">
@@ -637,6 +637,14 @@ else
 	?>
 	<script>
 		BX.message(<?=CUtil::PhpToJSObject($messages)?>);
+		BX.message({
+			KM_CONSENT_HTML: <?=CUtil::PhpToJSObject(
+				function_exists('kmPersonalDataConsentHtml')
+					? kmPersonalDataConsentHtml()
+					: 'Я даю <a target="_blank" href="/upload/compliance.png">согласие на обработку персональных данных</a> в соответствии с <a target="_blank" href="/upload/mm_politics.png">политикой обработки персональных данных</a>'
+			)?>,
+			KM_CONSENT_ERROR: 'Подтвердите согласие на обработку персональных данных — отметьте галочку ниже.'
+		});
 		BX.Sale.OrderAjaxComponent.init({
 			result: <?=CUtil::PhpToJSObject($arResult['JS_DATA'])?>,
 			locations: <?=CUtil::PhpToJSObject($arResult['LOCATIONS'])?>,

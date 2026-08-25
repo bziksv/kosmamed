@@ -2913,8 +2913,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 					});
 				}
 			});
-			//SUBMIT//
-			if(this.personalDataErrors === null){
+			//SUBMIT — галка согласия всегда снимается по умолчанию, пользователь отмечает сам
+			if(false && this.personalDataErrors === null){
 				BX.addClass(BX("input-checkbox_order"),"cheked");
 				BX.adjust(BX("PERSONAL_DATA_order"),{
 					props:{

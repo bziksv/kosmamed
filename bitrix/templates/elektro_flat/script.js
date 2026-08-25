@@ -95,16 +95,19 @@ function CloseModalWindow(ModalName){
 function refreshCartLine(result, disabled) {
 	disabled = disabled || false;
 
-	var basketCont, sumOld, sumCurr;
+	var basketCont, sumOld, sumCurr, qntText, $result;
 
 	basketCont = $(".cart_line");
+	$result = $("<div>").append($.parseHTML(result));
 
-	basketCont.find(".qnt").text($(result).find(".qnt").text());
+	qntText = $result.find(".qnt").first().text().trim();
+	basketCont.find(".qnt").text(qntText);
+	basketCont.find(".qnt_cont").toggleClass("qnt_cont--empty", !qntText || qntText === "0");
 
-	basketCont.find(".sum").data("decimal", $(result).find(".sum").data("decimal"));
+	basketCont.find(".sum").data("decimal", $result.find(".sum").data("decimal"));
 
 	sumOld = basketCont.find(".sum").data("sum");
-	basketCont.find(".sum").data("sum", $(result).find(".sum").data("sum"));
+	basketCont.find(".sum").data("sum", $result.find(".sum").data("sum"));
 	sumCurr = basketCont.find(".sum").data("sum");
 
 	if(sumCurr != sumOld) {
@@ -119,7 +122,7 @@ function refreshCartLine(result, disabled) {
 	}
 
 	if(disabled != true)
-		basketCont.find(".oformit_cont").html($(result).find(".oformit_cont").html());
+		basketCont.find(".oformit_cont").html($result.find(".oformit_cont").html());
 }
 
 function addToCompare(href, btn, site_dir) {

@@ -2458,6 +2458,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			this.orderSaveBlockNode.style.display = this.result.SHOW_AUTH ? 'none' : '';
 			this.mobileTotalBlockNode.style.display = this.result.SHOW_AUTH ? 'none' : '';
+			var orderConsent = BX('hint_agreement');
+			if (orderConsent)
+				orderConsent.style.display = this.result.SHOW_AUTH ? 'none' : '';
 
 			this.checkPickUpShow();
 
@@ -3024,6 +3027,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 						]
 					}));
 				}
+				authFormNodes.push(this.createAuthConsentNode());
+
 				authFormNodes.push(
 					BX.create('DIV', {
 						props: {className: 'bx-authform-formgroup-container'},
@@ -3044,6 +3049,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 								},
 								events: {
 									click: BX.delegate(function(e){
+										if (!this.validateAuthConsent(true))
+											return BX.PreventDefault(e);
 										BX('do_register').value = 'Y';
 										this.sendRequest('showAuthForm');
 										return BX.PreventDefault(e);
@@ -3126,6 +3133,136 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			}
 
 			authContent.appendChild(BX.create('DIV', {props: {className: 'col-md-6'}, children: nodes}));
+		},
+
+		createAuthConsentNode: function()
+		{
+			var consentHtml = BX.message('KM_CONSENT_HTML')
+				|| 'Я даю <a target="_blank" href="/upload/compliance.png">согласие на обработку персональных данных</a> в соответствии с <a target="_blank" href="/upload/mm_politics.png">политикой обработки персональных данных</a>';
+			var errorText = BX.message('KM_CONSENT_ERROR')
+				|| 'Подтвердите согласие на обработку персональных данных — отметьте галочку ниже.';
+			var self = this;
+
+			return BX.create('DIV', {
+				props: {
+					id: 'km-auth-consent',
+					className: 'hint_agreement km-order-consent km-auth-consent'
+				},
+				children: [
+					BX.create('INPUT', {
+						props: {
+							type: 'hidden',
+							name: 'PERSONAL_DATA',
+							id: 'PERSONAL_DATA_auth',
+							value: 'N'
+						}
+					}),
+					BX.create('P', {
+						props: {
+							id: 'km_auth_consent_error',
+							className: 'km-order-consent__error'
+						},
+						attrs: {hidden: 'hidden'},
+						text: errorText
+					}),
+					BX.create('DIV', {
+						props: {className: 'km-order-consent__row'},
+						children: [
+							BX.create('DIV', {
+								props: {className: 'km-order-consent__check'},
+								children: [
+									BX.create('SPAN', {
+										props: {
+											id: 'input-checkbox_auth',
+											className: 'input-checkbox',
+											tabIndex: 0
+										},
+										attrs: {
+											role: 'checkbox',
+											'aria-checked': 'false'
+										},
+										events: {
+											click: function() { self.toggleAuthConsent(); },
+											keydown: function(event) {
+												if (event.keyCode === 13 || event.keyCode === 32) {
+													self.toggleAuthConsent();
+													return BX.PreventDefault(event);
+												}
+											}
+										}
+									})
+								]
+							}),
+							BX.create('DIV', {
+								props: {className: 'km-order-consent__text'},
+								html: consentHtml,
+								events: {
+									click: function(event) {
+										if (event.target && event.target.tagName === 'A')
+											return;
+										self.toggleAuthConsent();
+									}
+								}
+							})
+						]
+					})
+				]
+			});
+		},
+
+		toggleAuthConsent: function()
+		{
+			var cb = BX('input-checkbox_auth');
+			var input = BX('PERSONAL_DATA_auth');
+			if (!cb || !input)
+				return;
+
+			if (!BX.hasClass(cb, 'cheked')) {
+				BX.addClass(cb, 'cheked');
+				BX.adjust(cb, {
+					children: [BX.create('i', {props: {className: 'fa fa-check'}})]
+				});
+				input.value = 'Y';
+				cb.setAttribute('aria-checked', 'true');
+				this.clearAuthConsentError();
+			} else {
+				BX.removeClass(cb, 'cheked');
+				BX.remove(BX.findChild(cb, {className: 'fa fa-check'}));
+				input.value = 'N';
+				cb.setAttribute('aria-checked', 'false');
+			}
+		},
+
+		clearAuthConsentError: function()
+		{
+			var block = BX('km-auth-consent');
+			var err = BX('km_auth_consent_error');
+			if (block)
+				BX.removeClass(block, 'km-consent-error');
+			if (err)
+				err.hidden = true;
+		},
+
+		validateAuthConsent: function(showUi)
+		{
+			var input = BX('PERSONAL_DATA_auth');
+			if (input && input.value === 'Y') {
+				this.clearAuthConsentError();
+				return true;
+			}
+
+			if (showUi) {
+				var block = BX('km-auth-consent');
+				var err = BX('km_auth_consent_error');
+				if (block)
+					BX.addClass(block, 'km-consent-error');
+				if (err)
+					err.hidden = false;
+				if (block && typeof this.animateScrollTo === 'function')
+					this.animateScrollTo(block, 500, 80);
+			}
+
+			return false;
 		},
 
 		getAuthReference: function(authContent)

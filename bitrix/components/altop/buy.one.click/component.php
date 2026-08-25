@@ -55,7 +55,9 @@ if(empty($arParams["VALIDATE_PHONE_MASK"]))
 	$arParams["VALIDATE_PHONE_MASK"] = $arSetting["FORMS_VALIDATE_PHONE_MASK"];
 
 $arParams["SHOW_PERSONAL_DATA"] = $arSetting["SHOW_PERSONAL_DATA"];
-$arParams["TEXT_PERSONAL_DATA"] = $arSetting["TEXT_PERSONAL_DATA"];
+$arParams["TEXT_PERSONAL_DATA"] = function_exists('kmPersonalDataConsentHtml')
+	? kmPersonalDataConsentHtml()
+	: $arSetting["TEXT_PERSONAL_DATA"];
 
 $arParams["PROPERTIES"] = array("NAME", "PHONE", "EMAIL", "MESSAGE");
 
@@ -87,55 +89,67 @@ if($this->StartResultCache()) {
 
 		$arResult["ELEMENT"]["ID"] = $arElement["ID"];
 		$arResult["ELEMENT"]["NAME"] = $arElement["NAME"];
-		
-		if($arElement["PREVIEW_PICTURE"] <= 0 && $arElement["DETAIL_PICTURE"] <= 0) {
-			$mxResult = CCatalogSku::GetProductInfo($arElement["ID"]);
-			if(is_array($mxResult)) {
-				$arElement = CIBlockElement::GetList(
-					array(),
-					array(
-						"ID" => $mxResult["ID"]
-					),
-					false,
-					false,
-					array("ID", "IBLOCK_ID", "PREVIEW_PICTURE", "DETAIL_PICTURE")
-				)->Fetch();
-			}
-		}
-		
-		if($arElement["PREVIEW_PICTURE"] > 0) {
-			$arFile = CFile::GetFileArray($arElement["PREVIEW_PICTURE"]);
-			if($arFile["WIDTH"] > 178 || $arFile["HEIGHT"] > 178) {
-				$arFileTmp = CFile::ResizeImageGet(
-					$arFile,
-					array("width" => 178, "height" => 178),
-					BX_RESIZE_IMAGE_PROPORTIONAL,
-					true
-				);		
+
+		// PREVIEW/DETAIL часто пустые (фото из МойСклад в MORE_PHOTO) — та же логика, что в каталоге/корзине
+		if(function_exists("kmBasketItemPicture")) {
+			$pict = kmBasketItemPicture((int)$arElement["ID"], 178, 178);
+			if(is_array($pict) && !empty($pict["src"])) {
 				$arResult["ELEMENT"]["PREVIEW_PICTURE"] = array(
-					"SRC" => $arFileTmp["src"],
-					"WIDTH" => $arFileTmp["width"],
-					"HEIGHT" => $arFileTmp["height"],
+					"SRC" => $pict["src"],
+					"WIDTH" => (int)$pict["width"],
+					"HEIGHT" => (int)$pict["height"],
 				);
-			} else {
-				$arResult["ELEMENT"]["PREVIEW_PICTURE"] = $arFile;
 			}
-		} elseif($arElement["DETAIL_PICTURE"] > 0) {
-			$arFile = CFile::GetFileArray($arElement["DETAIL_PICTURE"]);
-			if($arFile["WIDTH"] > 178 || $arFile["HEIGHT"] > 178) {
-				$arFileTmp = CFile::ResizeImageGet(
-					$arFile,
-					array("width" => 178, "height" => 178),
-					BX_RESIZE_IMAGE_PROPORTIONAL,
-					true
-				);		
-				$arResult["ELEMENT"]["PREVIEW_PICTURE"] = array(
-					"SRC" => $arFileTmp["src"],
-					"WIDTH" => $arFileTmp["width"],
-					"HEIGHT" => $arFileTmp["height"],
-				);
-			} else {
-				$arResult["ELEMENT"]["PREVIEW_PICTURE"] = $arFile;
+		} else {
+			if($arElement["PREVIEW_PICTURE"] <= 0 && $arElement["DETAIL_PICTURE"] <= 0) {
+				$mxResult = CCatalogSku::GetProductInfo($arElement["ID"]);
+				if(is_array($mxResult)) {
+					$arElement = CIBlockElement::GetList(
+						array(),
+						array(
+							"ID" => $mxResult["ID"]
+						),
+						false,
+						false,
+						array("ID", "IBLOCK_ID", "PREVIEW_PICTURE", "DETAIL_PICTURE")
+					)->Fetch();
+				}
+			}
+
+			if($arElement["PREVIEW_PICTURE"] > 0) {
+				$arFile = CFile::GetFileArray($arElement["PREVIEW_PICTURE"]);
+				if($arFile["WIDTH"] > 178 || $arFile["HEIGHT"] > 178) {
+					$arFileTmp = CFile::ResizeImageGet(
+						$arFile,
+						array("width" => 178, "height" => 178),
+						BX_RESIZE_IMAGE_PROPORTIONAL,
+						true
+					);
+					$arResult["ELEMENT"]["PREVIEW_PICTURE"] = array(
+						"SRC" => $arFileTmp["src"],
+						"WIDTH" => $arFileTmp["width"],
+						"HEIGHT" => $arFileTmp["height"],
+					);
+				} else {
+					$arResult["ELEMENT"]["PREVIEW_PICTURE"] = $arFile;
+				}
+			} elseif($arElement["DETAIL_PICTURE"] > 0) {
+				$arFile = CFile::GetFileArray($arElement["DETAIL_PICTURE"]);
+				if($arFile["WIDTH"] > 178 || $arFile["HEIGHT"] > 178) {
+					$arFileTmp = CFile::ResizeImageGet(
+						$arFile,
+						array("width" => 178, "height" => 178),
+						BX_RESIZE_IMAGE_PROPORTIONAL,
+						true
+					);
+					$arResult["ELEMENT"]["PREVIEW_PICTURE"] = array(
+						"SRC" => $arFileTmp["src"],
+						"WIDTH" => $arFileTmp["width"],
+						"HEIGHT" => $arFileTmp["height"],
+					);
+				} else {
+					$arResult["ELEMENT"]["PREVIEW_PICTURE"] = $arFile;
+				}
 			}
 		}
 	}

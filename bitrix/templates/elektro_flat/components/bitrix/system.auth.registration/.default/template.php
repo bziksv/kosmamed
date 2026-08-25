@@ -92,7 +92,7 @@
 							<span class="input-checkbox" id="input-checkbox_register"></span>
 						</div>	
 						<div class="label">
-Я согласен на обработку персональных данных и принимаю условия <a target="_blank" href="/upload/mm_politics.png">Политики</a>
+<?=function_exists('kmPersonalDataConsentHtml') ? kmPersonalDataConsentHtml() : 'Я даю <a target="_blank" href="/upload/compliance.png">согласие на обработку персональных данных</a> в соответствии с <a target="_blank" href="/upload/mm_politics.png">политикой обработки персональных данных</a>'?>
 						</div>
 					</div>
 				<?}?>	

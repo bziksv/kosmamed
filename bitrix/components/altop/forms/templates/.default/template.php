@@ -71,7 +71,7 @@ if($arResult["ELEMENT"]["ID"] > 0):?>
 				<span class="input-checkbox" id="input-checkbox_<?=$arResult['ELEMENT_AREA_ID']?>"></span>
 			</div>
 			<div class="label">
-				Я согласен на обработку персональных данных и принимаю условия <a target="_blank" href="/upload/mm_politics.png">Политики</a>
+				<?=!empty($arParams["TEXT_PERSONAL_DATA"]) ? $arParams["TEXT_PERSONAL_DATA"] : (function_exists('kmPersonalDataConsentHtml') ? kmPersonalDataConsentHtml() : '')?>
 			</div>
 		</div>
 	<?}?>

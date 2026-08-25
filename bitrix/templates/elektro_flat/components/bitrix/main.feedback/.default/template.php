@@ -59,9 +59,9 @@
 					<div class="checkbox">
 						<span class="input-checkbox" id="input-checkbox_mfeedback"></span>
 					</div>	
-					<div class="label">
-						<?=$arSetting["TEXT_PERSONAL_DATA"]?>
-					</div>
+<div class="label">
+						<?=function_exists('kmPersonalDataConsentHtml') ? kmPersonalDataConsentHtml() : $arSetting["TEXT_PERSONAL_DATA"]?>
+						</div>
 				</div>
 			<?}?>	
 			<div class="submit">

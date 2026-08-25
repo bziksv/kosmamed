@@ -7,8 +7,8 @@
 		"ELEMENT_AREA_ID" => $arAskPriceFilter["ELEMENT_AREA_ID"],
 		"ELEMENT_NAME" => $arAskPriceFilter["ELEMENT_NAME"],
 		"ELEMENT_PRICE" => "",		
-		"CACHE_TYPE" => "A",
-		"CACHE_TIME" => "36000000"
+		"CACHE_TYPE" => "N",
+		"CACHE_TIME" => "0"
 	),
 	false
 );?>

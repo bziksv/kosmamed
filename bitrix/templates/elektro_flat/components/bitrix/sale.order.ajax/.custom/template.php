@@ -277,7 +277,7 @@ if(strlen($request->get('ORDER_ID')) > 0) {
 							<span class="input-checkbox" id="input-checkbox_order"></span>
 						</div>
 						<div class="label">
-							<?=$arSetting["TEXT_PERSONAL_DATA"]["VALUE"]?>
+							<?=function_exists('kmPersonalDataConsentHtml') ? kmPersonalDataConsentHtml() : $arSetting["TEXT_PERSONAL_DATA"]["VALUE"]?>
 						</div>
 					</div>
 					<script>

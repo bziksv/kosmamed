@@ -577,11 +577,19 @@ function ks_find_products(array $words, $priceTypeId, $queryForRank = "") {
 	);
 	while ($e = $rs->GetNext()) {
 		$id = (int)$e["ID"];
-		$pictId = $e["PREVIEW_PICTURE"] ?: $e["DETAIL_PICTURE"];
 		$img = "";
-		if ($pictId > 0) {
-			$f = CFile::ResizeImageGet($pictId, array("width" => 70, "height" => 70), BX_RESIZE_IMAGE_PROPORTIONAL, true);
-			$img = $f["src"];
+		if (function_exists("kmBasketItemPicture")) {
+			$pic = kmBasketItemPicture($id, 70, 70);
+			if (is_array($pic) && !empty($pic["src"])) {
+				$img = $pic["src"];
+			}
+		}
+		if ($img === "") {
+			$pictId = $e["PREVIEW_PICTURE"] ?: $e["DETAIL_PICTURE"];
+			if ($pictId > 0) {
+				$f = CFile::ResizeImageGet($pictId, array("width" => 70, "height" => 70), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+				$img = $f["src"];
+			}
 		}
 		$raw[$id] = array(
 			"ID"         => $id,

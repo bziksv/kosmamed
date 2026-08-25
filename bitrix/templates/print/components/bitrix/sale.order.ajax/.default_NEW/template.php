@@ -474,10 +474,10 @@ else
                             <span class="input-checkbox" id="input-checkbox_order"></span>
                         </div>    
                         <div class="label">
-							При отправке данной формы Вы подтверждаете свою согласие на 
-							<a href="/upload/compliance.pdf" target="_blank">обработку персональных данных</a> 
+							При отправке данной формы Вы подтверждаете своё согласие на 
+							<a href="/upload/compliance.png" target="_blank">обработку персональных данных</a> 
 							и согласие с
-							<a href="/upload/politics.pdf" target="_blank">политикой конфиденциальности</a>.
+							<a href="/upload/mm_politics.png" target="_blank">политикой обработки персональных данных</a>.
 						</div>
                     </div>
                     <script>
