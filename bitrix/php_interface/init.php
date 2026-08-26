@@ -56,6 +56,9 @@ if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_catal
 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php')){
    require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_viewed_count.php');
 }
+if(file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_mail_product_links.php')){
+   require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/php_interface/include/km_mail_product_links.php');
+}
 AddEventHandler('sale', 'OnSaleComponentOrderJsData', 'kmOnSaleComponentOrderJsData');
 AddEventHandler('sale', 'OnSaleComponentOrderResultPrepared', 'kmOnSaleComponentOrderResultPrepared');
 AddEventHandler('sale', 'OnSaleComponentOrderShowAjaxAnswer', 'kmOnSaleComponentOrderShowAjaxAnswer');

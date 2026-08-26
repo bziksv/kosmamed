@@ -49,6 +49,7 @@ $arParams["TEXT_PERSONAL_DATA"] = function_exists('kmPersonalDataConsentHtml')
 	: $arSetting["TEXT_PERSONAL_DATA"];
 
 $arParams["PARAMS_STRING"] = array(
+	"ELEMENT_ID" => $arParams["ELEMENT_ID"],
 	"ELEMENT_NAME" => $arParams["ELEMENT_NAME"],
 	"ELEMENT_PRICE" => $arParams["ELEMENT_PRICE"],
 	"VALIDATE_PHONE_MASK" => $arParams["VALIDATE_PHONE_MASK"]
