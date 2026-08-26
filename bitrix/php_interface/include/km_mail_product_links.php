@@ -55,6 +55,7 @@ if (!function_exists('kmMailProductLinkFields')) {
 	}
 }
 
+if (!function_exists('kmFormProductUrl')) {
 	function kmFormProductUrl(int $elementId): string
 	{
 		if ($elementId <= 0 || !Loader::includeModule('iblock')) {
