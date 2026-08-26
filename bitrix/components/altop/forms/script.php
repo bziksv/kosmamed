@@ -92,14 +92,8 @@ foreach($iblock["PROPERTIES"] as $arProp) {
 		$productUrl = function_exists("kmFormProductUrl")
 			? kmFormProductUrl((int)($params["ELEMENT_ID"] ?? 0))
 			: "";
-		if (function_exists("kmMailProductLinkFields")) {
-			$linkFields = kmMailProductLinkFields((string)$params["ELEMENT_NAME"], $productUrl);
-			$arPropsMess["PRODUCT"] = $linkFields["PRODUCT"];
-			$arPropsMess["PRODUCT_URL"] = $linkFields["PRODUCT_URL"];
-		} else {
-			$arPropsMess["PRODUCT"] = $params["ELEMENT_NAME"];
-			$arPropsMess["PRODUCT_URL"] = $productUrl;
-		}
+		$arPropsMess["PRODUCT"] = $params["ELEMENT_NAME"];
+		$arPropsMess["PRODUCT_URL"] = $productUrl;
 	} elseif($arProp["CODE"] == "PRODUCT_PRICE") {
 		$arProps[$arProp["CODE"]] = $params["ELEMENT_PRICE"];
 		$arPropsMess[$arProp["CODE"]] = $params["ELEMENT_PRICE"];
