@@ -35,7 +35,26 @@ if (!function_exists('kmMailAbsoluteUrl')) {
 	}
 }
 
-if (!function_exists('kmFormProductUrl')) {
+if (!function_exists('kmMailProductLinkFields')) {
+	function kmMailProductLinkFields(string $name, string $url): array
+	{
+		$name = trim($name);
+		$url = trim($url);
+		if ($url === '') {
+			return [
+				'PRODUCT' => $name,
+				'PRODUCT_URL' => '',
+			];
+		}
+		$safeName = htmlspecialcharsbx($name, ENT_QUOTES | ENT_SUBSTITUTE, SITE_CHARSET);
+		$safeUrl = htmlspecialcharsbx($url, ENT_QUOTES | ENT_SUBSTITUTE, SITE_CHARSET);
+		return [
+			'PRODUCT' => '<a href="' . $safeUrl . '">' . $safeName . '</a>',
+			'PRODUCT_URL' => $safeUrl,
+		];
+	}
+}
+
 	function kmFormProductUrl(int $elementId): string
 	{
 		if ($elementId <= 0 || !Loader::includeModule('iblock')) {
