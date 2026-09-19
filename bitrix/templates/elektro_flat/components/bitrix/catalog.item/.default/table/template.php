@@ -48,25 +48,7 @@ if(!$arElement["PROPERTIES"]["CML2_ARTICLE"]["VALUE"]){
 				<?}?>
 				<a<?if($kmImageLinkClass !== ''){?> class="<?=$kmImageLinkClass?>"<?}?> href="<?=$arElement['DETAIL_PAGE_URL']?>">
 					<?if(!empty($arPHOTOp[0]['SRC'])) {?>
-						<div class="magic_slide_ss">
-						<?foreach ($arPHOTOp as $key => $arFoto) {?>
-							<div class="magic_slide_s">
-								<img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="<?=(int)($arFoto['WIDTH'] ?? 588)?>" height="<?=(int)($arFoto['HEIGHT'] ?? $kmPreviewHeight)?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
-							</div>
-						<?}?>
-						</div>
-						<?if($kmPhotoCount > 1){?>
-						<div class="magic_slide_b">
-							<?foreach ($arPHOTOp as $key => $arFoto) {?>
-								<div data-sliderh="<?=$key?>" class="magic_slide_h" style="width:<?=(100 / $kmPhotoCount)?>%;"></div>
-							<?}?>
-						</div>
-						<div class="magic_slide_p">
-							<?foreach ($arPHOTOp as $key => $arFoto) {?>
-								<div data-sliderh="<?=$key?>"></div>
-							<?}?>
-						</div>
-						<?}?>
+						<?=kmCatalogCardSlidesHtml($arPHOTOp, $strAlt, $strTitle, $kmPreviewHeight)?>
 					<?} else {?>
 						<img class="item_img" src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="150" height="150" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
 					<?}?>

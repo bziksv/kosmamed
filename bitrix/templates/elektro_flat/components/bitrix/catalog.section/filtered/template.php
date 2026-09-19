@@ -148,25 +148,7 @@ $inQuickView = in_array("QUICK_VIEW", $arSetting["GENERAL_SETTINGS"]["VALUE"]);
                 <?}?>
                 <a<?if($kmImageLinkClass !== ''){?> class="<?=$kmImageLinkClass?>"<?}?> href="<?=$arElement['DETAIL_PAGE_URL']?>">
                     <?if(!empty($arPHOTOp[0]['SRC'])) {?>
-                        <div class="magic_slide_ss">
-                        <?foreach ($arPHOTOp as $key => $arFoto) {?>
-                            <div class="magic_slide_s">
-                                <img data-slider="<?=$key?>" class="magic_slide item_img" src="<?=$arFoto['SRC']?>" width="<?=(int)($arFoto['WIDTH'] ?? 588)?>" height="<?=(int)($arFoto['HEIGHT'] ?? $kmPreviewHeight)?>" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
-                            </div>
-                        <?}?>
-                        </div>
-                        <?if($kmPhotoCount > 1){?>
-                        <div class="magic_slide_b">
-                            <?foreach ($arPHOTOp as $key => $arFoto) {?>
-                                <div data-sliderh="<?=$key?>" class="magic_slide_h" style="width:<?=(100 / $kmPhotoCount)?>%;"></div>
-                            <?}?>
-                        </div>
-                        <div class="magic_slide_p">
-                            <?foreach ($arPHOTOp as $key => $arFoto) {?>
-                                <div data-sliderh="<?=$key?>"></div>
-                            <?}?>
-                        </div>
-                        <?}?>
+                        <?=kmCatalogCardSlidesHtml($arPHOTOp, $strAlt, $strTitle, $kmPreviewHeight)?>
                     <?} else {?>
                         <img class="item_img" src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="150" height="150" alt="<?=$strAlt?>" title="<?=$strTitle?>" />
                     <?}?>
@@ -680,6 +662,8 @@ $signedParams = $signer->sign(base64_encode(serialize($arResult["ORIGINAL_PARAME
 //JS//?>
 <script type="text/javascript">
 	BX.ready(function() {
+		<?if (empty($GLOBALS['kmFilteredBxMessage'])) {
+			$GLOBALS['kmFilteredBxMessage'] = true;?>
 		BX.message({
 			FILTERED_ELEMENT_FROM: "<?=GetMessageJS('CATALOG_ELEMENT_FROM')?>",
 			FILTERED_ADDITEMINCART_ADDED: "<?=GetMessageJS('CATALOG_ELEMENT_ADDED')?>",
@@ -689,7 +673,10 @@ $signedParams = $signer->sign(base64_encode(serialize($arResult["ORIGINAL_PARAME
 			FILTERED_SITE_DIR: "<?=SITE_DIR?>",
 			FILTERED_POPUP_WINDOW_MORE_OPTIONS: "<?=GetMessageJS('CATALOG_ELEMENT_MORE_OPTIONS')?>",
 			FILTERED_COMPONENT_TEMPLATE: "<?=$this->GetFolder();?>",
-			FILTERED_OFFERS_VIEW: "<?=$arSetting['OFFERS_VIEW']['VALUE']?>",
+			FILTERED_OFFERS_VIEW: "<?=$arSetting['OFFERS_VIEW']['VALUE']?>"
+		});
+		<?}?>
+		BX.message({
 			FILTERED_COMPONENT_PARAMS: "<?=CUtil::JSEscape($signedParams)?>"
 		});
 		<?foreach($arResult["ITEMS"] as $key => $arElement) {

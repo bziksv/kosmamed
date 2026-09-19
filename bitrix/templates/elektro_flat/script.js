@@ -172,7 +172,7 @@ function urlInit() {
 
 function openbtn() {
     var btnId = BX("btnOformitAction");
-    if(btnId!=null) {
+    if(btnId!=null && typeof TweenMax !== "undefined") {
         var duration = 0.3,
             delay = 0.08;
         $("#btnOformitAction").addClass("btnOformit");

@@ -1141,7 +1141,6 @@ if (!function_exists('kmFixCatalogSliderImages')) {
 			'/<img\b([^>]*\bclass="[^"]*\bmagic_slide\s+item_img\b[^"]*"[^>]*)>/i',
 			static function (array $m): string {
 				$attrs = preg_replace('/\sstyle="display:\s*none;"/i', '', $m[1]);
-				$attrs = preg_replace('/\sloading="lazy"/i', '', $attrs);
 				$attrs = preg_replace('/\s\/\s*$/', '', $attrs);
 				if (!preg_match('/\bloading\s*=/i', $attrs)) {
 					$attrs .= ' loading="eager"';

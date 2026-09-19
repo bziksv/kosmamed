@@ -454,6 +454,75 @@ function kmCatalogCardPhotos(array $arElement, $maxPhotos = 5)
 }
 
 /**
+ * Карточка списка: в HTML только первое фото. Остальные — в data-km-photos, JS дорисовывает по наведению.
+ * Первые 8 карточек за запрос — eager, дальше lazy.
+ */
+function kmCatalogCardSlidesHtml(array $photos, $alt, $title, $previewHeight = 150)
+{
+	if (empty($photos[0]['SRC'])) {
+		return '';
+	}
+
+	static $cardIndex = 0;
+	$index = $cardIndex;
+	$cardIndex++;
+
+	$alt = htmlspecialcharsbx((string)$alt);
+	$title = htmlspecialcharsbx((string)$title);
+	$first = $photos[0];
+	$width = (int)($first['WIDTH'] ?? 588);
+	$height = (int)($first['HEIGHT'] ?? $previewHeight);
+	if ($width < 1) {
+		$width = 588;
+	}
+	if ($height < 1) {
+		$height = (int)$previewHeight > 0 ? (int)$previewHeight : 150;
+	}
+	$loading = $index < 8 ? 'eager' : 'lazy';
+
+	$extra = array();
+	foreach ($photos as $i => $foto) {
+		if ($i === 0 || empty($foto['SRC'])) {
+			continue;
+		}
+		$extra[] = array(
+			'src' => (string)$foto['SRC'],
+			'w' => (int)($foto['WIDTH'] ?? $width),
+			'h' => (int)($foto['HEIGHT'] ?? $height),
+		);
+	}
+
+	$dataAttr = '';
+	if ($extra) {
+		$json = json_encode($extra, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		if ($json !== false) {
+			$dataAttr = ' data-km-photos="' . htmlspecialcharsbx($json) . '"';
+		}
+	}
+
+	$html = '<div class="magic_slide_ss"' . $dataAttr . '>';
+	$html .= '<div class="magic_slide_s">';
+	$html .= '<img data-slider="0" class="magic_slide item_img" src="' . htmlspecialcharsbx((string)$first['SRC']) . '" width="' . $width . '" height="' . $height . '" alt="' . $alt . '" title="' . $title . '" loading="' . $loading . '" />';
+	$html .= '</div></div>';
+
+	$count = count($photos);
+	if ($count > 1) {
+		$slice = 100 / $count;
+		$html .= '<div class="magic_slide_b">';
+		for ($i = 0; $i < $count; $i++) {
+			$html .= '<div data-sliderh="' . $i . '" class="magic_slide_h" style="width:' . $slice . '%;"></div>';
+		}
+		$html .= '</div><div class="magic_slide_p">';
+		for ($i = 0; $i < $count; $i++) {
+			$html .= '<div data-sliderh="' . $i . '"></div>';
+		}
+		$html .= '</div>';
+	}
+
+	return $html;
+}
+
+/**
  * Картинка для popup «Товар добавлен в корзину» — та же логика, что в карточке каталога.
  */
 function kmCatalogCardPictForJs(array $arElement)

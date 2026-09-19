@@ -112,7 +112,9 @@ Loc::loadMessages(__FILE__);?>
 	");
 	}
 
-    Asset::getInstance()->addJs($kmTplPath."/js/TweenMax.min.js");
+	if (CSite::InDir(SITE_DIR."personal/cart/") || CSite::InDir(SITE_DIR."personal/order/")) {
+		Asset::getInstance()->addJs($kmTplPath."/js/TweenMax.min.js");
+	}
 	$kmMainJsPath = $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/js/main.js';
 	$kmMainJsVer = file_exists($kmMainJsPath) ? filemtime($kmMainJsPath) : time();
 	Asset::getInstance()->addJs(SITE_TEMPLATE_PATH."/js/main.js?v=".$kmMainJsVer);

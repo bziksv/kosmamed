@@ -2211,14 +2211,21 @@ header.fixed.fixed_f .center.inner {
 	max-height: 747px;
 }
 
+.catalog-detail-element .detail_picture_pa {
+	aspect-ratio: 560 / 747;
+	max-width: 100%;
+}
+
 .catalog-detail-element .detail_picture_pa.slick-slider {
 	overflow: hidden;
 	max-width: 100%;
+	aspect-ratio: 560 / 747;
 }
 
 .catalog-detail-element .detail_picture_pa .slick-list {
 	width: 100% !important;
 	overflow: hidden !important;
+	aspect-ratio: 560 / 747;
 }
 
 .catalog-detail-element .detail_picture_pa .slick-slide img {
