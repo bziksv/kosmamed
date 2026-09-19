@@ -162,8 +162,31 @@ BX.GeolocationDelivery = function(elementId) {
 	);
 };
 
+function kmReadGeolocationCityCookie() {
+	var m = document.cookie.match(/(?:^|; )BITRIX_SM_GEOLOCATION_CITY=([^;]*)/);
+	if(!m) return "";
+	try {
+		return decodeURIComponent(m[1].replace(/\+/g, " "));
+	} catch(e) {
+		return m[1];
+	}
+}
+
+function kmApplyGeolocationCityCookie() {
+	var city = kmReadGeolocationCityCookie();
+	if(!city) return false;
+	var nodes = document.querySelectorAll(".geolocation__value");
+	for(var i = 0; i < nodes.length; i++)
+		nodes[i].textContent = city;
+	return true;
+}
+
+BX.ready(kmApplyGeolocationCityCookie);
+
 //GEOLOCATION//
 BX.Geolocation = function(geolocation) {
+	if(kmApplyGeolocationCityCookie())
+		return;
 	if(geolocation.city) {
 		BX.ajax.post(
 			BX.message("GEOLOCATION_COMPONENT_PATH") + "/ajax.php",
