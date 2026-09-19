@@ -165,16 +165,19 @@
 			}
 			panel.classList.add("is-loading");
 			fetch("/ajax/search_suggest.php?q=" + encodeURIComponent(q), opts)
-				.then(function (r) { return r.text(); })
+				.then(function (r) {
+					if (!r.ok) throw new Error("suggest " + r.status);
+					return r.text();
+				})
 				.then(function (html) {
 					panel.classList.remove("is-loading");
-					if (!html || !html.trim()) { hide(); return; }
+					if (!html || html.indexOf("ks-suggest") === -1) { hide(); return; }
 					cache[q] = html;
 					panel.innerHTML = html;
 					bindPanelUi();
 					show();
 				})
-				.catch(function () { panel.classList.remove("is-loading"); });
+				.catch(function () { panel.classList.remove("is-loading"); hide(); });
 		}
 
 		function onInput() {
