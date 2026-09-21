@@ -105,6 +105,23 @@ function kmCatalogGateIsTailedCatalog(): bool
 	return false;
 }
 
+function kmCatalogGatePass(string $uri): void
+{
+	$safe = htmlspecialchars($uri, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+	if (!headers_sent()) {
+		header('Content-Type: text/html; charset=UTF-8');
+		header('Cache-Control: no-store');
+		http_response_code(200);
+	}
+	echo '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">'
+		. '<meta http-equiv="refresh" content="0;url=' . $safe . '">'
+		. '<title>Открываем каталог</title></head><body>'
+		. '<p>Код принят. <a href="' . $safe . '">Перейти в каталог</a></p>'
+		. '<script>location.replace(' . json_encode($uri, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ');</script>'
+		. '</body></html>';
+	die();
+}
+
 function kmCatalogGateShow(string $error = ''): void
 {
 	global $APPLICATION;
@@ -187,9 +204,7 @@ function kmCatalogGateRun(): void
 		$sid = (string)($_POST['captcha_sid'] ?? '');
 		if ($word !== '' && $APPLICATION->CaptchaCheckCode($word, $sid)) {
 			kmCatalogGateSetCookie();
-			$uri = (string)($_SERVER['REQUEST_URI'] ?? '/catalog/');
-			header('Location: ' . $uri, true, 303);
-			die();
+			kmCatalogGatePass((string)($_SERVER['REQUEST_URI'] ?? '/catalog/'));
 		}
 		kmCatalogGateShow('Неверный код. Введите новый.');
 	}
