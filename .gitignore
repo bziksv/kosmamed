@@ -15,6 +15,7 @@ bitrix/php_interface/*
 !/bitrix/php_interface/include/kosmamed_perf.php
 !/bitrix/php_interface/include/km_section_preview.php
 !/bitrix/php_interface/include/km_personal_data_consent.php
+!/bitrix/php_interface/include/km_catalog_gate.php
 
 # --- СЕКРЕТЫ ---
 bitrix/.settings.php
