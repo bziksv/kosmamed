@@ -19,14 +19,25 @@ $uf_name = Array("UF_NAME_MENU");
 //$uf_section_id = $matches[1];
 
 if(CModule::IncludeModule("iblock")): 
-    $uf_arresult = CIBlockSection::GetList(Array("SORT"=>"­­ASC"), Array("IBLOCK_ID" => $uf_iblock_id), false, $uf_name);
-    while($uf_value = $uf_arresult->GetNext()):
-	$idMenu[$uf_value["CODE"]] = $uf_value["ID"];
-        if($uf_value["UF_NAME_MENU"]): 
-            $nameMenu[$uf_value["CODE"]] = $uf_value["UF_NAME_MENU"];
-		
-        endif;
-    endwhile;
+    $idMenu = array();
+    $nameMenu = array();
+    $menuMapCache = \Bitrix\Main\Data\Cache::createInstance();
+    if ($menuMapCache->initCache(86400, "km_menu_section_map_" . $uf_iblock_id, "/km_menu_section_map")):
+        list($idMenu, $nameMenu) = $menuMapCache->getVars();
+    elseif ($menuMapCache->startDataCache()):
+        $uf_arresult = CIBlockSection::GetList(Array("SORT"=>"­­ASC"), Array("IBLOCK_ID" => $uf_iblock_id), false, $uf_name);
+        while($uf_value = $uf_arresult->GetNext()):
+            $idMenu[$uf_value["CODE"]] = $uf_value["ID"];
+            if($uf_value["UF_NAME_MENU"]): 
+                $nameMenu[$uf_value["CODE"]] = $uf_value["UF_NAME_MENU"];
+            endif;
+        endwhile;
+        $taggedCache = \Bitrix\Main\Application::getInstance()->getTaggedCache();
+        $taggedCache->startTagCache("/km_menu_section_map");
+        $taggedCache->registerTag("iblock_id_" . $uf_iblock_id);
+        $taggedCache->endTagCache();
+        $menuMapCache->endDataCache(array($idMenu, $nameMenu));
+    endif;
 
 
 

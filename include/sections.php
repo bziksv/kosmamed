@@ -6,7 +6,7 @@
 		"IBLOCK_ID" => "24",
 		"CACHE_TYPE" => "A",
 		"CACHE_TIME" => "36000000",
-		"CACHE_GROUPS" => "Y",
+		"CACHE_GROUPS" => "N",
 		"TOP_DEPTH" => "1",
 		"SECTION_FIELDS" => array(
 			0 => "",
@@ -24,7 +24,7 @@
 		"COMPONENT_TEMPLATE" => "panel",
 		"SECTION_ID" => $_REQUEST["SECTION_ID"],
 		"SECTION_CODE" => "",
-		"COUNT_ELEMENTS" => "Y",
+		"COUNT_ELEMENTS" => "N",
 		"FILTER_NAME" => "sectionsFilter",
 		"CACHE_FILTER" => "N"
 	),
