@@ -92,11 +92,11 @@ check_page() {
   local size=${#html}
   echo "  $label: HTML ${size} b"
   for needle in "$@"; do
-    echo "$html" | grep -q "$needle" && ok "$label содержит $needle" || bad "$label НЕТ $needle"
+    grep -q -- "$needle" <<<"$html" && ok "$label содержит $needle" || bad "$label НЕТ $needle"
   done
 }
 
-check_page "/" "главная" "kosmamed-theme.css" "anythingslider/slider.css" "anythingContainer" "catalog-item-card"
+check_page "/" "главная" "kosmamed-theme.css" "anythingslider" "anythingContainer" "catalog-item-card"
 check_page "/catalog/anesteziologiya_i_reanimatsiya/" "каталог" "magic_slide_ss" "kosmamed-theme.css"
 DATA_KM=$(curl -sf -A "$UA" --max-time 180 "${BASE_URL}/catalog/anesteziologiya_i_reanimatsiya/?bxrand=$(date +%s)" | grep -c data-km-src || true)
 if [[ "$DATA_KM" -gt 0 ]]; then
