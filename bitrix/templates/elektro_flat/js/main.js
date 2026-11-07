@@ -511,6 +511,36 @@ function kmHideLeftCatalogFlyouts($except) {
 	});
 }
 
+function kmLoadMenuIcons($scope) {
+	var $root = $scope && $scope.length ? $scope : $(document);
+	$root.find('.graph[data-km-menu-src], .graph[data-km-menu-icon]').each(function () {
+		var el = this;
+		if (el.getAttribute('data-km-menu-loaded') === '1') {
+			return;
+		}
+		el.setAttribute('data-km-menu-loaded', '1');
+		var iconClass = el.getAttribute('data-km-menu-icon');
+		if (iconClass) {
+			el.innerHTML = '<i class="' + iconClass.replace(/"/g, '') + '" aria-hidden="true"></i>';
+			return;
+		}
+		var src = el.getAttribute('data-km-menu-src') || '';
+		if (!src) {
+			return;
+		}
+		var w = el.getAttribute('data-km-menu-w') || '50';
+		var h = el.getAttribute('data-km-menu-h') || '50';
+		var alt = el.getAttribute('data-km-menu-alt') || '';
+		var webp = el.getAttribute('data-km-menu-webp') || '';
+		var img = '<img src="' + src.replace(/"/g, '&quot;') + '" width="' + w + '" height="' + h + '" alt="' + String(alt).replace(/"/g, '&quot;') + '" loading="lazy" decoding="async" />';
+		if (webp) {
+			el.innerHTML = '<picture><source srcset="' + webp.replace(/"/g, '&quot;') + '" type="image/webp">' + img + '</picture>';
+		} else {
+			el.innerHTML = img;
+		}
+	});
+}
+
 function kmInitLeftCatalogFlyout() {
 	var $root = $('.left-column');
 	if (!$root.length || $root.data('km-flyout-bound')) {
@@ -523,6 +553,7 @@ function kmInitLeftCatalogFlyout() {
 		if (!$dropdown.length) {
 			return;
 		}
+		kmLoadMenuIcons($dropdown);
 		kmHideLeftCatalogFlyouts($dropdown);
 		kmPositionLeftCatalogFlyout($li);
 		$dropdown.addClass('km-flyout-open').css('display', 'grid').stop(true, true).delay(200).fadeIn(150);
@@ -531,6 +562,10 @@ function kmInitLeftCatalogFlyout() {
 		$dropdown.stop(true, true).delay(200).fadeOut(150, function () {
 			kmResetLeftCatalogFlyout($dropdown);
 		});
+	});
+	// Header megamenu (if present)
+	$('.top-catalog').on('mouseenter', 'ul.left-menu > li.parent', function () {
+		kmLoadMenuIcons($(this).children('.catalog-section-childs'));
 	});
 }
 

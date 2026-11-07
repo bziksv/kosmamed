@@ -189,17 +189,23 @@ if ($element !== null) {
 				?>
 				<<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span class="show_<?=$arCode[2]?>" data-replace-content="<?=$arItem['LINK']?>"<?else:?>a href="<?=$arItem['LINK']?>"<?endif;?> title="<?=$arItem['TEXT']?>">
 					<span class="child">
-						<span class="graph">
-							<?if(!empty($arItem["PARAMS"]["ICON"])) {?>
-								<i class="<?=$arItem['PARAMS']['ICON']?>" aria-hidden="true"></i>
-							<?} elseif(is_array($arItem["PICTURE"])) {
-								echo function_exists('kmPictureHtml')
-									? kmPictureHtml($arItem['PICTURE'], ['alt' => $arItem['TEXT'], 'title' => $arItem['TEXT']])
-									: '<img src="'.htmlspecialcharsbx($arItem['PICTURE']['SRC']).'" width="'.(int)$arItem['PICTURE']['WIDTH'].'" height="'.(int)$arItem['PICTURE']['HEIGHT'].'" alt="'.htmlspecialcharsbx($arItem['TEXT']).'" title="'.htmlspecialcharsbx($arItem['TEXT']).'" />';
-							} else {?>
-								<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="50" height="50" alt="<?=$arItem['TEXT']?>" title="<?=$arItem['TEXT']?>" />
-							<?}?>
-						</span>
+						<span class="graph"<?
+							if(!empty($arItem["PARAMS"]["ICON"])) {
+								echo ' data-km-menu-icon="'.htmlspecialcharsbx($arItem['PARAMS']['ICON']).'"';
+							} elseif(is_array($arItem["PICTURE"]) && !empty($arItem["PICTURE"]["SRC"])) {
+								echo ' data-km-menu-src="'.htmlspecialcharsbx($arItem["PICTURE"]["SRC"]).'"';
+								echo ' data-km-menu-w="'.(int)($arItem["PICTURE"]["WIDTH"] ?: 50).'"';
+								echo ' data-km-menu-h="'.(int)($arItem["PICTURE"]["HEIGHT"] ?: 50).'"';
+								echo ' data-km-menu-alt="'.htmlspecialcharsbx($arItem["TEXT"]).'"';
+								if(!empty($arItem["PICTURE"]["SRC_WEBP"])) {
+									echo ' data-km-menu-webp="'.htmlspecialcharsbx($arItem["PICTURE"]["SRC_WEBP"]).'"';
+								}
+							} else {
+								echo ' data-km-menu-src="'.htmlspecialcharsbx(SITE_TEMPLATE_PATH.'/images/no-photo.svg').'"';
+								echo ' data-km-menu-w="50" data-km-menu-h="50"';
+								echo ' data-km-menu-alt="'.htmlspecialcharsbx($arItem["TEXT"]).'"';
+							}
+						?>></span>
 						<span class="text-cont">
 							<?
 							$arCode = explode('/',$arItem["LINK"]);
@@ -246,6 +252,9 @@ if ($element !== null) {
 					arrow = $(this).children(".arrow"),
 					arrowLeft = pos.left + ($(this).width() / 2) + "px",
 					arrowTop = pos.top + $(this).height() + 3 + "px";
+				if (typeof kmLoadMenuIcons === "function") {
+					kmLoadMenuIcons(dropdownMenu);
+				}
 				if(menu.width() - pos.left < dropdownMenu.width()) {
 					dropdownMenu.css({"left": "auto", "right": "10px", "top": dropdownMenuTop, "z-index" : "9999"});
 					arrow.css({"left": arrowLeft, "top": arrowTop});
