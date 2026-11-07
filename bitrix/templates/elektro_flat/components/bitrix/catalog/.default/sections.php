@@ -10,6 +10,7 @@ $this->setFrameMode(true);?>
 		"CACHE_TIME" => $arParams["CACHE_TIME"],
 		"CACHE_GROUPS" => $arParams["CACHE_GROUPS"],		
 		"TOP_DEPTH" => 2,
+		"COUNT_ELEMENTS" => "N",
 		"SECTION_FIELDS" => array(
 			0 => "PICTURE",
 		),
