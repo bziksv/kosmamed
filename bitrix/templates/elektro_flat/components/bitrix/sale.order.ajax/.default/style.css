@@ -856,6 +856,8 @@
 
 
 /*REGION*/
+#bx-soa-region .bx-sls .quick-locations,
+#bx-soa-region .bx-slst .quick-locations {display: none;}
 .bx-sls .quick-location-tag,
 .bx-slst .quick-location-tag {
     display: inline-block;
