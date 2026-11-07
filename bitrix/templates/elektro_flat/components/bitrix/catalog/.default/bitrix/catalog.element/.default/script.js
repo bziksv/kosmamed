@@ -1876,6 +1876,13 @@
 				strPictHeight = (!!this.offers[this.offerNum].PREVIEW_IMG ? this.offers[this.offerNum].PREVIEW_IMG.HEIGHT : this.product.pict.HEIGHT);
 				break;
 		}
+
+		if (window.kmResolveBasketPopupPict && (!strPictSrc || strPictSrc.indexOf("no-photo") !== -1)) {
+			var kmPict = window.kmResolveBasketPopupPict({pict: {SRC: strPictSrc, WIDTH: strPictWidth, HEIGHT: strPictHeight}}, this.visual);
+			strPictSrc = kmPict.SRC;
+			strPictWidth = kmPict.WIDTH;
+			strPictHeight = kmPict.HEIGHT;
+		}
 		
 		strContent = "<div class='cont'><div class='item_image_cont'><div class='item_image_full'><img src='" + strPictSrc + "' width='" + strPictWidth + "' height='" + strPictHeight + "' alt='"+ this.product.name +"' /></div></div><div class='item_title'>" + this.product.name + "</div></div>";
 
