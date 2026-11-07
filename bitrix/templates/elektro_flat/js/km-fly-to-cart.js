@@ -214,7 +214,8 @@
 		var width = pict.WIDTH || 150;
 		var height = pict.HEIGHT || 150;
 
-		if (src && src.indexOf("undefined") === -1) {
+		// PICT = no-photo, если нет анонсного фото, хотя в карточке показано фото из галереи
+		if (src && src.indexOf("undefined") === -1 && src.indexOf("no-photo") === -1) {
 			return {SRC: src, WIDTH: width, HEIGHT: height};
 		}
 
