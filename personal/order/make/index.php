@@ -1,5 +1,9 @@
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 
+// Sale\Internals\Input\Manager::initJs() always loads sale.address (~70 files: location.widget,
+// ui.entity-editor, maps). The order has no ADDRESS-type properties, so register an empty stub instead.
+CJSCore::RegisterExt('sale.address', ['skip_core' => true]);
+
 $APPLICATION->SetTitle("Оформление заказа");
 
 
