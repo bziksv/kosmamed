@@ -511,34 +511,67 @@ function kmHideLeftCatalogFlyouts($except) {
 	});
 }
 
+// nginx perip = 50r/s burst 100 — не вываливать весь submenu разом
+var kmMenuIconQueue = [];
+var kmMenuIconTimer = null;
+var KM_MENU_ICON_BATCH = 5;
+var KM_MENU_ICON_GAP_MS = 160;
+
+function kmInjectMenuIcon(el) {
+	if (!el || el.getAttribute('data-km-menu-loaded') === '1') {
+		return;
+	}
+	el.setAttribute('data-km-menu-loaded', '1');
+	var iconClass = el.getAttribute('data-km-menu-icon');
+	if (iconClass) {
+		el.innerHTML = '<i class="' + iconClass.replace(/"/g, '') + '" aria-hidden="true"></i>';
+		return;
+	}
+	var src = el.getAttribute('data-km-menu-src') || '';
+	if (!src) {
+		return;
+	}
+	var w = el.getAttribute('data-km-menu-w') || '50';
+	var h = el.getAttribute('data-km-menu-h') || '50';
+	var alt = el.getAttribute('data-km-menu-alt') || '';
+	var webp = el.getAttribute('data-km-menu-webp') || '';
+	var img = '<img src="' + src.replace(/"/g, '&quot;') + '" width="' + w + '" height="' + h + '" alt="' + String(alt).replace(/"/g, '&quot;') + '" loading="lazy" decoding="async" />';
+	if (webp) {
+		el.innerHTML = '<picture><source srcset="' + webp.replace(/"/g, '&quot;') + '" type="image/webp">' + img + '</picture>';
+	} else {
+		el.innerHTML = img;
+	}
+}
+
+function kmFlushMenuIconQueue() {
+	kmMenuIconTimer = null;
+	var n = Math.min(KM_MENU_ICON_BATCH, kmMenuIconQueue.length);
+	for (var i = 0; i < n; i++) {
+		kmInjectMenuIcon(kmMenuIconQueue.shift());
+	}
+	if (kmMenuIconQueue.length) {
+		kmMenuIconTimer = setTimeout(kmFlushMenuIconQueue, KM_MENU_ICON_GAP_MS);
+	}
+}
+
 function kmLoadMenuIcons($scope) {
 	var $root = $scope && $scope.length ? $scope : $(document);
 	$root.find('.graph[data-km-menu-src], .graph[data-km-menu-icon]').each(function () {
 		var el = this;
-		if (el.getAttribute('data-km-menu-loaded') === '1') {
+		if (el.getAttribute('data-km-menu-loaded') === '1' || el.getAttribute('data-km-menu-queued') === '1') {
 			return;
 		}
-		el.setAttribute('data-km-menu-loaded', '1');
-		var iconClass = el.getAttribute('data-km-menu-icon');
-		if (iconClass) {
-			el.innerHTML = '<i class="' + iconClass.replace(/"/g, '') + '" aria-hidden="true"></i>';
+		// CSS-иконки — без сети, сразу
+		if (el.getAttribute('data-km-menu-icon')) {
+			kmInjectMenuIcon(el);
 			return;
 		}
-		var src = el.getAttribute('data-km-menu-src') || '';
-		if (!src) {
-			return;
-		}
-		var w = el.getAttribute('data-km-menu-w') || '50';
-		var h = el.getAttribute('data-km-menu-h') || '50';
-		var alt = el.getAttribute('data-km-menu-alt') || '';
-		var webp = el.getAttribute('data-km-menu-webp') || '';
-		var img = '<img src="' + src.replace(/"/g, '&quot;') + '" width="' + w + '" height="' + h + '" alt="' + String(alt).replace(/"/g, '&quot;') + '" loading="lazy" decoding="async" />';
-		if (webp) {
-			el.innerHTML = '<picture><source srcset="' + webp.replace(/"/g, '&quot;') + '" type="image/webp">' + img + '</picture>';
-		} else {
-			el.innerHTML = img;
-		}
+		el.setAttribute('data-km-menu-queued', '1');
+		kmMenuIconQueue.push(el);
 	});
+	if (!kmMenuIconTimer && kmMenuIconQueue.length) {
+		kmFlushMenuIconQueue();
+	}
 }
 
 function kmInitLeftCatalogFlyout() {
