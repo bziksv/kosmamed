@@ -31,13 +31,16 @@ foreach($jsHide as $arJsHide){
 
 //s2
 
-$arSelect = Array("ID");
-$arFilter = Array("IBLOCK_ID"=>24, "CODE" => $arPage[2]);
-$res = CIBlockElement::GetList(Array(), $arFilter, false, Array("nPageSize"=>1), $arSelect);
-if($ob = $res->GetNextElement())
-{
-	$arFields = $ob->GetFields();
-	$elementId = $arFields["ID"];
+$elementId = 0;
+if (($arPage[2] ?? '') !== '') {
+	$arSelect = Array("ID");
+	$arFilter = Array("IBLOCK_ID"=>24, "CODE" => $arPage[2]);
+	$res = CIBlockElement::GetList(Array(), $arFilter, false, Array("nPageSize"=>1), $arSelect);
+	if($ob = $res->GetNextElement())
+	{
+		$arFields = $ob->GetFields();
+		$elementId = $arFields["ID"];
+	}
 }
  
 $opanP = false;

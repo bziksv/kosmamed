@@ -304,14 +304,16 @@ $APPLICATION->SetTitle("Каталог медицинского оборудов
 <?
 
 
+if($path[2] != ''){
 	$arFilter = Array('IBLOCK_ID'=>24, 'CODE'=>$path[2]);
-	$db_list = CIBlockSection::GetList(Array($by=>$order), $arFilter, true, ['UF_NAME_MENU']);
+	$db_list = CIBlockSection::GetList(Array(), $arFilter, false, ['UF_NAME_MENU']);
 	if($ar_result = $db_list->GetNext())
 	{
 		if($ar_result['UF_NAME_MENU']){
 			$APPLICATION->SetTitle($ar_result['UF_NAME_MENU']);
 		}
 	}
+}
 
 if($path[2]==''){
 	$APPLICATION->SetTitle("Каталог медицинского оборудования");
