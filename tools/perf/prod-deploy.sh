@@ -13,6 +13,10 @@ cd "$SITE_DIR"
 cp -a "$SITE_DIR/bitrix/.settings.php" /root/.settings.php.bak
 
 # Единственный источник правды — origin/main. Локальные правки tracked-файлов на проде сбрасываем.
+# Файлы, которые перепишет git, запоминаем: им (и новым папкам) потом вернём владельца.
+OLD_HEAD=$(git rev-parse HEAD)
+DIRTY_LIST=$(mktemp)
+git diff --name-only -z HEAD > "$DIRTY_LIST"
 git fetch origin
 git reset --hard origin/main
 
@@ -48,7 +52,25 @@ apache2ctl configtest
 systemctl reload php8.3-fpm
 systemctl reload apache2
 
-chown -R "$OWNER" "$SITE_DIR"
+# chown -R по всему сайту идёт минутами и падает на файлах кеша, которые Bitrix удаляет на ходу.
+if [[ "${FULL_CHOWN:-}" == "1" ]]; then
+  chown -R "$OWNER" "$SITE_DIR" 2>/dev/null || echo "WARN: chown -R частично не прошёл (удалённые на ходу файлы кеша)"
+else
+  CHANGED=$(
+    { cat "$DIRTY_LIST"; git diff --name-only -z "$OLD_HEAD" HEAD; } | tr '\0' '\n' | sort -u | grep -v '^$' || true
+  )
+  if [[ -n "$CHANGED" ]]; then
+    # файлы + все их родительские папки внутри сайта (git создаёт новые папки от root)
+    printf '%s\n' "$CHANGED" \
+      | awk -F/ '{ p=$1; print p; for (i=2; i<=NF; i++) { p=p"/"$i; print p } }' \
+      | sort -u \
+      | while IFS= read -r path; do
+          [[ -e "$path" ]] && chown -h "$OWNER" "$path"
+        done || true
+    echo "chown: $(printf '%s\n' "$CHANGED" | wc -l | tr -d ' ') изменённых файлов"
+  fi
+fi
+rm -f "$DIRTY_LIST"
 
 # Быстрая проверка снаружи после reload (warmup — отдельно, в фоне)
 bash "$SITE_DIR/tools/perf/prod-verify-deploy.sh" "$BASE_URL" || true

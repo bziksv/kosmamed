@@ -7,6 +7,8 @@ set -euo pipefail
 
 SITE_DIR="${SITE_DIR:-/var/www/medmarket_su_usr/data/www/medmarket.su}"
 BASE_URL="${1:-https://kosmamed.ru}"
+# nginx отвечает 444 на UA "curl/*" для страниц сайта
+UA='Mozilla/5.0 (compatible; kosmamed-warmup/1.0)'
 EXPECT_COMMIT="${2:-}"
 DISK_ONLY=0
 if [[ "${2:-}" == "--disk-only" ]]; then
@@ -77,7 +79,7 @@ if [[ "$DISK_ONLY" -eq 1 ]]; then
 fi
 
 echo "--- Снаружи (curl) ---"
-REMOTE_MAIN=$(curl -sf "$BASE_URL/bitrix/templates/elektro_flat/js/main.js" | wc -c | tr -d ' ')
+REMOTE_MAIN=$(curl -sf -A "$UA" "$BASE_URL/bitrix/templates/elektro_flat/js/main.js" | wc -c | tr -d ' ')
 [[ "$REMOTE_MAIN" -ge 21000 ]] && ok "remote main.js $REMOTE_MAIN" || bad "remote main.js $REMOTE_MAIN (OPcache/старый файл?)"
 
 check_page() {
@@ -85,7 +87,7 @@ check_page() {
   shift 2
   local url="${BASE_URL}${path}"
   local html
-  html=$(curl -sf --max-time 180 "$url?bxrand=$(date +%s)" -H 'Cache-Control: no-cache' || true)
+  html=$(curl -sf -A "$UA" --max-time 180 "$url?bxrand=$(date +%s)" -H 'Cache-Control: no-cache' || true)
   [[ -n "$html" ]] || { bad "$label: пустой ответ $url"; return; }
   local size=${#html}
   echo "  $label: HTML ${size} b"
@@ -96,7 +98,7 @@ check_page() {
 
 check_page "/" "главная" "kosmamed-theme.css" "anythingslider/slider.css" "anythingContainer" "catalog-item-card"
 check_page "/catalog/anesteziologiya_i_reanimatsiya/" "каталог" "magic_slide_ss" "kosmamed-theme.css"
-DATA_KM=$(curl -sf --max-time 180 "${BASE_URL}/catalog/anesteziologiya_i_reanimatsiya/?bxrand=$(date +%s)" | grep -c data-km-src || true)
+DATA_KM=$(curl -sf -A "$UA" --max-time 180 "${BASE_URL}/catalog/anesteziologiya_i_reanimatsiya/?bxrand=$(date +%s)" | grep -c data-km-src || true)
 if [[ "$DATA_KM" -gt 0 ]]; then
   ok "каталог data-km-src: $DATA_KM"
 else
