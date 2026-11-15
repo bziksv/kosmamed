@@ -28,6 +28,9 @@ Loc::loadMessages(__FILE__);?>
 
 	$kmTplPath = SITE_TEMPLATE_PATH;
 	$kmIsHome = ($APPLICATION->GetCurPage(true) === SITE_DIR . "index.php");
+	if (function_exists('kmMenuIndexState')) {
+		$_GET['km_menu_index'] = kmMenuIndexState()['key'];
+	}
 	$kmIsCatalog = CSite::InDir(SITE_DIR . "catalog/");
 	$kmIsProduct = CSite::InDir(SITE_DIR . "product/");
 	$kmIsCatalogLike = $kmIsCatalog || $kmIsProduct;
@@ -369,7 +372,7 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 								"MENU_CACHE_TYPE" => "A",
 								"MENU_CACHE_TIME" => "36000000",
 								"MENU_CACHE_USE_GROUPS" => "Y",
-								"MENU_CACHE_GET_VARS" => array(),
+								"MENU_CACHE_GET_VARS" => array("km_menu_index"),
 								"MAX_LEVEL" => "4",
 								"CHILD_MENU_TYPE" => "left",
 								"USE_EXT" => "Y",
@@ -500,7 +503,7 @@ $APPLICATION->IncludeComponent("bitrix:menu", "catalog_menu_interface_2_0_1_styl
 												"MENU_CACHE_TYPE" => "A",
 												"MENU_CACHE_TIME" => "36000000",
 												"MENU_CACHE_USE_GROUPS" => "Y",
-												"MENU_CACHE_GET_VARS" => array(),
+												"MENU_CACHE_GET_VARS" => array("km_menu_index"),
 												"MAX_LEVEL" => "4",
 												"CHILD_MENU_TYPE" => "left",
 												"USE_EXT" => "Y",

@@ -1,6 +1,4 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-use Bitrix\Iblock\SectionTable;
-use Bitrix\Iblock\ElementTable;
 use Bitrix\Main\Loader;
 use Bitrix\Main\SystemException;
  
@@ -29,87 +27,19 @@ foreach($jsHide as $arJsHide){
 
 
 
-//s2
-
-$elementId = 0;
-if (($arPage[2] ?? '') !== '') {
-	$arSelect = Array("ID");
-	$arFilter = Array("IBLOCK_ID"=>24, "CODE" => $arPage[2]);
-	$res = CIBlockElement::GetList(Array(), $arFilter, false, Array("nPageSize"=>1), $arSelect);
-	if($ob = $res->GetNextElement())
-	{
-		$arFields = $ob->GetFields();
-		$elementId = $arFields["ID"];
-	}
-}
- 
-$opanP = false;
-$opanALL = false;
-
-$arResult["AR_SEC"] = [];
-
-$element = ElementTable::getRow([
-    'select' => [
-        'IBLOCK_SECTION_ID',
-    ],
-    'filter' => [
-        '=ID' => $elementId,
-    ],
-]);
-
-if ($element !== null) {
-
-    $parentSections = [];
- 
-    $parentSectionIterator = SectionTable::getList([
-        'select' => [
-            'SECTION_ID' => 'SECTION_SECTION.ID',
-            'IBLOCK_SECTION_ID' => 'SECTION_SECTION.IBLOCK_SECTION_ID',
-        ],
-        'filter' => [
-            '=ID' => $element['IBLOCK_SECTION_ID'],
-        ],
-        'runtime' => [
-            'SECTION_SECTION' => [
-                'data_type' => '\Bitrix\Iblock\SectionTable',
-                'reference' => [
-                    '=this.IBLOCK_ID' => 'ref.IBLOCK_ID',
-                    '>=this.LEFT_MARGIN' => 'ref.LEFT_MARGIN',
-                    '<=this.RIGHT_MARGIN' => 'ref.RIGHT_MARGIN',
-                ],
-                'join_type' => 'inner'
-            ],
-        ],
-    ]);
-	
-    while ($parentSection = $parentSectionIterator->fetch()) {
-        $arResult["AR_SEC"][] = $parentSection['SECTION_ID'];
-
-    }
-    foreach ($arResult["AR_SEC"] as $key => $valueS) {
-
-		$dbRes = CIBlockSection::GetList(array(), ["IBLOCK_ID" => 24, "ID" => $valueS], false, array("ID", "UF_INDEX_MENU_P"));
-		if ($arCurSection = $dbRes->Fetch()){
-			if($arCurSection["UF_INDEX_MENU_P"] == 10){
-				$opanP = true;
-			}
-			if($arCurSection["UF_INDEX_MENU_P"] == 11){
-				$opanALL = true;
-			}
-			//echo '<pre>';print_r($arCurSection);echo '</pre>';
-		}
-    }
-
- 	
-   // echo '<pre>';print_r($arResult["AR_SEC"]);echo '</pre>';
- 
-}
-
-//s2
+$kmMenu = function_exists('kmMenuIndexState')
+	? kmMenuIndexState()
+	: ['mode' => 'off', 'open' => []];
+$kmMenuOnProduct = ($kmMenu['mode'] !== 'off');
+$kmOpenIds = array_map('intval', $kmMenu['open']);
+$kmBranchOpen = false;
 
 ?>
 
 
+<?if($kmMenuOnProduct):?>
+<style>.left-column ul.left-menu>li.parent.km-l2-closed>.catalog-section-childs{display:none!important}</style>
+<?endif;?>
 <ul class="left-menu">
 	<?$previousLevel = 0;	
 	foreach($arResult["NEW_SORT_ASC"] as $arItem) {
@@ -117,11 +47,18 @@ if ($element !== null) {
 			echo str_repeat("</div></li>", ($previousLevel - $arItem["DEPTH_LEVEL"]));
 		}
 		if($arItem["DEPTH_LEVEL"] == 1) {
+			$kmBranchOpen = false;
+			if($kmMenu['mode'] === 'all') {
+				$kmBranchOpen = true;
+			} elseif($kmMenu['mode'] === 'parent' && in_array((int)$arItem['ID'], $kmOpenIds, true)) {
+				$kmBranchOpen = true;
+			}
+			$kmClosed = ($kmMenuOnProduct && $arItem["IS_PARENT"] && !$kmBranchOpen) ? ' km-l2-closed' : '';
 			if($arItem["IS_PARENT"]) {?>
 				<?
 				$arCode = explode('/',$arItem["LINK"]);
 				?>
-				<li class="parent<?=($arItem['SELECTED'] ? ' selected' : '')?> <? if(in_array($arItem["ID"], $JS_HIDE)) echo 'show_parent_'.$arCode[2]; ?>">
+				<li class="parent<?=($arItem['SELECTED'] ? ' selected' : '')?><?=$kmClosed?> <? if(in_array($arItem["ID"], $JS_HIDE)) echo 'show_parent_'.$arCode[2]; ?>">
 
 					<<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span data-replace-content="<?=$arItem['LINK']?>" data-hide-text1="<?=$arItem["TEXT"].($arSetting["CATALOG_LOCATION"]["VALUE"] == "LEFT" ? "<span class='arrow'></span>" : "")?>"<?else:?>a href="<?=$arItem['LINK']?>"<?endif;?>>
 					<?if(!in_array($arItem["ID"], $JS_HIDE)):?> 
@@ -154,37 +91,10 @@ if ($element !== null) {
 </<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span<?else:?>a<?endif;?>>
 				</li>
 			<?}
-			if(in_array($arItem['ID'], $arResult['AR_SEC']) ){
-
-				$dbRes = CIBlockSection::GetList(array(), ["IBLOCK_ID" => 24, "ID" => $arItem['ID']], false, array("ID", "UF_INDEX_MENU_P"));
-				if ($arCurSection = $dbRes->Fetch()){
-					if($arCurSection["UF_INDEX_MENU_P"] == 10){
-						$opanP = true;
-					}
-				}
-
-			}else{
-				$opanP = false;
-			}
 		} elseif($arItem["DEPTH_LEVEL"] == 2) {
-
-
-			// if(in_array($arItem['ID'], $arResult['AR_SEC']) ){
-
-			// 	$dbRes = CIBlockSection::GetList(array(), ["IBLOCK_ID" => 24, "ID" => $arItem['ID']], false, array("ID", "UF_INDEX_MENU_P"));
-			// 	if ($arCurSection = $dbRes->Fetch()){
-			// 		if($arCurSection["UF_INDEX_MENU_P"] == 10){
-			// 			$opanP = true;
-			// 		}
-			// 		if($arCurSection["UF_INDEX_MENU_P"] == 11){
-			// 			$opanALL = true;
-			// 		}
-			// 	}
-			// }
-
 			?>
 			<div class="catalog-section-child">
-				<?if($arItem["PARAMS"]["URL"]=='product' && !$opanP && !$opanALL){
+				<?if($kmMenuOnProduct && !$kmBranchOpen){
 					echo '<!--noindex-->';
 				}?>
 				<?
@@ -213,9 +123,9 @@ if ($element !== null) {
 							<?
 							$arCode = explode('/',$arItem["LINK"]);
 							?>
-							<?if($opanALL):?>
+							<?if($kmMenu['mode'] === 'all'):?>
 							<span class="text opanALL"><?=$arItem["TEXT"]?></span>
-							<?elseif($opanP):?>
+							<?elseif($kmMenu['mode'] === 'parent' && $kmBranchOpen):?>
 							<span class="text opanP"><?=$arItem["TEXT"]?></span>
 							<?else:?>
 							<span class="text" title="<?=htmlspecialcharsbx($arItem['TEXT'])?>"><?=htmlspecialcharsbx($arItem['TEXT'])?></span>
@@ -224,7 +134,7 @@ if ($element !== null) {
 					</span>
 <span data-href-content="<?=$arItem['LINK']?>"></span>
 				</<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span<?else:?>a<?endif;?>>
-				<?if($arItem["PARAMS"]["URL"]=='product' && !$opanP && !$opanALL){
+				<?if($kmMenuOnProduct && !$kmBranchOpen){
 					echo '<!--/noindex-->';
 				}?>
 			</div>
