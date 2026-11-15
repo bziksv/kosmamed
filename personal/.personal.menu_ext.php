@@ -46,13 +46,6 @@ $aMenuLinks = Array(
 		"" 
 	),
 	Array(
-		"Личный счет",
-		"/personal/account/",
-		Array(), 
-		Array(),
-		"CBXFeatures::IsFeatureEnabled('SaleAccounts')"
-	),
-	Array(
 		"Профили заказов",
 		"/personal/profiles/",
 		Array(),

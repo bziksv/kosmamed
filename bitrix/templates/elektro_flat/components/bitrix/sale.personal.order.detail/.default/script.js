@@ -52,6 +52,16 @@ BX.namespace('BX.Sale.PersonalOrderComponent');
 				}, this));
 			});
 
+			if (window.location.hash === '#pay' && listPaymentWrapper[0]) {
+				BX.addClass(listPaymentWrapper[0], 'sale-order-detail-active-event');
+				var payAnchor = BX('pay');
+				if (payAnchor) {
+					setTimeout(function () {
+						payAnchor.scrollIntoView({block: 'start'});
+					}, 60);
+				}
+			}
+
 			Array.prototype.forEach.call(listPaymentWrapper, function(paymentWrapper) {
 				var rowPayment = paymentWrapper.getElementsByClassName('sale-order-detail-payment-options-methods-info')[0];
 

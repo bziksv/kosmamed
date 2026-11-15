@@ -181,9 +181,10 @@ $margin = array(
 $width = $pageWidth - $margin['left'] - $margin['right'];
 
 
-$aNum = explode('/',$params["ACCOUNT_NUMBER"]);
-
-$original_order_id = $_REQUEST['ORDER_ID'];
+$aNum = explode('/', (string)$params["ACCOUNT_NUMBER"]);
+$orderAccount = $aNum[0];
+$original_order_id = $_REQUEST['ORDER_ID'] ?: $orderAccount;
+$printHref = '/personal/order/payment/?ORDER_ID='.urlencode((string)$original_order_id).'&print=y';
 
 
 $dCss ='';
@@ -197,15 +198,10 @@ if($_REQUEST['accountNumber']) $_REQUEST['ORDER_ID'] =$_REQUEST['accountNumber']
 
 <body style=" <?=$_REQUES['ORDER_ID'];?> margin: 0pt; padding: 0pt; background: <?=$background; ?>"<? if ($_REQUEST['print'] == 'y') { ?> onload="setTimeout(window.print, 0);"<? } ?>>
 <?if($_REQUEST['print'] != 'y'):?>
-<?if($_REQUEST['PAYMENT_ID']):?>
-	<a class="bill_print" href="?PAYMENT_ID=<?=$_REQUEST['PAYMENT_ID']?>&ORDER_ID=<?=$original_order_id?>&print=y">напечатать счет</a>
-<div style="clear: both;"></div>
-<?else:?>
-	<a class="bill_print" href="/personal/order/make/?ORDER_ID=<?=$original_order_id?>&print=y">напечатать счет</a>
+	<a class="bill_print" href="<?=htmlspecialcharsbx($printHref)?>" target="_blank" rel="noopener">напечатать счет</a>
 	<div style="clear: both;"></div>
 <?endif;?>
-<?endif;?>
-<div style="margin: 0pt; padding: <?=join('pt ', $margin); ?>pt; width: <?=$width; ?>pt; background: <?=$background; ?>; <?=$dCss?>">
+<div style="margin: 0pt; padding: <?=join('pt ', $margin); ?>pt; width: <?=$width; ?>pt; max-width: 100%; box-sizing: border-box; background: <?=$background; ?>; <?=$dCss?>">
 
 
 <?if ($params['BILL_HEADER_SHOW'] == 'Y'):?>
@@ -895,13 +891,8 @@ for ($n = 1; $n <= $rowsCnt; $n++):
 
 </div>
 <?if($_REQUEST['print'] != 'y'):?>
-<?if($_REQUEST['PAYMENT_ID']):?>
-	<a class="bill_print" href="?PAYMENT_ID=<?=$_REQUEST['PAYMENT_ID']?>&ORDER_ID=<?=$original_order_id?>&print=y">напечатать счет</a>
-<div style="clear: both;"></div>
-<?else:?>
-	<a class="bill_print" href="/personal/order/make/?ORDER_ID=<?=$original_order_id?>&print=y">напечатать счет</a>
+	<a class="bill_print" href="<?=htmlspecialcharsbx($printHref)?>" target="_blank" rel="noopener">напечатать счет</a>
 	<div style="clear: both;"></div>
-<?endif;?>
 <?endif;?>
 </body>
 </html>

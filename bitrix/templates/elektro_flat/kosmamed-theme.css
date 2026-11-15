@@ -2065,6 +2065,16 @@ ul.new_leader_disc li:hover {
 	background: var(--km-surface) !important;
 }
 
+.personal-exit:link,
+.personal-exit:visited {
+	color: var(--km-text-secondary) !important;
+}
+
+.personal-exit:hover {
+	color: var(--km-primary-dark) !important;
+	background: var(--km-primary-light) !important;
+}
+
 .personal-user:hover .personal-user__title,
 ul.new_leader_disc li:hover a .text {
 	color: var(--km-primary) !important;

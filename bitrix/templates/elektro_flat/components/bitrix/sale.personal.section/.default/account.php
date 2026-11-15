@@ -1,6 +1,6 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 
-if($arParam["SHOW_ACCOUNT_PAGE"] === "N") {
+if($arParams["SHOW_ACCOUNT_PAGE"] === "N") {
 	LocalRedirect($arParams["SEF_FOLDER"]);
 }
 

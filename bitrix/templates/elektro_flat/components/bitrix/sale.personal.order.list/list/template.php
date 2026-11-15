@@ -3,7 +3,7 @@
 global $USER;
 if(!$USER->IsAuthorized())
 	return;
-	
+
 global $arSetting;
 
 if($_REQUEST["show_canceled"] == "Y")
@@ -22,240 +22,184 @@ else
 	</div>
 
 	<?if(!empty($arResult["ORDERS"])) {?>
-		<div class="cart-items">
-			<div class="equipment-order list">
-				<div class="thead">					
-					<div class="cart-item-number-date"><?=GetMessage("STPOL_ORDER_NUMBER_DATE")?></div>
-					<div class="cart-item-status"><?=GetMessage("STPOL_ORDER_STATUS")?></div>
-					<div class="cart-item-payment"><?=GetMessage("STPOL_ORDER_PAYMENT")?></div>
-					<div class="cart-item-payed"><?=GetMessage("STPOL_ORDER_PAYED")?></div>
-					<div class="cart-item-summa"><?=GetMessage("STPOL_ORDER_SUMMA")?></div>
-				</div>
-				<div class="tbody">
-					<?foreach($arResult["ORDERS"] as $key => $val) {
-						$accountHashNumber = md5($val["ORDER"]["ACCOUNT_NUMBER"]);?>
-						<div class="tr">
-							<div class="tr_into">
-								<div class="tr_into_in">
-									<div class="cart-item-plus-minus">
-										<script type="text/javascript">
-											$(document).ready(function() {
-												$("#plus-minus-<?=$accountHashNumber?>").click(function() {
-													var clickitem = $(this);
-													if(clickitem.hasClass("plus")) {
-														clickitem.removeClass().addClass("minus active");							
-													} else {
-														clickitem.removeClass().addClass("plus");									
-													}
-													$(".cart-items.basket.<?=$accountHashNumber?>, .order-recipient.<?=$accountHashNumber?>, .order-item-actions.<?=$accountHashNumber?>").slideToggle();
-												});
-											});
-										</script>
-										<a href="javascript:void(0)" id="plus-minus-<?=$accountHashNumber?>" class="plus"><i class="fa fa-plus-circle"></i><i class="fa fa-minus-circle"></i></a>
-									</div>									
-									<div class="cart-item-number-date">
-										<span class="cart-item-number"><?=$val["ORDER"]["ACCOUNT_NUMBER"]?></span>
-										<?=$val["ORDER"]["DATE_INSERT_FORMATED"];?>
-									</div>
-									<div class="cart-item-status">
-										<?if($val["ORDER"]["CANCELED"] == "Y") {?>
-											<span class="item-status-d">
-												<?=GetMessage("STPOL_ORDER_DELETE");?>
-											</span>
-										<?} else {?>
-											<span class="item-status-<?=toLower($val["ORDER"]["STATUS_ID"])?>">
-												<?=$arResult["INFO"]["STATUS"][$val["ORDER"]["STATUS_ID"]]["NAME"];?>
-											</span>
-										<?}?>
-									</div>
-									<div class="cart-item-payment">
-									<?foreach ($val['PAYMENT'] as $payment) {?>
-										<div class="cart-item-payment-title">
-											<?=$payment['PAY_SYSTEM_NAME'];?>
-											<?if ($payment['PAID'] === 'N' && $payment['IS_CASH'] !== 'Y') {?>
-												<?if ($val['ORDER']['IS_ALLOW_PAY'] != 'N' && $page != 'cancel') {?>
-													<?if($payment['NEW_WINDOW'] === 'Y'){?>
-														<a href="<?=htmlspecialcharsbx($payment['PSA_ACTION_FILE'])?>" target="_blank"><?=GetMessage("STPOL_REPEAT_PAY")?></a>
-													<?}else{?>
-														<a href="<?=htmlspecialcharsbx($val['ORDER']['URL_TO_DETAIL'])?>"><?=GetMessage("STPOL_REPEAT_PAY")?></a>
-													<?}?>
-												<?}?>
-											<?}?>
-										</div>
-									<?}?>
-									</div>
-									<div class="cart-item-payed">
-										<?if($val["ORDER"]["PAYED"] == "Y") {
-											echo "<span class='item-payed-yes'>".GetMessage("STPOL_YES")."</span>";
-										} else {
-											echo GetMessage("STPOL_NO");
-										}?>
-									</div>
-									<div class="cart-item-summa">
-										<span class="sum">
-											<?=$val["ORDER"]["FORMATED_PRICE"];?>
-										</span>
-										<?if($arSetting["REFERENCE_PRICE"]["VALUE"] == "Y" && !empty($arSetting["REFERENCE_PRICE_COEF"]["VALUE"])) {?>
-											<span class="reference-sum">
-												<?=CCurrencyLang::CurrencyFormat($val["ORDER"]["PRICE"] * $arSetting["REFERENCE_PRICE_COEF"]["VALUE"], $val["ORDER"]["CURRENCY"], true);?>
-											</span>
-										<?}?>
-									</div>
-								</div>
-								
-								<div class="cart-items basket <?=$accountHashNumber?>" style="display:none;">
-									<div class="equipment-order basket">
-										<div class="thead">
-											<div class="cart-item-name"><?=GetMessage("STPOL_ORDER_NAME")?></div>
-											<div class="cart-item-price"><?=GetMessage("STPOL_ORDER_PRICE")?></div>
-											<div class="cart-item-quantity"><?=GetMessage("STPOL_ORDER_QUANTITY")?></div>
-											<div class="cart-item-summa"><?=GetMessage("STPOL_ORDER_SUMMA")?></div>
-										</div>
-										<div class="tbody">
-											<?$i = 1;
-											foreach($val["BASKET_ITEMS"] as $arBasketItems) {?>
-												<div class="tr">
-													<div class="tr_into">
-														<div class="cart-item-number"><?=$i?></div>
-														<div class="cart-item-image">
-															<?if(is_array($arBasketItems["DETAIL_PICTURE"])) {?>
-																<img src="<?=$arBasketItems['DETAIL_PICTURE']['src']?>" width="<?=$arBasketItems['DETAIL_PICTURE']['width']?>" height="<?=$arBasketItems['DETAIL_PICTURE']['height']?>" />
-															<?} else {?>
-																<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="30" height="30" />
-															<?}?>
-														</div>
-														<div class="cart-item-name">
-															<?if(strlen($arBasketItems["DETAIL_PAGE_URL"]) > 0) {?>
-																<a href="<?=$arBasketItems["DETAIL_PAGE_URL"]?>">
-															<?}
-															echo $arBasketItems["NAME"];
-															if(strlen($arBasketItems["DETAIL_PAGE_URL"]) > 0) {?>
-																</a>
-															<?}
-															if(!empty($arBasketItems["PROPS"])) {?>
-																<div class="item-props">
-																	<?foreach($arBasketItems["PROPS"] as $props) {
-																		echo "<span style='display:block;'>".$props["NAME"].": ".$props["VALUE"]."</span>";
-																	}?>
-																	<div class="clr"></div>
-																</div>
-															<?}?>
-														</div>
-														<div class="cart-item-price">
-															<div class="price">
-																<?=CCurrencyLang::CurrencyFormat($arBasketItems["PRICE"], $arBasketItems["CURRENCY"], true);?>
-															</div>
-															<?if($arSetting["REFERENCE_PRICE"]["VALUE"] == "Y" && !empty($arSetting["REFERENCE_PRICE_COEF"]["VALUE"])) {?>
-																<span class="reference-price">
-																	<?=CCurrencyLang::CurrencyFormat($arBasketItems["PRICE"] * $arSetting["REFERENCE_PRICE_COEF"]["VALUE"], $arBasketItems["CURRENCY"], true);?>
-																</span>
-															<?}?>
-														</div>
-														<div class="cart-item-quantity">
-															<?=$arBasketItems["QUANTITY"];
-															if(!empty($arBasketItems["MEASURE_TEXT"])) {
-																echo " ".$arBasketItems["MEASURE_TEXT"];
-															}?>
-														</div>
-														<div class="cart-item-summa">
-															<span class="sum">
-																<?=CCurrencyLang::CurrencyFormat($arBasketItems["PRICE"] * $arBasketItems["QUANTITY"], $arBasketItems["CURRENCY"], true);?>
-															</span>							
-															<?if($arSetting["REFERENCE_PRICE"]["VALUE"] == "Y" && !empty($arSetting["REFERENCE_PRICE_COEF"]["VALUE"])) {?>
-																<span class="reference-sum">
-																	<?=CCurrencyLang::CurrencyFormat($arBasketItems["PRICE"] * $arBasketItems["QUANTITY"] * $arSetting["REFERENCE_PRICE_COEF"]["VALUE"], $arBasketItems["CURRENCY"], true);?>
-																</span>
-															<?}?>
-														</div>
-													</div>
-												</div>
-												<?$i++;
-											}
-											if(IntVal($val["ORDER"]["DELIVERY_ID"]) > 0) {?>
-												<div class="tr">
-													<div class="tr_into">
-														<div class="cart-itogo">
-															<? if($arResult["INFO"]["DELIVERY"][$val["ORDER"]["DELIVERY_ID"]]["NAME"]): ?>
-																Возмещение доставки (<?=$arResult["INFO"]["DELIVERY"][$val["ORDER"]["DELIVERY_ID"]]["NAME"]?>)
-															<? endif; ?>
-														</div>
-														<div class="cart-allsum">
-															<?if($val["ORDER"]["PRICE_DELIVERY"] > 0) {?>
-																<span class="allsum">
-																	<?=CCurrencyLang::CurrencyFormat($val["ORDER"]["PRICE_DELIVERY"], $val["ORDER"]["CURRENCY"], true);?>
-																</span>
-																<?if($arSetting["REFERENCE_PRICE"]["VALUE"] == "Y" && !empty($arSetting["REFERENCE_PRICE_COEF"]["VALUE"])) {?>
-																	<span class="reference-allsum">
-																		<?=CCurrencyLang::CurrencyFormat($val["ORDER"]["PRICE_DELIVERY"] * $arSetting["REFERENCE_PRICE_COEF"]["VALUE"], $val["ORDER"]["CURRENCY"], true);?>
-																	</span>
-																<?}?>
-															<?}?>
-														</div>
-													</div>
-												</div>
-											<?}?>
-										</div>
-										<div class="myorders_itog<?=($arSetting['REFERENCE_PRICE']['VALUE'] == 'Y' && !empty($arSetting['REFERENCE_PRICE_COEF']['VALUE']) ? ' reference' : '');?>">
-											<div class="cart-itogo"><?=GetMessage("STPOL_ORDER_SUM_IT")?></div>
-											<div class="cart-allsum">
-												<span class="allsum">
-													<?=$val["ORDER"]["FORMATED_PRICE"];?>
-												</span>
-												<?if($arSetting["REFERENCE_PRICE"]["VALUE"] == "Y" && !empty($arSetting["REFERENCE_PRICE_COEF"]["VALUE"])) {?>
-													<span class="reference-allsum">
-														<?=CCurrencyLang::CurrencyFormat($val["ORDER"]["PRICE"] * $arSetting["REFERENCE_PRICE_COEF"]["VALUE"], $val["ORDER"]["CURRENCY"], true);?>
-													</span>
-												<?}?>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<table class="order-recipient <?=$accountHashNumber?>" style="display:none;">
-									<?if(!empty($val["ORDER"]["ORDER_PROPS"])) {										
-										foreach($val["ORDER"]["ORDER_PROPS"] as $orderProps) {?>
-											<tr>
-												<td class="field-name"><?=$orderProps["NAME"]?>:</td>
-												<td class="field-value">
-													<?if($orderProps["TYPE"] == "CHECKBOX") {
-														if($orderProps["VALUE"] == "Y")
-															echo GetMessage("STPOL_YES");
-														else
-															echo GetMessage("STPOL_NO");
-													} else {
-														echo $orderProps["VALUE"];
-													}?>
-												</td>
-											</tr>
-										<?}
-									}?>
-									<?if(strlen($val["ORDER"]["USER_DESCRIPTION"]) > 0) {?>
-										<tr>
-											<td class="field-name"><?=GetMessage("STPOL_ORDER_USER_COMMENT")?></td>
-											<td class="field-value"><?=$val["ORDER"]["USER_DESCRIPTION"]?></td>
-										</tr>
-									<?}?>
-								</table>
-
-								<div class="order-item-actions <?=$accountHashNumber?>" style="display:none;">
-									<a class="btn_buy apuo order_repeat" href="<?=htmlspecialcharsbx($val['ORDER']['URL_TO_COPY'])?>" title="<?=GetMessage('STPOL_REPEAT_ORDER')?>"><i class="fa fa-repeat"></i><span><?=GetMessage("STPOL_REPEAT_ORDER")?></span></a>
-									<?if($page != 'all' && $page != 'cancel'): ?>
-									<a class="btn_buy apuo order_delete" href="<?=htmlspecialcharsbx($val['ORDER']['URL_TO_CANCEL'])?>" title="<?=GetMessage('STPOL_CANCEL_ORDER')?>"><i class="fa fa-times"></i><span><?=GetMessage("STPOL_CANCEL_ORDER")?></span></a>
-									<?endif;?>
-									<a class="btn_buy apuo order_detail" href="<?=htmlspecialcharsbx($val['ORDER']['URL_TO_DETAIL'])?>" title="<?=GetMessage('STPOL_DETAIL_ORDER')?>"><i class="fa fa-chevron-right"></i><span><?=GetMessage("STPOL_DETAIL_ORDER")?></span></a>
-									<div class="clr"></div>
-								</div>
-							</div>
+		<div class="km-orders">
+			<?foreach($arResult["ORDERS"] as $val) {
+				$accountHashNumber = md5($val["ORDER"]["ACCOUNT_NUMBER"]);
+				$canPay = ($val["ORDER"]["CANCELED"] != "Y" && $page != "cancel" && $val["ORDER"]["PAYED"] != "Y" && $val["ORDER"]["IS_ALLOW_PAY"] != "N");
+				?>
+				<article class="km-order" id="order-<?=$accountHashNumber?>">
+					<div class="km-order__main">
+						<button type="button" class="km-order__toggle" data-order-toggle aria-expanded="false" aria-controls="order-more-<?=$accountHashNumber?>" title="<?=GetMessage("STPOL_ORDER_NAME")?>">
+							<i class="fa fa-chevron-down" aria-hidden="true"></i>
+						</button>
+						<div class="km-order__id">
+							<a class="km-order__num" href="<?=htmlspecialcharsbx($val["ORDER"]["URL_TO_DETAIL"])?>"><?=htmlspecialcharsbx($val["ORDER"]["ACCOUNT_NUMBER"])?></a>
+							<span class="km-order__date"><?=$val["ORDER"]["DATE_INSERT_FORMATED"];?></span>
 						</div>
-					<?}?>
-				</div>
-			</div>
-		</div>		
-	<?} else {		
-		echo ShowNote(GetMessage("STPOL_NO_ORDERS_NEW"), "infotext");	
+						<div class="km-order__status">
+							<?if($val["ORDER"]["CANCELED"] == "Y") {?>
+								<span class="item-status-d"><?=GetMessage("STPOL_ORDER_DELETE");?></span>
+							<?} else {?>
+								<span class="item-status-<?=toLower($val["ORDER"]["STATUS_ID"])?>"><?=htmlspecialcharsbx($arResult["INFO"]["STATUS"][$val["ORDER"]["STATUS_ID"]]["NAME"]);?></span>
+							<?}?>
+						</div>
+						<div class="km-order__sum">
+							<span class="km-order__sum-value"><?=$val["ORDER"]["FORMATED_PRICE"];?></span>
+							<?if($arSetting["REFERENCE_PRICE"]["VALUE"] == "Y" && !empty($arSetting["REFERENCE_PRICE_COEF"]["VALUE"])) {?>
+								<span class="km-order__sum-ref"><?=CCurrencyLang::CurrencyFormat($val["ORDER"]["PRICE"] * $arSetting["REFERENCE_PRICE_COEF"]["VALUE"], $val["ORDER"]["CURRENCY"], true);?></span>
+							<?}?>
+						</div>
+					</div>
+
+					<div class="km-order__pay">
+						<?foreach ($val["PAYMENT"] as $payment) {
+							$payHref = "";
+							$payBlank = false;
+							if ($canPay && $payment["PAID"] === "N" && $payment["IS_CASH"] !== "Y") {
+								if ($payment["NEW_WINDOW"] === "Y" && $payment["PSA_ACTION_FILE"]) {
+									$payHref = $payment["PSA_ACTION_FILE"];
+									$payBlank = true;
+								} else {
+									$payHref = $val["ORDER"]["URL_TO_DETAIL"]."#pay";
+								}
+							}
+							?>
+							<?
+							$payName = (string)$payment["PAY_SYSTEM_NAME"];
+							$payNameLower = mb_strtolower($payName);
+							if (mb_strpos($payNameLower, "qr") !== false) {
+								$payName = "QR-код в приложении банка";
+							} elseif (mb_strpos($payNameLower, "безнал") !== false) {
+								$payName = "Безналичный расчёт";
+							} elseif (mb_strpos($payNameLower, "налич") !== false) {
+								$payName = "Наличные";
+							} else {
+								$payName = trim(preg_split('/[,(]/u', $payName, 2)[0]);
+							}
+							?>
+							<div class="km-order__pay-line">
+								<span class="km-order__pay-name"><?=htmlspecialcharsbx($payName);?></span>
+								<?if($payment["PAID"] === "Y" || $val["ORDER"]["PAYED"] == "Y") {?>
+									<span class="km-order__badge km-order__badge--yes">Оплачен</span>
+								<?} else {?>
+									<span class="km-order__badge km-order__badge--no">Не оплачен</span>
+								<?}?>
+								<?if($payHref) {?>
+									<a class="km-order__pay-btn" href="<?=htmlspecialcharsbx($payHref)?>"<?=$payBlank ? ' target="_blank" rel="noopener"' : ''?>><?=GetMessage("STPOL_REPEAT_PAY")?></a>
+								<?}?>
+							</div>
+						<?}?>
+					</div>
+
+					<div class="km-order__more" id="order-more-<?=$accountHashNumber?>" hidden>
+						<ul class="km-order__items">
+							<?foreach($val["BASKET_ITEMS"] as $arBasketItems) {?>
+								<li class="km-order__item">
+									<span class="km-order__thumb">
+										<?if(is_array($arBasketItems["DETAIL_PICTURE"])) {?>
+											<img src="<?=$arBasketItems["DETAIL_PICTURE"]["src"]?>" width="<?=$arBasketItems["DETAIL_PICTURE"]["width"]?>" height="<?=$arBasketItems["DETAIL_PICTURE"]["height"]?>" alt="" />
+										<?} else {?>
+											<img src="<?=SITE_TEMPLATE_PATH?>/images/no-photo.svg" width="48" height="48" alt="" />
+										<?}?>
+									</span>
+									<span class="km-order__item-name">
+										<?if(strlen($arBasketItems["DETAIL_PAGE_URL"]) > 0) {?>
+											<a href="<?=$arBasketItems["DETAIL_PAGE_URL"]?>"><?=htmlspecialcharsbx($arBasketItems["NAME"])?></a>
+										<?} else {
+											echo htmlspecialcharsbx($arBasketItems["NAME"]);
+										}
+										if(!empty($arBasketItems["PROPS"])) {?>
+											<span class="km-order__item-props">
+												<?foreach($arBasketItems["PROPS"] as $props) {
+													echo htmlspecialcharsbx($props["NAME"]).": ".htmlspecialcharsbx($props["VALUE"])." ";
+												}?>
+											</span>
+										<?}?>
+									</span>
+									<span class="km-order__item-qty">
+										<?=$arBasketItems["QUANTITY"];
+										if(!empty($arBasketItems["MEASURE_TEXT"])) {
+											echo " ".$arBasketItems["MEASURE_TEXT"];
+										}?>
+									</span>
+									<span class="km-order__item-price"><?=CCurrencyLang::CurrencyFormat($arBasketItems["PRICE"] * $arBasketItems["QUANTITY"], $arBasketItems["CURRENCY"], true);?></span>
+								</li>
+							<?}
+							if(IntVal($val["ORDER"]["DELIVERY_ID"]) > 0 && $val["ORDER"]["PRICE_DELIVERY"] > 0) {?>
+								<li class="km-order__item km-order__item--delivery">
+									<span class="km-order__item-name">
+										Доставка<?if($arResult["INFO"]["DELIVERY"][$val["ORDER"]["DELIVERY_ID"]]["NAME"]):?>
+											— <?=htmlspecialcharsbx($arResult["INFO"]["DELIVERY"][$val["ORDER"]["DELIVERY_ID"]]["NAME"])?>
+										<?endif;?>
+									</span>
+									<span class="km-order__item-price"><?=CCurrencyLang::CurrencyFormat($val["ORDER"]["PRICE_DELIVERY"], $val["ORDER"]["CURRENCY"], true);?></span>
+								</li>
+							<?}?>
+						</ul>
+
+						<?if(!empty($val["ORDER"]["ORDER_PROPS"]) || strlen($val["ORDER"]["USER_DESCRIPTION"]) > 0) {?>
+							<dl class="km-order__props">
+								<?foreach($val["ORDER"]["ORDER_PROPS"] as $orderProps) {?>
+									<dt><?=htmlspecialcharsbx($orderProps["NAME"])?></dt>
+									<dd>
+										<?if($orderProps["TYPE"] == "CHECKBOX") {
+											echo ($orderProps["VALUE"] == "Y") ? GetMessage("STPOL_YES") : GetMessage("STPOL_NO");
+										} else {
+											echo htmlspecialcharsbx($orderProps["VALUE"]);
+										}?>
+									</dd>
+								<?}
+								if(strlen($val["ORDER"]["USER_DESCRIPTION"]) > 0) {?>
+									<dt><?=GetMessage("STPOL_ORDER_USER_COMMENT")?></dt>
+									<dd><?=htmlspecialcharsbx($val["ORDER"]["USER_DESCRIPTION"])?></dd>
+								<?}?>
+							</dl>
+						<?}?>
+
+						<div class="km-order__actions">
+							<a class="km-order__action" href="<?=htmlspecialcharsbx($val["ORDER"]["URL_TO_COPY"])?>"><?=GetMessage("STPOL_REPEAT_ORDER")?></a>
+							<?if($page != "all" && $page != "cancel"):?>
+								<a class="km-order__action km-order__action--danger" href="<?=htmlspecialcharsbx($val["ORDER"]["URL_TO_CANCEL"])?>"><?=GetMessage("STPOL_CANCEL_ORDER")?></a>
+							<?endif;?>
+							<a class="km-order__action" href="<?=htmlspecialcharsbx($val["ORDER"]["URL_TO_DETAIL"])?>"><?=GetMessage("STPOL_DETAIL_ORDER")?></a>
+						</div>
+					</div>
+				</article>
+			<?}?>
+		</div>
+	<?} else {
+		echo ShowNote(GetMessage("STPOL_NO_ORDERS_NEW"), "infotext");
 	}?>
 </div>
 
 <?if(strlen($arResult["NAV_STRING"]) > 0) {?>
 	<div class="navigation"><?=$arResult["NAV_STRING"]?></div>
 <?}?>
+
+<script type="text/javascript">
+(function () {
+	if (window.__kmOrderListToggleBound) {
+		return;
+	}
+	window.__kmOrderListToggleBound = true;
+	document.addEventListener("click", function (e) {
+		var btn = e.target.closest && e.target.closest(".km-orders [data-order-toggle]");
+		if (!btn) {
+			return;
+		}
+		var card = btn.closest(".km-order");
+		var more = card && card.querySelector(".km-order__more");
+		if (!more) {
+			return;
+		}
+		var open = more.hasAttribute("hidden");
+		if (open) {
+			more.removeAttribute("hidden");
+		} else {
+			more.setAttribute("hidden", "");
+		}
+		btn.setAttribute("aria-expanded", open ? "true" : "false");
+		card.classList.toggle("is-open", open);
+	});
+})();
+</script>

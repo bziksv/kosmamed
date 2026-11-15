@@ -170,7 +170,7 @@ if (!empty($arResult['ERRORS']['FATAL'])) {
 				</div>
 			</div>
 			<?//PAYMENT_OPTIONS//?>
-			<div class="sale-order-detail-payment-options sale-order-detail-item">
+			<div class="sale-order-detail-payment-options sale-order-detail-item" id="pay">
 				<div class="sale-order-detail-payment-options-container">
 					<div class="sale-order-detail-payment-options-title">
 						<div class="sale-order-detail-payment-options-title-element">
@@ -324,9 +324,6 @@ if (!empty($arResult['ERRORS']['FATAL'])) {
 										if ($payment["PAID"] !== "Y" && $payment['PAY_SYSTEM']["IS_CASH"] !== "Y" && $payment['PAY_SYSTEM']['PSA_NEW_WINDOW'] !== 'Y' && $arResult['CANCELED'] !== 'Y' && $arResult["IS_ALLOW_PAY"] !== "N") {
 										?>
 											<div class="sale-order-detail-payment-options-methods-template">
-												<span class="sale-paysystem-close active-button">
-													<span class="sale-paysystem-close-item sale-order-payment-cancel"></span>
-												</span><? //sale-paysystem-close// ?>
 												<?=$payment['BUFFERED_OUTPUT']?>
 											</div>
 										<?

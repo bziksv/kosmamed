@@ -26,30 +26,74 @@ foreach($arResult['SHIPMENT'] as $keyS => $shipment) {
 	unset($arListExtraService, $extraServiceManager, $extraService);
 }
 
-foreach($arResult["BASKET"] as $key => $arBasketItems) {
-	$ar = CIBlockElement::GetList(
-		array(), 
-		array("ID" => $arBasketItems["PRODUCT_ID"]), 
-		false, 
-		false, 
-		array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
-	)->Fetch();		
-	if($ar["DETAIL_PICTURE"] > 0) {
-		$arResult["BASKET"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 30, "height" => 30), BX_RESIZE_IMAGE_PROPORTIONAL, true);
-	} else {
-		$mxResult = CCatalogSku::GetProductInfo($ar["ID"]);
-		if(is_array($mxResult)) {
-			$ar = CIBlockElement::GetList(
-				array(), 
-				array("ID" => $mxResult["ID"]), 
-				false, 
-				false, 
-				array("ID", "IBLOCK_ID", "DETAIL_PICTURE")
+if (!function_exists('kmOrderItemPicture')) {
+	function kmOrderItemPicture($elementId)
+	{
+		$elementId = (int)$elementId;
+		if ($elementId <= 0) {
+			return null;
+		}
+		$element = CIBlockElement::GetList(
+			array(),
+			array('ID' => $elementId),
+			false,
+			false,
+			array('ID', 'IBLOCK_ID', 'DETAIL_PICTURE', 'PREVIEW_PICTURE')
+		)->Fetch();
+		if (!$element) {
+			$sku = CCatalogSku::GetProductInfo($elementId);
+			if (is_array($sku)) {
+				return kmOrderItemPicture($sku['ID']);
+			}
+			return null;
+		}
+		$fileId = (int)($element['DETAIL_PICTURE'] ?: $element['PREVIEW_PICTURE']);
+		if ($fileId <= 0) {
+			$photo = CIBlockElement::GetProperty(
+				$element['IBLOCK_ID'],
+				$element['ID'],
+				array('sort' => 'asc'),
+				array('CODE' => 'MORE_PHOTO')
 			)->Fetch();
-			if($ar["DETAIL_PICTURE"] > 0) {
-				$arResult["BASKET"][$key]["DETAIL_PICTURE"] = CFile::ResizeImageGet($ar["DETAIL_PICTURE"], array("width" => 30, "height" => 30), BX_RESIZE_IMAGE_PROPORTIONAL, true);
+			if ($photo && (int)$photo['VALUE'] > 0) {
+				$fileId = (int)$photo['VALUE'];
 			}
 		}
+		if ($fileId <= 0) {
+			$sku = CCatalogSku::GetProductInfo($elementId);
+			if (is_array($sku) && (int)$sku['ID'] !== $elementId) {
+				return kmOrderItemPicture($sku['ID']);
+			}
+			return null;
+		}
+		$file = CFile::GetFileArray($fileId);
+		if (!$file || empty($file['SRC'])) {
+			return null;
+		}
+		$absolute = $_SERVER['DOCUMENT_ROOT'].$file['SRC'];
+		if (is_file($absolute)) {
+			$resized = CFile::ResizeImageGet(
+				$fileId,
+				array('width' => 64, 'height' => 64),
+				BX_RESIZE_IMAGE_PROPORTIONAL,
+				true
+			);
+			if (!empty($resized['src'])) {
+				return $resized;
+			}
+		}
+		return array(
+			'src' => $file['SRC'],
+			'width' => 64,
+			'height' => 64,
+		);
+	}
+}
+
+foreach($arResult["BASKET"] as $key => $arBasketItems) {
+	$picture = kmOrderItemPicture($arBasketItems["PRODUCT_ID"]);
+	if ($picture) {
+		$arResult["BASKET"][$key]["DETAIL_PICTURE"] = $picture;
 	}
 	if(in_array("OFFERS_LINK_SHOW", $arSetting["GENERAL_SETTINGS"]["VALUE"]) && is_array(CCatalogSku::GetProductInfo($arBasketItems["PRODUCT_ID"]))) {
 		$arResult["BASKET"][$key]["DETAIL_PAGE_URL"] .= "?offer=".$arBasketItems["PRODUCT_ID"];
