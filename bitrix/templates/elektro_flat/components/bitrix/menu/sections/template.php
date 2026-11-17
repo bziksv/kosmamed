@@ -37,9 +37,6 @@ $kmBranchOpen = false;
 ?>
 
 
-<?if($kmMenuOnProduct):?>
-<style>.left-column ul.left-menu>li.parent.km-l2-closed>.catalog-section-childs{display:none!important}</style>
-<?endif;?>
 <ul class="left-menu">
 	<?$previousLevel = 0;	
 	foreach($arResult["NEW_SORT_ASC"] as $arItem) {
@@ -53,12 +50,11 @@ $kmBranchOpen = false;
 			} elseif($kmMenu['mode'] === 'parent' && in_array((int)$arItem['ID'], $kmOpenIds, true)) {
 				$kmBranchOpen = true;
 			}
-			$kmClosed = ($kmMenuOnProduct && $arItem["IS_PARENT"] && !$kmBranchOpen) ? ' km-l2-closed' : '';
 			if($arItem["IS_PARENT"]) {?>
 				<?
 				$arCode = explode('/',$arItem["LINK"]);
 				?>
-				<li class="parent<?=($arItem['SELECTED'] ? ' selected' : '')?><?=$kmClosed?> <? if(in_array($arItem["ID"], $JS_HIDE)) echo 'show_parent_'.$arCode[2]; ?>">
+				<li class="parent<?=($arItem['SELECTED'] ? ' selected' : '')?> <? if(in_array($arItem["ID"], $JS_HIDE)) echo 'show_parent_'.$arCode[2]; ?>">
 
 					<<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span data-replace-content="<?=$arItem['LINK']?>" data-hide-text1="<?=$arItem["TEXT"].($arSetting["CATALOG_LOCATION"]["VALUE"] == "LEFT" ? "<span class='arrow'></span>" : "")?>"<?else:?>a href="<?=$arItem['LINK']?>"<?endif;?>>
 					<?if(!in_array($arItem["ID"], $JS_HIDE)):?> 
