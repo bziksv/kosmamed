@@ -33,6 +33,8 @@ $kmMenu = function_exists('kmMenuIndexState')
 $kmMenuOnProduct = ($kmMenu['mode'] !== 'off');
 $kmOpenIds = array_map('intval', $kmMenu['open']);
 $kmBranchOpen = false;
+$kmMenuCss = '';
+$kmMenuCssN = 0;
 
 ?>
 
@@ -89,14 +91,26 @@ $kmBranchOpen = false;
 			<?}
 		} elseif($arItem["DEPTH_LEVEL"] == 2) {
 			?>
+			<?
+			$kmHideName = ($kmMenuOnProduct && !$kmBranchOpen);
+			$kmLabelClass = '';
+			if ($kmHideName) {
+				$kmMenuCssN++;
+				$kmLabelClass = ' km-ml-' . $kmMenuCssN;
+				$kmCssText = str_replace(
+					["\\", "'", "\n", "\r", "\t"],
+					["\\\\", "\\'", "\\A ", "", " "],
+					(string)$arItem["TEXT"]
+				);
+				$kmMenuCss .= '.km-ml-' . $kmMenuCssN . ":before{content:'" . $kmCssText . "';}";
+			}
+			$arCode = explode('/',$arItem["LINK"]);
+			?>
 			<div class="catalog-section-child">
-				<?if($kmMenuOnProduct && !$kmBranchOpen){
+				<?if($kmHideName){
 					echo '<!--noindex-->';
 				}?>
-				<?
-				$arCode = explode('/',$arItem["LINK"]);
-				?>
-				<<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span class="show_<?=$arCode[2]?>" data-replace-content="<?=$arItem['LINK']?>"<?else:?>a href="<?=$arItem['LINK']?>"<?endif;?> title="<?=$arItem['TEXT']?>">
+				<<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span class="show_<?=$arCode[2]?>" data-replace-content="<?=$arItem['LINK']?>"<?else:?>a href="<?=$arItem['LINK']?>"<?endif;?><?= $kmHideName ? '' : ' title="'.htmlspecialcharsbx($arItem['TEXT']).'"' ?>>
 					<span class="child">
 						<span class="graph"<?
 							if(!empty($arItem["PARAMS"]["ICON"])) {
@@ -105,32 +119,35 @@ $kmBranchOpen = false;
 								echo ' data-km-menu-src="'.htmlspecialcharsbx($arItem["PICTURE"]["SRC"]).'"';
 								echo ' data-km-menu-w="'.(int)($arItem["PICTURE"]["WIDTH"] ?: 50).'"';
 								echo ' data-km-menu-h="'.(int)($arItem["PICTURE"]["HEIGHT"] ?: 50).'"';
-								echo ' data-km-menu-alt="'.htmlspecialcharsbx($arItem["TEXT"]).'"';
+								if (!$kmHideName) {
+									echo ' data-km-menu-alt="'.htmlspecialcharsbx($arItem["TEXT"]).'"';
+								}
 								if(!empty($arItem["PICTURE"]["SRC_WEBP"])) {
 									echo ' data-km-menu-webp="'.htmlspecialcharsbx($arItem["PICTURE"]["SRC_WEBP"]).'"';
 								}
 							} else {
 								echo ' data-km-menu-src="'.htmlspecialcharsbx(SITE_TEMPLATE_PATH.'/images/no-photo.svg').'"';
 								echo ' data-km-menu-w="50" data-km-menu-h="50"';
-								echo ' data-km-menu-alt="'.htmlspecialcharsbx($arItem["TEXT"]).'"';
+								if (!$kmHideName) {
+									echo ' data-km-menu-alt="'.htmlspecialcharsbx($arItem["TEXT"]).'"';
+								}
 							}
 						?>></span>
 						<span class="text-cont">
-							<?
-							$arCode = explode('/',$arItem["LINK"]);
-							?>
 							<?if($kmMenu['mode'] === 'all'):?>
-							<span class="text opanALL"><?=$arItem["TEXT"]?></span>
+							<span class="text opanALL"><?=htmlspecialcharsbx($arItem["TEXT"])?></span>
 							<?elseif($kmMenu['mode'] === 'parent' && $kmBranchOpen):?>
-							<span class="text opanP"><?=$arItem["TEXT"]?></span>
+							<span class="text opanP"><?=htmlspecialcharsbx($arItem["TEXT"])?></span>
+							<?elseif($kmHideName):?>
+							<span class="text<?=$kmLabelClass?>"></span>
 							<?else:?>
-							<span class="text" title="<?=htmlspecialcharsbx($arItem['TEXT'])?>"><?=htmlspecialcharsbx($arItem['TEXT'])?></span>
+							<span class="text"><?=htmlspecialcharsbx($arItem["TEXT"])?></span>
 							<?endif;?>
 						</span>
 					</span>
 <span data-href-content="<?=$arItem['LINK']?>"></span>
 				</<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span<?else:?>a<?endif;?>>
-				<?if($kmMenuOnProduct && !$kmBranchOpen){
+				<?if($kmHideName){
 					echo '<!--/noindex-->';
 				}?>
 			</div>
@@ -143,6 +160,9 @@ $kmBranchOpen = false;
 		echo str_repeat("</div></li>", ($previousLevel-1));
 	}?>
 </ul>
+<?if($kmMenuCss !== ''):?>
+<style>.left-column .catalog-section-child .text[class*="km-ml-"]:before{white-space:normal;}<?=$kmMenuCss?></style>
+<?endif;?>
 
 <script type="text/javascript">
 	//<![CDATA[
