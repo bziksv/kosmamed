@@ -107,9 +107,6 @@ $kmMenuCssN = 0;
 			$arCode = explode('/',$arItem["LINK"]);
 			?>
 			<div class="catalog-section-child">
-				<?if($kmHideName){
-					echo '<!--noindex-->';
-				}?>
 				<<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span class="show_<?=$arCode[2]?>" data-replace-content="<?=$arItem['LINK']?>"<?else:?>a href="<?=$arItem['LINK']?>"<?endif;?><?= $kmHideName ? '' : ' title="'.htmlspecialcharsbx($arItem['TEXT']).'"' ?>>
 					<span class="child">
 						<span class="graph"<?
@@ -147,9 +144,6 @@ $kmMenuCssN = 0;
 					</span>
 <span data-href-content="<?=$arItem['LINK']?>"></span>
 				</<? if(in_array($arItem["ID"], $JS_HIDE)): ?>span<?else:?>a<?endif;?>>
-				<?if($kmHideName){
-					echo '<!--/noindex-->';
-				}?>
 			</div>
 		<?} else {
 			continue;
